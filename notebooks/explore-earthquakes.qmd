@@ -1,31 +1,245 @@
 ---
-title: Explore Earthquakes
-author: Charlotte Wickham
+title: Supply Chain Data Analytics
+subtitle: Analyzing and Forcasting Supermarket Sales
+authors:
+  - name: Stan Brouwer
+    orchid: 0009-0006-3447-0096
+    affiliation: Vrije Universiteit
+    corresponding: true
+  - name: Liz Chan
+    affiliation: Master TSCM
+  - name: Maaike Lamberst
+    affiliation: Supply Chain Data analysis
+  - name: Niek Schroor
+    affiliation: Group 10
+
+date: last-modified
+bibliography: references.bib
+citation:
+  container-title: Earth and Space Science
+number-sections: true
 ---
 
+We analyze, forecast and interpret the [Superstore sales](https://public.tableau.com/app/sample-data/sample_-_superstore.xls) provided by [Tableau](https://public.tableau.com/app/learn/sample-data) using different statistical and machine learning methods.
+
+We describe our work in the PDF version. However, we would like to recommend reading our quarto manuscript *here* as it contains the **relevant** R code in the Article Notebook.
+
+## Data Pre-processing
+
+The superstore data set we selected is of high quality. Thus we do the required data pre-processing, but included the hypothetical steps we would take were our data of lower quality to communicate our understanding of the data pre-processing process.
+
+We took the following pre-processing steps:
+
 ```{r}
-library(tidyverse)
+#| label: setup
+#| include: false
+#| output: false
+
+# Clear workspace
+rm(list = ls())
+# Function to load (and install if necessary) dependencies
+install_and_load <- function(packages) {
+  install.packages(setdiff(packages, rownames(installed.packages())), dependencies = TRUE)
+  invisible(lapply(packages, require, character.only = TRUE))
+}
+install_and_load(c("tidyverse", "readxl", "ggplot2", "lubridate", "stats", "Amelia","forecast", "tseries", "plotly", "stringr", "knitr"))
+```
+
+-   Improved column names by removing whitespaces
+-   Removed the <code>Row_ID</code> column as it can be inferred by it's index
+-   Removed all columns with a single unique value, as storing these would be [redundant](https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html)
+-   Ensured machine-readable date formats in yyyy-mm-dd as these usually differ per locale.
+-   Ensured proper decimal separators
+-   calculated the number of missing values (both NA and empty string "") per column.
+
+```{r}
+#| label: data_preprocessing
+
+# Load the data
+suppressWarnings({data <- read_excel("data/sample_-_superstore.xls")}) # The Postal code column is stored as 'text' but coerced to numeric, causing warnings which we suppress
+
+# Improve column names (replace " "with "_")
+colnames(data) <- str_replace_all(colnames(data), " ", "_")
+
+# Remove the 'Row_ID' column as it can be inferred by it's index
+data <- subset(data, select = -`Row_ID`)
+
+# Remove all columns that have only one unique value, as storing these would be redundant
+data <- data[, sapply(data, function(col) length(unique(col)) > 1)]
+
+# Ensure a machine-readable date format as these are usually horrible in excel files
+data$Order_Date <- as.Date(data$Order_Date, format = "%Y-%m-%d")
+data$Ship_Date <- as.Date(data$Ship_Date, format = "%Y-%m-%d")
+
+# The readxl package by default uses the correct decimal separator (as opposed to base R)
+
+# Calculate the number of missing values per column.
+# The sample dates are likely in Unix time, and when these are converted to R date objects they are stored as Date objects (which are represented by 'double' datatypes). Comparing these dates to characters (empty strings) results in NA values. Thus we only check date values for NA. As Date objects are stored as doubles within R (amount of days since 1970-01-01), we can't check numeric columns for " " either. We thus only check character columns for " ".
+missing_values <- sapply(data, function(col) {
+  if (inherits(col, "Date")) {
+    sum(is.na(col))
+  } else if (is.character(col)) {
+    sum(is.na(col) | col == "")
+  } else {
+    sum(is.na(col))
+  }
+})
+
+if (sum(missing_values) == 0) {
+  print("No missing values")
+}
+
+
+# Optionally, print the missing values as a nice table using knitr
+# Convert the result into a data frame (table)
+missing_values_table <- data.frame(
+  Column = names(missing_values),
+  Missing_or_Empty = missing_values
+)
+
+# Note that there are no missing values, thus we do not print them
+# kable(missing_values_table, caption = "Missing or Empty Values in Columns", format = "pipe")
+rm(missing_values, missing_values_table)
+```
+
+We also ran some descriptive statistics to check unlikely or impossible values, outliers, means, etc.
+
+```{r descriptive_statistics, warning=FALSE, message=FALSE}
+
+# Select only numerical columns
+numerical_data <- data %>% select_if(is.numeric)
+
+# Apply sapply to calculate descriptive statistics for each numeric column
+descriptive_stats <- sapply(numerical_data, function(col) {
+  # Remove NA values
+  col <- na.omit(col)
+  
+  # Calculate basic statistics
+  min_val <- min(col)
+  max_val <- max(col)
+  mean_val <- mean(col)
+  median_val <- median(col)
+  
+  # 95% Confidence Interval (assuming normal distribution)
+  se <- sd(col) / sqrt(length(col))  # Standard error
+  ci_lower <- mean_val - 1.96 * se  # Lower bound of 95% CI
+  ci_upper <- mean_val + 1.96 * se  # Upper bound of 95% CI
+  
+  # Calculate outliers (using 1.5 * IQR rule)
+  Q1 <- quantile(col, 0.25)
+  Q3 <- quantile(col, 0.75)
+  IQR <- Q3 - Q1
+  outliers <- sum(col < (Q1 - 1.5 * IQR) | col > (Q3 + 1.5 * IQR))  # Number of outliers
+  
+  # Return the statistics as a named vector
+  return(c(Min = min_val, 
+           Mean = mean_val, 
+           Max = max_val, 
+           Median = median_val, 
+           `95% CI Lower` = ci_lower, 
+           `95% CI Upper` = ci_upper, 
+           Outliers = outliers))
+})
+head(data,5)
+
 ```
 
 
-Read a clean version of data:
+
+
+There is some more processing to do, such as removing outliers. However, by doing so we impose our own assumptions on the data (possibly the outliers are actual sales?). We will visualize and qualitatively evaluate the data first, and then decide what other processing steps to take. 
+
 
 ```{r}
-la_palma <- read_csv("la-palma.csv")
+# Display the first 5 rows of the data in a nice table with kable
+kable(head(data,5), caption = "First 5 Rows of the Data", format = "pipe")
+
 ```
 
-Create spatial plot:
+
+
+## Section
+
+This is a simple placeholder for the manuscript's main document [@knuth84].
+
+```{r echo=TRUE}
+1 + 1
+```
+
+
+
+
+## Introduction
 
 ```{r}
-#| label: fig-spatial-plot
-#| fig-cap: "Locations of earthquakes on La Palma since 2017"
-#| fig-alt: "A scatterplot of earthquake locations plotting latitude
-#|   against longitude."
-la_palma |> 
-  ggplot(aes(Longitude, Latitude)) +
-  geom_point(aes(color = Magnitude, size = 40-`Depth(km)`)) +
-  scale_color_viridis_c(direction = -1) + 
-  scale_size(range = c(0.5, 2), guide = "none") +
-  theme_bw()
+eruptions <- c(1492, 1585, 1646, 1677, 1712, 1949, 1971, 2021)
+n_eruptions <- length(eruptions)
 ```
 
+```{r}
+#| label: fig-timeline
+#| fig-cap: Timeline of recent earthquakes on La Palma
+#| fig-alt: An event plot of the years of the last 8 eruptions on La Palma.
+#| fig-height: 1.5
+#| fig-width: 6
+par(mar = c(3, 1, 1, 1) + 0.1)
+plot(eruptions, rep(0, n_eruptions), 
+  pch = "|", axes = FALSE)
+axis(1)
+box()
+```
+
+```{r}
+#| output: false
+avg_years_between_eruptions <- mean(diff(eruptions[-n_eruptions]))
+avg_years_between_eruptions
+```
+
+Based on data up to and including 1971, eruptions on La Palma happen every `{r} round(avg_years_between_eruptions, 1)` years on average.
+
+Studies of the magma systems feeding the volcano, such as @marrero2019, have proposed that there are two main magma reservoirs feeding the Cumbre Vieja volcano; one in the mantle (30-40km depth) which charges and in turn feeds a shallower crustal reservoir (10-20km depth).
+
+Eight eruptions have been recorded since the late 1400s (@fig-timeline).
+
+Data and methods are discussed in @sec-data-methods.
+
+Let $x$ denote the number of eruptions in a year. Then, $x$ can be modeled by a Poisson distribution
+
+$$
+p(x) = \frac{e^{-\lambda} \lambda^{x}}{x !}
+$$ {#eq-poisson}
+
+where $\lambda$ is the rate of eruptions per year. Using @eq-poisson, the probability of an eruption in the next $t$ years can be calculated.
+
+| Name                 | Year   |
+| -------------------- | ------ |
+| Current              | 2021   |
+| Teneguía             | 1971   |
+| Nambroque            | 1949   |
+| El Charco            | 1712   |
+| Volcán San Antonio   | 1677   |
+| Volcán San Martin    | 1646   |
+| Tajuya near El Paso  | 1585   |
+| Montaña Quemada      | 1492   |
+
+: Recent historic eruptions on La Palma {#tbl-history}
+
+@tbl-history summarises the eruptions recorded since the colonization of the islands by Europeans in the late 1400s.
+
+![Map of La Palma](images/la-palma-map.png){#fig-map}
+
+La Palma is one of the west most islands in the Volcanic Archipelago of the Canary Islands (@fig-map). 
+
+{{< embed notebooks/explore-earthquakes.qmd#fig-spatial-plot >}}
+
+@fig-spatial-plot shows the location of recent Earthquakes on La Palma.
+
+## Data & Methods {#sec-data-methods}
+
+## Conclusion
+
+## References {.unnumbered}
+
+:::{#refs}
+
+:::
