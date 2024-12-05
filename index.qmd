@@ -20,6 +20,8 @@ citation:
 number-sections: true
 ---
 
+<h2>Introduction</h2>
+
 We analyze, forecast and interpret the [Superstore sales](https://public.tableau.com/app/sample-data/sample_-_superstore.xls) provided by [Tableau](https://public.tableau.com/app/learn/sample-data) using different statistical and machine learning methods.
 
 We describe our work in the PDF version. However, we would like to recommend reading our quarto manuscript *here* as it contains the **relevant** R code in the Article Notebook.
@@ -34,6 +36,7 @@ We took the following pre-processing steps:
 #| label: setup
 #| include: false
 #| output: false
+#| message: false
 
 # Clear workspace
 rm(list = ls())
@@ -54,6 +57,7 @@ install_and_load(c("tidyverse", "readxl", "ggplot2", "lubridate", "stats", "Amel
 
 ```{r}
 #| label: data_preprocessing
+#| echo: false
 
 # Load the data
 suppressWarnings({data <- read_excel("data/sample_-_superstore.xls")}) # The Postal code column is stored as 'text' but coerced to numeric, causing warnings which we suppress
@@ -84,11 +88,14 @@ missing_values <- sapply(data, function(col) {
     sum(is.na(col))
   }
 })
+```
 
+```{r}
 if (sum(missing_values) == 0) {
-  print("No missing values")
+  print("None of the columns contains missing values")
+  } else {
+  print("Some columns contain missing values")
 }
-
 
 # Optionally, print the missing values as a nice table using knitr
 # Convert the result into a data frame (table)
@@ -99,62 +106,21 @@ missing_values_table <- data.frame(
 
 # Note that there are no missing values, thus we do not print them
 # kable(missing_values_table, caption = "Missing or Empty Values in Columns", format = "pipe")
-rm(missing_values, missing_values_table)
+rm(missing_value, missing_values_table)
 ```
 
-We also ran some descriptive statistics to check unlikely or impossible values, outliers, means, etc.
-
-```{r descriptive_statistics, warning=FALSE, message=FALSE}
-
-# Select only numerical columns
-numerical_data <- data %>% select_if(is.numeric)
-
-# Apply sapply to calculate descriptive statistics for each numeric column
-descriptive_stats <- sapply(numerical_data, function(col) {
-  # Remove NA values
-  col <- na.omit(col)
-  
-  # Calculate basic statistics
-  min_val <- min(col)
-  max_val <- max(col)
-  mean_val <- mean(col)
-  median_val <- median(col)
-  
-  # 95% Confidence Interval (assuming normal distribution)
-  se <- sd(col) / sqrt(length(col))  # Standard error
-  ci_lower <- mean_val - 1.96 * se  # Lower bound of 95% CI
-  ci_upper <- mean_val + 1.96 * se  # Upper bound of 95% CI
-  
-  # Calculate outliers (using 1.5 * IQR rule)
-  Q1 <- quantile(col, 0.25)
-  Q3 <- quantile(col, 0.75)
-  IQR <- Q3 - Q1
-  outliers <- sum(col < (Q1 - 1.5 * IQR) | col > (Q3 + 1.5 * IQR))  # Number of outliers
-  
-  # Return the statistics as a named vector
-  return(c(Min = min_val, 
-           Mean = mean_val, 
-           Max = max_val, 
-           Median = median_val, 
-           `95% CI Lower` = ci_lower, 
-           `95% CI Upper` = ci_upper, 
-           Outliers = outliers))
-})
-head(data,5)
+After these steps (and transposing the table for better document formatting), the data looks as follows:
+```{r}
+#| label: data_table1
+kable(t(head(data, 3)), caption = "First 5 Rows of the Data (Transposed)", format = "markdown")
 
 ```
-
 
 
 
 There is some more processing to do, such as removing outliers. However, by doing so we impose our own assumptions on the data (possibly the outliers are actual sales?). We will visualize and qualitatively evaluate the data first, and then decide what other processing steps to take. 
 
 
-```{r}
-# Display the first 5 rows of the data in a nice table with kable
-kable(head(data,5), caption = "First 5 Rows of the Data", format = "pipe")
-
-```
 
 
 
@@ -229,10 +195,6 @@ where $\lambda$ is the rate of eruptions per year. Using @eq-poisson, the probab
 ![Map of La Palma](images/la-palma-map.png){#fig-map}
 
 La Palma is one of the west most islands in the Volcanic Archipelago of the Canary Islands (@fig-map). 
-
-{{< embed notebooks/explore-earthquakes.qmd#fig-spatial-plot >}}
-
-@fig-spatial-plot shows the location of recent Earthquakes on La Palma.
 
 ## Data & Methods {#sec-data-methods}
 
