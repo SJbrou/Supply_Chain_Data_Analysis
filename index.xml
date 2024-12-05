@@ -142,6 +142,7 @@ and Interchange DTD v1.2 20190208//EN" "JATS-archivearticle1.dtd">
 </front>
 
 <body>
+<p>Introduction</p>
 <p>We analyze, forecast and interpret the
 <ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore
 sales</ext-link> provided by
@@ -182,187 +183,145 @@ contains the <bold>relevant</bold> R code in the Article Notebook.</p>
       string ““) per column.</p>
     </list-item>
   </list>
-  <preformat>[1] &quot;No missing values&quot;</preformat>
-  <p>We also ran some descriptive statistics to check unlikely or
-  impossible values, outliers, means, etc.</p>
-  <preformat># A tibble: 5 × 19
-  Order_ID     Order_Date Ship_Date  Ship_Mode Customer_ID Customer_Name Segment
-  &lt;chr&gt;        &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;  
-1 CA-2016-152… 2016-11-08 2016-11-11 Second C… CG-12520    Claire Gute   Consum…
-2 CA-2016-152… 2016-11-08 2016-11-11 Second C… CG-12520    Claire Gute   Consum…
-3 CA-2016-138… 2016-06-12 2016-06-16 Second C… DV-13045    Darrin Van H… Corpor…
-4 US-2015-108… 2015-10-11 2015-10-18 Standard… SO-20335    Sean O'Donne… Consum…
-5 US-2015-108… 2015-10-11 2015-10-18 Standard… SO-20335    Sean O'Donne… Consum…
-# ℹ 12 more variables: City &lt;chr&gt;, State &lt;chr&gt;, Postal_Code &lt;dbl&gt;,
-#   Region &lt;chr&gt;, Product_ID &lt;chr&gt;, Category &lt;chr&gt;, `Sub-Category` &lt;chr&gt;,
-#   Product_Name &lt;chr&gt;, Sales &lt;dbl&gt;, Quantity &lt;dbl&gt;, Discount &lt;dbl&gt;,
-#   Profit &lt;dbl&gt;</preformat>
+  <preformat>[1] &quot;None of the columns contains missing values&quot;</preformat>
+  <p>After these steps (and transposing the table for better document
+  formatting), the data looks as follows:</p>
+  <table-wrap>
+    <caption>
+      <p>First 5 Rows of the Data (Transposed)</p>
+    </caption>
+    <table>
+      <colgroup>
+        <col width="8%" />
+        <col width="20%" />
+        <col width="36%" />
+        <col width="35%" />
+      </colgroup>
+      <tbody>
+        <tr>
+          <td align="left">Order_ID</td>
+          <td align="left">CA-2016-152156</td>
+          <td align="left">CA-2016-152156</td>
+          <td align="left">CA-2016-138688</td>
+        </tr>
+        <tr>
+          <td align="left">Order_Date</td>
+          <td align="left">2016-11-08</td>
+          <td align="left">2016-11-08</td>
+          <td align="left">2016-06-12</td>
+        </tr>
+        <tr>
+          <td align="left">Ship_Date</td>
+          <td align="left">2016-11-11</td>
+          <td align="left">2016-11-11</td>
+          <td align="left">2016-06-16</td>
+        </tr>
+        <tr>
+          <td align="left">Ship_Mode</td>
+          <td align="left">Second Class</td>
+          <td align="left">Second Class</td>
+          <td align="left">Second Class</td>
+        </tr>
+        <tr>
+          <td align="left">Customer_ID</td>
+          <td align="left">CG-12520</td>
+          <td align="left">CG-12520</td>
+          <td align="left">DV-13045</td>
+        </tr>
+        <tr>
+          <td align="left">Customer_Name</td>
+          <td align="left">Claire Gute</td>
+          <td align="left">Claire Gute</td>
+          <td align="left">Darrin Van Huff</td>
+        </tr>
+        <tr>
+          <td align="left">Segment</td>
+          <td align="left">Consumer</td>
+          <td align="left">Consumer</td>
+          <td align="left">Corporate</td>
+        </tr>
+        <tr>
+          <td align="left">City</td>
+          <td align="left">Henderson</td>
+          <td align="left">Henderson</td>
+          <td align="left">Los Angeles</td>
+        </tr>
+        <tr>
+          <td align="left">State</td>
+          <td align="left">Kentucky</td>
+          <td align="left">Kentucky</td>
+          <td align="left">California</td>
+        </tr>
+        <tr>
+          <td align="left">Postal_Code</td>
+          <td align="left">42420</td>
+          <td align="left">42420</td>
+          <td align="left">90036</td>
+        </tr>
+        <tr>
+          <td align="left">Region</td>
+          <td align="left">South</td>
+          <td align="left">South</td>
+          <td align="left">West</td>
+        </tr>
+        <tr>
+          <td align="left">Product_ID</td>
+          <td align="left">FUR-BO-10001798</td>
+          <td align="left">FUR-CH-10000454</td>
+          <td align="left">OFF-LA-10000240</td>
+        </tr>
+        <tr>
+          <td align="left">Category</td>
+          <td align="left">Furniture</td>
+          <td align="left">Furniture</td>
+          <td align="left">Office Supplies</td>
+        </tr>
+        <tr>
+          <td align="left">Sub-Category</td>
+          <td align="left">Bookcases</td>
+          <td align="left">Chairs</td>
+          <td align="left">Labels</td>
+        </tr>
+        <tr>
+          <td align="left">Product_Name</td>
+          <td align="left">Bush Somerset Collection Bookcase</td>
+          <td align="left">Hon Deluxe Fabric Upholstered Stacking
+          Chairs, Rounded Back</td>
+          <td align="left">Self-Adhesive Address Labels for Typewriters
+          by Universal</td>
+        </tr>
+        <tr>
+          <td align="left">Sales</td>
+          <td align="left">261.96</td>
+          <td align="left">731.94</td>
+          <td align="left">14.62</td>
+        </tr>
+        <tr>
+          <td align="left">Quantity</td>
+          <td align="left">2</td>
+          <td align="left">3</td>
+          <td align="left">2</td>
+        </tr>
+        <tr>
+          <td align="left">Discount</td>
+          <td align="left">0</td>
+          <td align="left">0</td>
+          <td align="left">0</td>
+        </tr>
+        <tr>
+          <td align="left">Profit</td>
+          <td align="left">41.9136</td>
+          <td align="left">219.5820</td>
+          <td align="left">6.8714</td>
+        </tr>
+      </tbody>
+    </table>
+  </table-wrap>
   <p>There is some more processing to do, such as removing outliers.
   However, by doing so we impose our own assumptions on the data
   (possibly the outliers are actual sales?). We will visualize and
   qualitatively evaluate the data first, and then decide what other
   processing steps to take.</p>
-  <table-wrap>
-    <caption>
-      <p>First 5 Rows of the Data</p>
-    </caption>
-    <table>
-      <colgroup>
-        <col width="5%" />
-        <col width="4%" />
-        <col width="4%" />
-        <col width="5%" />
-        <col width="4%" />
-        <col width="6%" />
-        <col width="4%" />
-        <col width="6%" />
-        <col width="4%" />
-        <col width="4%" />
-        <col width="3%" />
-        <col width="6%" />
-        <col width="6%" />
-        <col width="5%" />
-        <col width="22%" />
-        <col width="3%" />
-        <col width="3%" />
-        <col width="3%" />
-        <col width="4%" />
-      </colgroup>
-      <thead>
-        <tr>
-          <th align="left">Order_ID</th>
-          <th align="left">Order_Date</th>
-          <th align="left">Ship_Date</th>
-          <th align="left">Ship_Mode</th>
-          <th align="left">Customer_ID</th>
-          <th align="left">Customer_Name</th>
-          <th align="left">Segment</th>
-          <th align="left">City</th>
-          <th align="left">State</th>
-          <th align="right">Postal_Code</th>
-          <th align="left">Region</th>
-          <th align="left">Product_ID</th>
-          <th align="left">Category</th>
-          <th align="left">Sub-Category</th>
-          <th align="left">Product_Name</th>
-          <th align="right">Sales</th>
-          <th align="right">Quantity</th>
-          <th align="right">Discount</th>
-          <th align="right">Profit</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td align="left">CA-2016-152156</td>
-          <td align="left">2016-11-08</td>
-          <td align="left">2016-11-11</td>
-          <td align="left">Second Class</td>
-          <td align="left">CG-12520</td>
-          <td align="left">Claire Gute</td>
-          <td align="left">Consumer</td>
-          <td align="left">Henderson</td>
-          <td align="left">Kentucky</td>
-          <td align="right">42420</td>
-          <td align="left">South</td>
-          <td align="left">FUR-BO-10001798</td>
-          <td align="left">Furniture</td>
-          <td align="left">Bookcases</td>
-          <td align="left">Bush Somerset Collection Bookcase</td>
-          <td align="right">261.9600</td>
-          <td align="right">2</td>
-          <td align="right">0.00</td>
-          <td align="right">41.9136</td>
-        </tr>
-        <tr>
-          <td align="left">CA-2016-152156</td>
-          <td align="left">2016-11-08</td>
-          <td align="left">2016-11-11</td>
-          <td align="left">Second Class</td>
-          <td align="left">CG-12520</td>
-          <td align="left">Claire Gute</td>
-          <td align="left">Consumer</td>
-          <td align="left">Henderson</td>
-          <td align="left">Kentucky</td>
-          <td align="right">42420</td>
-          <td align="left">South</td>
-          <td align="left">FUR-CH-10000454</td>
-          <td align="left">Furniture</td>
-          <td align="left">Chairs</td>
-          <td align="left">Hon Deluxe Fabric Upholstered Stacking
-          Chairs, Rounded Back</td>
-          <td align="right">731.9400</td>
-          <td align="right">3</td>
-          <td align="right">0.00</td>
-          <td align="right">219.5820</td>
-        </tr>
-        <tr>
-          <td align="left">CA-2016-138688</td>
-          <td align="left">2016-06-12</td>
-          <td align="left">2016-06-16</td>
-          <td align="left">Second Class</td>
-          <td align="left">DV-13045</td>
-          <td align="left">Darrin Van Huff</td>
-          <td align="left">Corporate</td>
-          <td align="left">Los Angeles</td>
-          <td align="left">California</td>
-          <td align="right">90036</td>
-          <td align="left">West</td>
-          <td align="left">OFF-LA-10000240</td>
-          <td align="left">Office Supplies</td>
-          <td align="left">Labels</td>
-          <td align="left">Self-Adhesive Address Labels for Typewriters
-          by Universal</td>
-          <td align="right">14.6200</td>
-          <td align="right">2</td>
-          <td align="right">0.00</td>
-          <td align="right">6.8714</td>
-        </tr>
-        <tr>
-          <td align="left">US-2015-108966</td>
-          <td align="left">2015-10-11</td>
-          <td align="left">2015-10-18</td>
-          <td align="left">Standard Class</td>
-          <td align="left">SO-20335</td>
-          <td align="left">Sean O’Donnell</td>
-          <td align="left">Consumer</td>
-          <td align="left">Fort Lauderdale</td>
-          <td align="left">Florida</td>
-          <td align="right">33311</td>
-          <td align="left">South</td>
-          <td align="left">FUR-TA-10000577</td>
-          <td align="left">Furniture</td>
-          <td align="left">Tables</td>
-          <td align="left">Bretford CR4500 Series Slim Rectangular
-          Table</td>
-          <td align="right">957.5775</td>
-          <td align="right">5</td>
-          <td align="right">0.45</td>
-          <td align="right">-383.0310</td>
-        </tr>
-        <tr>
-          <td align="left">US-2015-108966</td>
-          <td align="left">2015-10-11</td>
-          <td align="left">2015-10-18</td>
-          <td align="left">Standard Class</td>
-          <td align="left">SO-20335</td>
-          <td align="left">Sean O’Donnell</td>
-          <td align="left">Consumer</td>
-          <td align="left">Fort Lauderdale</td>
-          <td align="left">Florida</td>
-          <td align="right">33311</td>
-          <td align="left">South</td>
-          <td align="left">OFF-ST-10000760</td>
-          <td align="left">Office Supplies</td>
-          <td align="left">Storage</td>
-          <td align="left">Eldon Fold ’N Roll Cart System</td>
-          <td align="right">22.3680</td>
-          <td align="right">2</td>
-          <td align="right">0.20</td>
-          <td align="right">2.5164</td>
-        </tr>
-      </tbody>
-    </table>
-  </table-wrap>
 </sec>
 <sec id="section">
   <title>2 Section</title>
@@ -470,13 +429,6 @@ contains the <bold>relevant</bold> R code in the Article Notebook.</p>
   <p>La Palma is one of the west most islands in the Volcanic
   Archipelago of the Canary Islands
   (<xref alt="Figure 2" rid="fig-map">Figure 2</xref>).</p>
-  <fig id="fig-spatial-plot">
-    <caption><p>Figure 3: Locations of earthquakes on La Palma since
-    2017</p></caption>
-    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/notebooks-explore-earthquakes-fig-spatial-plot-output-1.png" />
-  </fig>
-  <p><xref alt="Figure 3" rid="fig-spatial-plot">Figure 3</xref> shows
-  the location of recent Earthquakes on La Palma.</p>
 </sec>
 <sec id="sec-data-methods">
   <title>4 Data &amp; Methods</title>
@@ -511,7 +463,7 @@ contains the <bold>relevant</bold> R code in the Article Notebook.</p>
 </ref-list>
 </back>
 
-<sub-article article-type="notebook" id="nb-8-nb-article">
+<sub-article article-type="notebook" id="nb-7-nb-article">
 <front-stub>
 <title-group>
 <article-title>Supply Chain Data Analytics</article-title>
@@ -610,6 +562,7 @@ contains the <bold>relevant</bold> R code in the Article Notebook.</p>
 </front-stub>
 
 <body>
+<p>Introduction</p>
 <p>We analyze, forecast and interpret the
 <ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore
 sales</ext-link> provided by
@@ -754,13 +707,16 @@ missing_values &lt;- sapply(data, function(col) {
   } else {
     sum(is.na(col))
   }
-})
-
-if (sum(missing_values) == 0) {
-  print(&quot;No missing values&quot;)
+})</code>
+  </sec>
+  <sec specific-use="notebook-content">
+  <code language="r script">if (sum(missing_values) == 0) {
+  print(&quot;None of the columns contains missing values&quot;)
+  } else {
+  print(&quot;Some columns contain missing values&quot;)
 }</code>
   <boxed-text>
-    <preformat>[1] &quot;No missing values&quot;</preformat>
+    <preformat>[1] &quot;None of the columns contains missing values&quot;</preformat>
   </boxed-text>
   <code language="r script"># Optionally, print the missing values as a nice table using knitr
 # Convert the result into a data frame (table)
@@ -771,231 +727,153 @@ missing_values_table &lt;- data.frame(
 
 # Note that there are no missing values, thus we do not print them
 # kable(missing_values_table, caption = &quot;Missing or Empty Values in Columns&quot;, format = &quot;pipe&quot;)
-rm(missing_values, missing_values_table)</code>
-  </sec>
-  <p>We also ran some descriptive statistics to check unlikely or
-  impossible values, outliers, means, etc.</p>
-  <sec specific-use="notebook-content">
-  <code language="r script"># Select only numerical columns
-numerical_data &lt;- data %&gt;% select_if(is.numeric)
-
-# Apply sapply to calculate descriptive statistics for each numeric column
-descriptive_stats &lt;- sapply(numerical_data, function(col) {
-  # Remove NA values
-  col &lt;- na.omit(col)
-  
-  # Calculate basic statistics
-  min_val &lt;- min(col)
-  max_val &lt;- max(col)
-  mean_val &lt;- mean(col)
-  median_val &lt;- median(col)
-  
-  # 95% Confidence Interval (assuming normal distribution)
-  se &lt;- sd(col) / sqrt(length(col))  # Standard error
-  ci_lower &lt;- mean_val - 1.96 * se  # Lower bound of 95% CI
-  ci_upper &lt;- mean_val + 1.96 * se  # Upper bound of 95% CI
-  
-  # Calculate outliers (using 1.5 * IQR rule)
-  Q1 &lt;- quantile(col, 0.25)
-  Q3 &lt;- quantile(col, 0.75)
-  IQR &lt;- Q3 - Q1
-  outliers &lt;- sum(col &lt; (Q1 - 1.5 * IQR) | col &gt; (Q3 + 1.5 * IQR))  # Number of outliers
-  
-  # Return the statistics as a named vector
-  return(c(Min = min_val, 
-           Mean = mean_val, 
-           Max = max_val, 
-           Median = median_val, 
-           `95% CI Lower` = ci_lower, 
-           `95% CI Upper` = ci_upper, 
-           Outliers = outliers))
-})
-head(data,5)</code>
+rm(missing_value, missing_values_table)</code>
   <boxed-text>
-    <preformat># A tibble: 5 × 19
-  Order_ID     Order_Date Ship_Date  Ship_Mode Customer_ID Customer_Name Segment
-  &lt;chr&gt;        &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;  
-1 CA-2016-152… 2016-11-08 2016-11-11 Second C… CG-12520    Claire Gute   Consum…
-2 CA-2016-152… 2016-11-08 2016-11-11 Second C… CG-12520    Claire Gute   Consum…
-3 CA-2016-138… 2016-06-12 2016-06-16 Second C… DV-13045    Darrin Van H… Corpor…
-4 US-2015-108… 2015-10-11 2015-10-18 Standard… SO-20335    Sean O'Donne… Consum…
-5 US-2015-108… 2015-10-11 2015-10-18 Standard… SO-20335    Sean O'Donne… Consum…
-# ℹ 12 more variables: City &lt;chr&gt;, State &lt;chr&gt;, Postal_Code &lt;dbl&gt;,
-#   Region &lt;chr&gt;, Product_ID &lt;chr&gt;, Category &lt;chr&gt;, `Sub-Category` &lt;chr&gt;,
-#   Product_Name &lt;chr&gt;, Sales &lt;dbl&gt;, Quantity &lt;dbl&gt;, Discount &lt;dbl&gt;,
-#   Profit &lt;dbl&gt;</preformat>
+    <preformat>Warning in rm(missing_value, missing_values_table): object 'missing_value' not
+found</preformat>
   </boxed-text>
+  </sec>
+  <p>After these steps (and transposing the table for better document
+  formatting), the data looks as follows:</p>
+  <sec specific-use="notebook-content">
+  <code language="r script">kable(t(head(data, 3)), caption = &quot;First 5 Rows of the Data (Transposed)&quot;, format = &quot;markdown&quot;)</code>
+  <table-wrap>
+    <caption>
+      <p>First 5 Rows of the Data (Transposed)</p>
+    </caption>
+    <table>
+      <colgroup>
+        <col width="8%" />
+        <col width="20%" />
+        <col width="36%" />
+        <col width="35%" />
+      </colgroup>
+      <tbody>
+        <tr>
+          <td align="left">Order_ID</td>
+          <td align="left">CA-2016-152156</td>
+          <td align="left">CA-2016-152156</td>
+          <td align="left">CA-2016-138688</td>
+        </tr>
+        <tr>
+          <td align="left">Order_Date</td>
+          <td align="left">2016-11-08</td>
+          <td align="left">2016-11-08</td>
+          <td align="left">2016-06-12</td>
+        </tr>
+        <tr>
+          <td align="left">Ship_Date</td>
+          <td align="left">2016-11-11</td>
+          <td align="left">2016-11-11</td>
+          <td align="left">2016-06-16</td>
+        </tr>
+        <tr>
+          <td align="left">Ship_Mode</td>
+          <td align="left">Second Class</td>
+          <td align="left">Second Class</td>
+          <td align="left">Second Class</td>
+        </tr>
+        <tr>
+          <td align="left">Customer_ID</td>
+          <td align="left">CG-12520</td>
+          <td align="left">CG-12520</td>
+          <td align="left">DV-13045</td>
+        </tr>
+        <tr>
+          <td align="left">Customer_Name</td>
+          <td align="left">Claire Gute</td>
+          <td align="left">Claire Gute</td>
+          <td align="left">Darrin Van Huff</td>
+        </tr>
+        <tr>
+          <td align="left">Segment</td>
+          <td align="left">Consumer</td>
+          <td align="left">Consumer</td>
+          <td align="left">Corporate</td>
+        </tr>
+        <tr>
+          <td align="left">City</td>
+          <td align="left">Henderson</td>
+          <td align="left">Henderson</td>
+          <td align="left">Los Angeles</td>
+        </tr>
+        <tr>
+          <td align="left">State</td>
+          <td align="left">Kentucky</td>
+          <td align="left">Kentucky</td>
+          <td align="left">California</td>
+        </tr>
+        <tr>
+          <td align="left">Postal_Code</td>
+          <td align="left">42420</td>
+          <td align="left">42420</td>
+          <td align="left">90036</td>
+        </tr>
+        <tr>
+          <td align="left">Region</td>
+          <td align="left">South</td>
+          <td align="left">South</td>
+          <td align="left">West</td>
+        </tr>
+        <tr>
+          <td align="left">Product_ID</td>
+          <td align="left">FUR-BO-10001798</td>
+          <td align="left">FUR-CH-10000454</td>
+          <td align="left">OFF-LA-10000240</td>
+        </tr>
+        <tr>
+          <td align="left">Category</td>
+          <td align="left">Furniture</td>
+          <td align="left">Furniture</td>
+          <td align="left">Office Supplies</td>
+        </tr>
+        <tr>
+          <td align="left">Sub-Category</td>
+          <td align="left">Bookcases</td>
+          <td align="left">Chairs</td>
+          <td align="left">Labels</td>
+        </tr>
+        <tr>
+          <td align="left">Product_Name</td>
+          <td align="left">Bush Somerset Collection Bookcase</td>
+          <td align="left">Hon Deluxe Fabric Upholstered Stacking
+          Chairs, Rounded Back</td>
+          <td align="left">Self-Adhesive Address Labels for Typewriters
+          by Universal</td>
+        </tr>
+        <tr>
+          <td align="left">Sales</td>
+          <td align="left">261.96</td>
+          <td align="left">731.94</td>
+          <td align="left">14.62</td>
+        </tr>
+        <tr>
+          <td align="left">Quantity</td>
+          <td align="left">2</td>
+          <td align="left">3</td>
+          <td align="left">2</td>
+        </tr>
+        <tr>
+          <td align="left">Discount</td>
+          <td align="left">0</td>
+          <td align="left">0</td>
+          <td align="left">0</td>
+        </tr>
+        <tr>
+          <td align="left">Profit</td>
+          <td align="left">41.9136</td>
+          <td align="left">219.5820</td>
+          <td align="left">6.8714</td>
+        </tr>
+      </tbody>
+    </table>
+  </table-wrap>
   </sec>
   <p>There is some more processing to do, such as removing outliers.
   However, by doing so we impose our own assumptions on the data
   (possibly the outliers are actual sales?). We will visualize and
   qualitatively evaluate the data first, and then decide what other
   processing steps to take.</p>
-  <sec specific-use="notebook-content">
-  <code language="r script"># Display the first 5 rows of the data in a nice table with kable
-kable(head(data,5), caption = &quot;First 5 Rows of the Data&quot;, format = &quot;pipe&quot;)</code>
-  <table-wrap>
-    <caption>
-      <p>First 5 Rows of the Data</p>
-    </caption>
-    <table>
-      <colgroup>
-        <col width="5%" />
-        <col width="4%" />
-        <col width="4%" />
-        <col width="5%" />
-        <col width="4%" />
-        <col width="6%" />
-        <col width="4%" />
-        <col width="6%" />
-        <col width="4%" />
-        <col width="4%" />
-        <col width="3%" />
-        <col width="6%" />
-        <col width="6%" />
-        <col width="5%" />
-        <col width="22%" />
-        <col width="3%" />
-        <col width="3%" />
-        <col width="3%" />
-        <col width="4%" />
-      </colgroup>
-      <thead>
-        <tr>
-          <th align="left">Order_ID</th>
-          <th align="left">Order_Date</th>
-          <th align="left">Ship_Date</th>
-          <th align="left">Ship_Mode</th>
-          <th align="left">Customer_ID</th>
-          <th align="left">Customer_Name</th>
-          <th align="left">Segment</th>
-          <th align="left">City</th>
-          <th align="left">State</th>
-          <th align="right">Postal_Code</th>
-          <th align="left">Region</th>
-          <th align="left">Product_ID</th>
-          <th align="left">Category</th>
-          <th align="left">Sub-Category</th>
-          <th align="left">Product_Name</th>
-          <th align="right">Sales</th>
-          <th align="right">Quantity</th>
-          <th align="right">Discount</th>
-          <th align="right">Profit</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td align="left">CA-2016-152156</td>
-          <td align="left">2016-11-08</td>
-          <td align="left">2016-11-11</td>
-          <td align="left">Second Class</td>
-          <td align="left">CG-12520</td>
-          <td align="left">Claire Gute</td>
-          <td align="left">Consumer</td>
-          <td align="left">Henderson</td>
-          <td align="left">Kentucky</td>
-          <td align="right">42420</td>
-          <td align="left">South</td>
-          <td align="left">FUR-BO-10001798</td>
-          <td align="left">Furniture</td>
-          <td align="left">Bookcases</td>
-          <td align="left">Bush Somerset Collection Bookcase</td>
-          <td align="right">261.9600</td>
-          <td align="right">2</td>
-          <td align="right">0.00</td>
-          <td align="right">41.9136</td>
-        </tr>
-        <tr>
-          <td align="left">CA-2016-152156</td>
-          <td align="left">2016-11-08</td>
-          <td align="left">2016-11-11</td>
-          <td align="left">Second Class</td>
-          <td align="left">CG-12520</td>
-          <td align="left">Claire Gute</td>
-          <td align="left">Consumer</td>
-          <td align="left">Henderson</td>
-          <td align="left">Kentucky</td>
-          <td align="right">42420</td>
-          <td align="left">South</td>
-          <td align="left">FUR-CH-10000454</td>
-          <td align="left">Furniture</td>
-          <td align="left">Chairs</td>
-          <td align="left">Hon Deluxe Fabric Upholstered Stacking
-          Chairs, Rounded Back</td>
-          <td align="right">731.9400</td>
-          <td align="right">3</td>
-          <td align="right">0.00</td>
-          <td align="right">219.5820</td>
-        </tr>
-        <tr>
-          <td align="left">CA-2016-138688</td>
-          <td align="left">2016-06-12</td>
-          <td align="left">2016-06-16</td>
-          <td align="left">Second Class</td>
-          <td align="left">DV-13045</td>
-          <td align="left">Darrin Van Huff</td>
-          <td align="left">Corporate</td>
-          <td align="left">Los Angeles</td>
-          <td align="left">California</td>
-          <td align="right">90036</td>
-          <td align="left">West</td>
-          <td align="left">OFF-LA-10000240</td>
-          <td align="left">Office Supplies</td>
-          <td align="left">Labels</td>
-          <td align="left">Self-Adhesive Address Labels for Typewriters
-          by Universal</td>
-          <td align="right">14.6200</td>
-          <td align="right">2</td>
-          <td align="right">0.00</td>
-          <td align="right">6.8714</td>
-        </tr>
-        <tr>
-          <td align="left">US-2015-108966</td>
-          <td align="left">2015-10-11</td>
-          <td align="left">2015-10-18</td>
-          <td align="left">Standard Class</td>
-          <td align="left">SO-20335</td>
-          <td align="left">Sean O’Donnell</td>
-          <td align="left">Consumer</td>
-          <td align="left">Fort Lauderdale</td>
-          <td align="left">Florida</td>
-          <td align="right">33311</td>
-          <td align="left">South</td>
-          <td align="left">FUR-TA-10000577</td>
-          <td align="left">Furniture</td>
-          <td align="left">Tables</td>
-          <td align="left">Bretford CR4500 Series Slim Rectangular
-          Table</td>
-          <td align="right">957.5775</td>
-          <td align="right">5</td>
-          <td align="right">0.45</td>
-          <td align="right">-383.0310</td>
-        </tr>
-        <tr>
-          <td align="left">US-2015-108966</td>
-          <td align="left">2015-10-11</td>
-          <td align="left">2015-10-18</td>
-          <td align="left">Standard Class</td>
-          <td align="left">SO-20335</td>
-          <td align="left">Sean O’Donnell</td>
-          <td align="left">Consumer</td>
-          <td align="left">Fort Lauderdale</td>
-          <td align="left">Florida</td>
-          <td align="right">33311</td>
-          <td align="left">South</td>
-          <td align="left">OFF-ST-10000760</td>
-          <td align="left">Office Supplies</td>
-          <td align="left">Storage</td>
-          <td align="left">Eldon Fold ’N Roll Cart System</td>
-          <td align="right">22.3680</td>
-          <td align="right">2</td>
-          <td align="right">0.20</td>
-          <td align="right">2.5164</td>
-        </tr>
-      </tbody>
-    </table>
-  </table-wrap>
-  </sec>
 </sec>
 <sec id="section-nb-article">
   <title>2 Section</title>
@@ -1125,23 +1003,6 @@ avg_years_between_eruptions</code>
   <p>La Palma is one of the west most islands in the Volcanic
   Archipelago of the Canary Islands
   (<xref alt="Figure 2" rid="fig-map-nb-article">Figure 2</xref>).</p>
-  <sec id="cell-fig-spatial-plot-nb-article" specific-use="notebook-content">
-  <code language="python">la_palma |&gt; 
-  ggplot(aes(Longitude, Latitude)) +
-  geom_point(aes(color = Magnitude, size = 40-`Depth(km)`)) +
-  scale_color_viridis_c(direction = -1) + 
-  scale_size(range = c(0.5, 2), guide = &quot;none&quot;) +
-  theme_bw()</code>
-  <boxed-text>
-    <fig id="fig-spatial-plot-nb-article">
-      <caption><p>Figure 3: Locations of earthquakes on La Palma since
-      2017</p></caption>
-      <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/notebooks-explore-earthquakes-fig-spatial-plot-output-1.png" />
-    </fig>
-  </boxed-text>
-  </sec>
-  <p><xref alt="Figure 3" rid="fig-spatial-plot-nb-article">Figure 3</xref> shows
-  the location of recent Earthquakes on La Palma.</p>
 </sec>
 <sec id="sec-data-methods-nb-article">
   <title>4 Data &amp; Methods</title>
@@ -1180,70 +1041,368 @@ avg_years_between_eruptions</code>
 
 
 </sub-article>
-<sub-article article-type="notebook" id="nb-4-nb-1">
+<sub-article article-type="notebook" id="nb-3-nb-1">
 <front-stub>
 <title-group>
-<article-title>Explore Earthquakes</article-title>
+<article-title>Supply Chain Data Analytics</article-title>
 </title-group>
-<contrib-group>
-<contrib contrib-type="author">
-<name>
-<surname>Wickham</surname>
-<given-names>Charlotte</given-names>
-</name>
-<string-name>Charlotte Wickham</string-name>
-
-</contrib>
-</contrib-group>
 </front-stub>
 
 <body>
-<sec specific-use="notebook-content">
-<code language="r script">library(tidyverse)
-</code>
-<boxed-text>
-  <preformat>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+<sec id="cell-849b3526-cc7a-49ca-a916-949194fa166d-nb-1" specific-use="notebook-content">
+<p>Analyzing and Forcasting Supermarket Sales</p>
+<p>Stan Brouwer (Vrije Universiteit)
+Liz Chan (Master TSCM)
+Maaike Lamberst (Supply Chain Data analysis)
+Niek Schroor (Group 10)
+December 5, 2024</p>
+</sec>
+<sec id="cell-5bd31506-0b72-4bf6-9fa2-790dcf547f9e-nb-1" specific-use="notebook-content">
+</sec>
+<sec id="da879eaf-acfa-4518-9b60-82eaed332469-nb-1" specific-use="notebook-content">
+<p>Introduction</p>
+</sec>
+<sec id="cell-4907d4ff-82b5-47d9-8daf-5c22039972ba-nb-1" specific-use="notebook-content">
+</sec>
+<sec id="d7d31d56-c042-4b60-bba3-cd7e90f2ebff-nb-1" specific-use="notebook-content">
+<p>We analyze, forecast and interpret the
+<ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore
+sales</ext-link> provided by
+<ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/learn/sample-data">Tableau</ext-link>
+using different statistical and machine learning methods.</p>
+<p>We describe our work in the PDF version. However, we would like to
+recommend reading our quarto manuscript <italic>here</italic> as it
+contains the <bold>relevant</bold> R code in the Article Notebook.</p>
+<sec id="data-pre-processing-nb-1">
+  <title>1 Data Pre-processing</title>
+  <p>The superstore data set we selected is of high quality. Thus we do
+  the required data pre-processing, but included the hypothetical steps
+  we would take were our data of lower quality to communicate our
+  understanding of the data pre-processing process.</p>
+  <p>We took the following pre-processing steps:</p>
+  </sec>
+  <sec id="cell-69337c99-6b39-4ce9-a6d4-cc534cdb0f4f-nb-1" specific-use="notebook-content">
+  <code language="python"># Clear workspace
+rm(list = ls())
+# Function to load (and install if necessary) dependencies
+install_and_load &lt;- function(packages) {
+  install.packages(setdiff(packages, rownames(installed.packages())), dependencies = TRUE)
+  invisible(lapply(packages, require, character.only = TRUE))
+}
+install_and_load(c(&quot;tidyverse&quot;, &quot;readxl&quot;, &quot;ggplot2&quot;, &quot;lubridate&quot;, &quot;stats&quot;, &quot;Amelia&quot;,&quot;forecast&quot;, &quot;tseries&quot;, &quot;plotly&quot;, &quot;stringr&quot;, &quot;knitr&quot;))</code>
+  <boxed-text>
+    <preformat>Loading required package: tidyverse── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
 ✔ forcats   1.0.0     ✔ stringr   1.5.1
-✔ ggplot2   3.5.0     ✔ tibble    3.2.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
 ✔ lubridate 1.9.3     ✔ tidyr     1.3.1
 ✔ purrr     1.0.2     
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::filter() masks stats::filter()
 ✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</preformat>
-</boxed-text>
-</sec>
-<p>Read a clean version of data:</p>
-<sec specific-use="notebook-content">
-<code language="r script">la_palma &lt;- read_csv(&quot;la-palma.csv&quot;)
-</code>
-<boxed-text>
-  <preformat>Rows: 11347 Columns: 5
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: &quot;,&quot;
-dbl  (4): Longitude, Latitude, Depth(km), Magnitude
-dttm (1): DateTime
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
+Loading required package: readxl
 
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</preformat>
-</boxed-text>
+Loading required package: AmeliaWarning: package 'Amelia' was built under R version 4.3.3Loading required package: Rcpp
+## 
+## Amelia II: Multiple Imputation
+## (Version 1.8.3, built: 2024-11-07)
+## Copyright (C) 2005-2024 James Honaker, Gary King and Matthew Blackwell
+## Refer to http://gking.harvard.edu/amelia/ for more information
+## 
+Loading required package: forecastWarning: package 'forecast' was built under R version 4.3.3Registered S3 method overwritten by 'quantmod':
+  method            from
+  as.zoo.data.frame zoo 
+Loading required package: tseriesWarning: package 'tseries' was built under R version 4.3.3Loading required package: plotly
+
+Attaching package: 'plotly'
+
+The following object is masked from 'package:ggplot2':
+
+    last_plot
+
+The following object is masked from 'package:stats':
+
+    filter
+
+The following object is masked from 'package:graphics':
+
+    layout
+
+Loading required package: knitrWarning: package 'knitr' was built under R version 4.3.3</preformat>
+  </boxed-text>
+  </sec>
+  <sec id="cell-08adf834-669a-4137-ac53-473ed9f3c46a-nb-1" specific-use="notebook-content">
+  <list list-type="bullet">
+    <list-item>
+      <p>Improved column names by removing whitespaces</p>
+    </list-item>
+    <list-item>
+      <p>Removed the Row_ID column as it can be inferred by it’s
+      index</p>
+    </list-item>
+    <list-item>
+      <p>Removed all columns with a single unique value, as storing
+      these would be
+      <ext-link ext-link-type="uri" xlink:href="https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html">redundant</ext-link></p>
+    </list-item>
+    <list-item>
+      <p>Ensured machine-readable date formats in yyyy-mm-dd as these
+      usually differ per locale.</p>
+    </list-item>
+    <list-item>
+      <p>Ensured proper decimal separators</p>
+    </list-item>
+    <list-item>
+      <p>calculated the number of missing values (both NA and empty
+      string ““) per column.</p>
+    </list-item>
+  </list>
+  </sec>
+  <sec id="cell-148d8508-c7d2-4e80-929a-2b1b6cd11f65-nb-1" specific-use="notebook-content">
+  <code language="python"># Load the data
+suppressWarnings({data &lt;- read_excel(&quot;data/sample_-_superstore.xls&quot;)}) # The Postal code column is stored as 'text' but coerced to numeric, causing warnings which we suppress
+
+# Improve column names (replace &quot; &quot;with &quot;_&quot;)
+colnames(data) &lt;- str_replace_all(colnames(data), &quot; &quot;, &quot;_&quot;)
+
+# Remove the 'Row_ID' column as it can be inferred by it's index
+data &lt;- subset(data, select = -`Row_ID`)
+
+# Remove all columns that have only one unique value, as storing these would be redundant
+data &lt;- data[, sapply(data, function(col) length(unique(col)) &gt; 1)]
+
+# Ensure a machine-readable date format as these are usually horrible in excel files
+data$Order_Date &lt;- as.Date(data$Order_Date, format = &quot;%Y-%m-%d&quot;)
+data$Ship_Date &lt;- as.Date(data$Ship_Date, format = &quot;%Y-%m-%d&quot;)
+
+# The readxl package by default uses the correct decimal separator (as opposed to base R)
+
+# Calculate the number of missing values per column.
+# The sample dates are likely in Unix time, and when these are converted to R date objects they are stored as Date objects (which are represented by 'double' datatypes). Comparing these dates to characters (empty strings) results in NA values. Thus we only check date values for NA. As Date objects are stored as doubles within R (amount of days since 1970-01-01), we can't check numeric columns for &quot; &quot; either. We thus only check character columns for &quot; &quot;.
+missing_values &lt;- sapply(data, function(col) {
+  if (inherits(col, &quot;Date&quot;)) {
+    sum(is.na(col))
+  } else if (is.character(col)) {
+    sum(is.na(col) | col == &quot;&quot;)
+  } else {
+    sum(is.na(col))
+  }
+})
+
+if (sum(missing_values) == 0) {
+  print(&quot;No missing values&quot;)
+}</code>
+  <boxed-text>
+    <preformat>[1] &quot;No missing values&quot;</preformat>
+  </boxed-text>
+  </sec>
+  <sec id="b81e65cc-f83b-436e-b1e3-c1e79af543ad-nb-1" specific-use="notebook-content">
+  <p>We also ran some descriptive statistics to check unlikely or
+  impossible values, outliers, means, etc.</p>
+  </sec>
+  <sec id="cell-412655fd-4fc4-4406-a922-2a189b0c861e-nb-1" specific-use="notebook-content">
+  <code language="python"># Select only numerical columns
+numerical_data &lt;- data %&gt;% select_if(is.numeric)
+
+# Apply sapply to calculate descriptive statistics for each numeric column
+descriptive_stats &lt;- sapply(numerical_data, function(col) {
+  # Remove NA values
+  col &lt;- na.omit(col)
+  
+  # Calculate basic statistics
+  min_val &lt;- min(col)
+  max_val &lt;- max(col)
+  mean_val &lt;- mean(col)
+  median_val &lt;- median(col)
+  
+  # 95% Confidence Interval (assuming normal distribution)
+  se &lt;- sd(col) / sqrt(length(col))  # Standard error
+  ci_lower &lt;- mean_val - 1.96 * se  # Lower bound of 95% CI
+  ci_upper &lt;- mean_val + 1.96 * se  # Upper bound of 95% CI
+  
+  # Calculate outliers (using 1.5 * IQR rule)
+  Q1 &lt;- quantile(col, 0.25)
+  Q3 &lt;- quantile(col, 0.75)
+  IQR &lt;- Q3 - Q1
+  outliers &lt;- sum(col &lt; (Q1 - 1.5 * IQR) | col &gt; (Q3 + 1.5 * IQR))  # Number of outliers
+  
+  # Return the statistics as a named vector
+  return(c(Min = min_val, 
+           Mean = mean_val, 
+           Max = max_val, 
+           Median = median_val, 
+           `95% CI Lower` = ci_lower, 
+           `95% CI Upper` = ci_upper, 
+           Outliers = outliers))
+})
+head(data,5)</code>
+  <boxed-text>
+    <preformat># A tibble: 5 × 19
+  Order_ID     Order_Date Ship_Date  Ship_Mode Customer_ID Customer_Name Segment
+  &lt;chr&gt;        &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;  
+1 CA-2016-152… 2016-11-08 2016-11-11 Second C… CG-12520    Claire Gute   Consum…
+2 CA-2016-152… 2016-11-08 2016-11-11 Second C… CG-12520    Claire Gute   Consum…
+3 CA-2016-138… 2016-06-12 2016-06-16 Second C… DV-13045    Darrin Van H… Corpor…
+4 US-2015-108… 2015-10-11 2015-10-18 Standard… SO-20335    Sean O'Donne… Consum…
+5 US-2015-108… 2015-10-11 2015-10-18 Standard… SO-20335    Sean O'Donne… Consum…
+# ℹ 12 more variables: City &lt;chr&gt;, State &lt;chr&gt;, Postal_Code &lt;dbl&gt;,
+#   Region &lt;chr&gt;, Product_ID &lt;chr&gt;, Category &lt;chr&gt;, `Sub-Category` &lt;chr&gt;,
+#   Product_Name &lt;chr&gt;, Sales &lt;dbl&gt;, Quantity &lt;dbl&gt;, Discount &lt;dbl&gt;,
+#   Profit &lt;dbl&gt;</preformat>
+  </boxed-text>
+  </sec>
+  <sec id="f1aa39cb-136f-4f96-a52b-52a1135a912c-nb-1" specific-use="notebook-content">
+  <p>There is some more processing to do, such as removing outliers.
+  However, by doing so we impose our own assumptions on the data
+  (possibly the outliers are actual sales?). We will visualize and
+  qualitatively evaluate the data first, and then decide what other
+  processing steps to take.</p>
+  </sec>
+  <sec id="cell-25ab37f1-d368-4c61-b41e-481172c82c7f-nb-1" specific-use="notebook-content">
+  <code language="python"># Display the first 5 rows of the data in a nice table with kable
+kable(head(data,5), caption = &quot;First 5 Rows of the Data&quot;, format = &quot;pipe&quot;)</code>
+  <boxed-text>
+  </boxed-text>
+  </sec>
+  <sec id="ca73d308-b7d2-43a9-80ad-e80854581beb-nb-1" specific-use="notebook-content">
 </sec>
-<p>Create spatial plot:</p>
-<sec id="cell-fig-spatial-plot-nb-1" specific-use="notebook-content">
-<code language="r script">#|   against longitude.&quot;
-la_palma |&gt; 
-  ggplot(aes(Longitude, Latitude)) +
-  geom_point(aes(color = Magnitude, size = 40-`Depth(km)`)) +
-  scale_color_viridis_c(direction = -1) + 
-  scale_size(range = c(0.5, 2), guide = &quot;none&quot;) +
-  theme_bw()
-</code>
-<fig id="fig-spatial-plot-nb-1">
-  <caption><p>Locations of earthquakes on La Palma since
-  2017</p></caption>
-  <graphic mimetype="image" mime-subtype="png" xlink:href="explore-earthquakes_files/figure-jats/fig-spatial-plot-1.png" />
-</fig>
+<sec id="section-nb-1">
+  <title>2 Section</title>
+  <p>This is a simple placeholder for the manuscript’s main document
+  (<xref alt="knuth84?" rid="ref-knuth84-nb-1" ref-type="bibr"><bold>knuth84?</bold></xref>).</p>
+  </sec>
+  <sec id="cell-9c2fcecf-6445-4cc8-9218-b666bcdca55b-nb-1" specific-use="notebook-content">
+  <code language="python">1 + 1</code>
+  <boxed-text>
+    <preformat>[1] 2</preformat>
+  </boxed-text>
+  </sec>
+  <sec id="cell-20fe86a8-1a18-436d-a6f8-4ad67175020a-nb-1" specific-use="notebook-content">
+</sec>
+<sec id="introduction-nb-1">
+  <title>3 Introduction</title>
+  </sec>
+  <sec id="af4d3d8d-1d5f-40ea-b014-2334e82bd866-nb-1" specific-use="notebook-content">
+  <code language="python">eruptions &lt;- c(1492, 1585, 1646, 1677, 1712, 1949, 1971, 2021)
+n_eruptions &lt;- length(eruptions)</code>
+  </sec>
+  <sec id="cell-fig-timeline-nb-1" specific-use="notebook-content">
+  <code language="python">par(mar = c(3, 1, 1, 1) + 0.1)
+plot(eruptions, rep(0, n_eruptions), 
+  pch = &quot;|&quot;, axes = FALSE)
+axis(1)
+box()</code>
+  <boxed-text>
+  </boxed-text>
+  </sec>
+  <sec id="cell-74d96b0e-38ba-40e4-8a00-2874e7deed9e-nb-1" specific-use="notebook-content">
+  <code language="python">avg_years_between_eruptions &lt;- mean(diff(eruptions[-n_eruptions]))
+avg_years_between_eruptions</code>
+  <boxed-text>
+    <preformat>[1] 79.83333</preformat>
+  </boxed-text>
+  </sec>
+  <sec id="cell-230104d7-c37b-438c-93fd-5bab58bad4dd-nb-1" specific-use="notebook-content">
+  <p>Based on data up to and including 1971, eruptions on La Palma
+  happen every 79.8 years on average.</p>
+  <p>Studies of the magma systems feeding the volcano, such as Marrero
+  et
+  al. (<xref alt="2019" rid="ref-marrero2019-nb-1" ref-type="bibr">2019</xref>),
+  have proposed that there are two main magma reservoirs feeding the
+  Cumbre Vieja volcano; one in the mantle (30-40km depth) which charges
+  and in turn feeds a shallower crustal reservoir (10-20km depth).</p>
+  <p>Eight eruptions have been recorded since the late 1400s
+  (Figure 1).</p>
+  <p>Data and methods are discussed in Section 4.</p>
+  <p>Let <inline-formula><alternatives>
+  <tex-math><![CDATA[x]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>x</mml:mi></mml:math></alternatives></inline-formula>
+  denote the number of eruptions in a year. Then,
+  <inline-formula><alternatives>
+  <tex-math><![CDATA[x]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>x</mml:mi></mml:math></alternatives></inline-formula>
+  can be modeled by a Poisson distribution</p>
+  <p><styled-content id="eq-poisson-nb-1"><disp-formula><alternatives>
+  <tex-math><![CDATA[
+  p(x) = \frac{e^{-\lambda} \lambda^{x}}{x !}
+   \qquad(1)]]></tex-math>
+  <mml:math display="block" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mrow><mml:mi>p</mml:mi><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mi>x</mml:mi><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow><mml:mo>=</mml:mo><mml:mfrac><mml:mrow><mml:msup><mml:mi>e</mml:mi><mml:mrow><mml:mi>−</mml:mi><mml:mi>λ</mml:mi></mml:mrow></mml:msup><mml:msup><mml:mi>λ</mml:mi><mml:mi>x</mml:mi></mml:msup></mml:mrow><mml:mrow><mml:mi>x</mml:mi><mml:mi>!</mml:mi></mml:mrow></mml:mfrac><mml:mspace width="2.0em"></mml:mspace><mml:mrow><mml:mo stretchy="true" form="prefix">(</mml:mo><mml:mn>1</mml:mn><mml:mo stretchy="true" form="postfix">)</mml:mo></mml:mrow></mml:mrow></mml:math></alternatives></disp-formula></styled-content></p>
+  <p>where <inline-formula><alternatives>
+  <tex-math><![CDATA[\lambda]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>λ</mml:mi></mml:math></alternatives></inline-formula>
+  is the rate of eruptions per year. Using Equation 1, the probability
+  of an eruption in the next <inline-formula><alternatives>
+  <tex-math><![CDATA[t]]></tex-math>
+  <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>t</mml:mi></mml:math></alternatives></inline-formula>
+  years can be calculated.</p>
+  <table-wrap>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Year</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Current</td>
+          <td>2021</td>
+        </tr>
+        <tr>
+          <td>Teneguía</td>
+          <td>1971</td>
+        </tr>
+        <tr>
+          <td>Nambroque</td>
+          <td>1949</td>
+        </tr>
+        <tr>
+          <td>El Charco</td>
+          <td>1712</td>
+        </tr>
+        <tr>
+          <td>Volcán San Antonio</td>
+          <td>1677</td>
+        </tr>
+        <tr>
+          <td>Volcán San Martin</td>
+          <td>1646</td>
+        </tr>
+        <tr>
+          <td>Tajuya near El Paso</td>
+          <td>1585</td>
+        </tr>
+        <tr>
+          <td>Montaña Quemada</td>
+          <td>1492</td>
+        </tr>
+      </tbody>
+    </table>
+  </table-wrap>
+  <p>Table 1: Recent historic eruptions on La Palma</p>
+  <p>Table 1 summarises the eruptions recorded since the colonization of
+  the islands by Europeans in the late 1400s.</p>
+  <p></p>
+  <p>Figure 2: Map of La Palma</p>
+  <p>La Palma is one of the west most islands in the Volcanic
+  Archipelago of the Canary Islands (Figure 2).</p>
+</sec>
+<sec id="data-methods-nb-1">
+  <title>4 Data &amp; Methods</title>
+</sec>
+<sec id="conclusion-nb-1">
+  <title>5 Conclusion</title>
+</sec>
+<sec id="references-nb-1">
+  <title>References</title>
+  <p>Marrero, José, Alicia García, Manuel Berrocoso, Ángeles Llinares,
+  Antonio Rodríguez-Losada, and R. Ortiz. 2019. “Strategies for the
+  Development of Volcanic Hazard Maps in Monogenetic Volcanic Fields:
+  The Example of La Palma (Canary Islands).” <italic>Journal of Applied
+  Volcanology</italic> 8 (July).
+  <ext-link ext-link-type="uri" xlink:href="https://doi.org/10.1186/s13617-019-0085-5">https://doi.org/10.1186/s13617-019-0085-5</ext-link>.</p>
+  </sec>
 </sec>
 </body>
 

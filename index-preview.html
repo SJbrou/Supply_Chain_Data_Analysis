@@ -297,7 +297,10 @@
 </div>
 <main class="content quarto-banner-title-block" id="quarto-document-content">      
 
-       <p>We analyze, forecast and interpret the <a href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore sales</a> provided by <a href="https://public.tableau.com/app/learn/sample-data">Tableau</a> using different statistical and machine learning methods.</p>
+       <h2 class="anchored">
+Introduction
+</h2>
+<p>We analyze, forecast and interpret the <a href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore sales</a> provided by <a href="https://public.tableau.com/app/learn/sample-data">Tableau</a> using different statistical and machine learning methods.</p>
 <p>We describe our work in the PDF version. However, we would like to recommend reading our quarto manuscript <em>here</em> as it contains the <strong>relevant</strong> R code in the Article Notebook.</p>
 <section id="data-pre-processing" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="data-pre-processing"><span class="header-section-number">1</span> Data Pre-processing</h2>
@@ -415,238 +418,164 @@ Loading required package: knitr</code></pre>
 <span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
 <span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(<span class="fu">is.na</span>(col))</span>
 <span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">sum</span>(missing_values) <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">"No missing values"</span>)</span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] "No missing values"</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Optionally, print the missing values as a nice table using knitr</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the result into a data frame (table)</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>missing_values_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Column =</span> <span class="fu">names</span>(missing_values),</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Missing_or_Empty =</span> missing_values</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Note that there are no missing values, thus we do not print them</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co"># kable(missing_values_table, caption = "Missing or Empty Values in Columns", format = "pipe")</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(missing_values, missing_values_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
-<p>We also ran some descriptive statistics to check unlikely or impossible values, outliers, means, etc.</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select only numerical columns</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>numerical_data <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">select_if</span>(is.numeric)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply sapply to calculate descriptive statistics for each numeric column</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>descriptive_stats <span class="ot">&lt;-</span> <span class="fu">sapply</span>(numerical_data, <span class="cf">function</span>(col) {</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Remove NA values</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  col <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(col)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate basic statistics</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>  min_val <span class="ot">&lt;-</span> <span class="fu">min</span>(col)</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>  max_val <span class="ot">&lt;-</span> <span class="fu">max</span>(col)</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  mean_val <span class="ot">&lt;-</span> <span class="fu">mean</span>(col)</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  median_val <span class="ot">&lt;-</span> <span class="fu">median</span>(col)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 95% Confidence Interval (assuming normal distribution)</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  se <span class="ot">&lt;-</span> <span class="fu">sd</span>(col) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(col))  <span class="co"># Standard error</span></span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  ci_lower <span class="ot">&lt;-</span> mean_val <span class="sc">-</span> <span class="fl">1.96</span> <span class="sc">*</span> se  <span class="co"># Lower bound of 95% CI</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>  ci_upper <span class="ot">&lt;-</span> mean_val <span class="sc">+</span> <span class="fl">1.96</span> <span class="sc">*</span> se  <span class="co"># Upper bound of 95% CI</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate outliers (using 1.5 * IQR rule)</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>  Q1 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(col, <span class="fl">0.25</span>)</span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>  Q3 <span class="ot">&lt;-</span> <span class="fu">quantile</span>(col, <span class="fl">0.75</span>)</span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  IQR <span class="ot">&lt;-</span> Q3 <span class="sc">-</span> Q1</span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  outliers <span class="ot">&lt;-</span> <span class="fu">sum</span>(col <span class="sc">&lt;</span> (Q1 <span class="sc">-</span> <span class="fl">1.5</span> <span class="sc">*</span> IQR) <span class="sc">|</span> col <span class="sc">&gt;</span> (Q3 <span class="sc">+</span> <span class="fl">1.5</span> <span class="sc">*</span> IQR))  <span class="co"># Number of outliers</span></span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Return the statistics as a named vector</span></span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">c</span>(<span class="at">Min =</span> min_val, </span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>           <span class="at">Mean =</span> mean_val, </span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>           <span class="at">Max =</span> max_val, </span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>           <span class="at">Median =</span> median_val, </span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>           <span class="st">`</span><span class="at">95% CI Lower</span><span class="st">`</span> <span class="ot">=</span> ci_lower, </span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>           <span class="st">`</span><span class="at">95% CI Upper</span><span class="st">`</span> <span class="ot">=</span> ci_upper, </span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>           <span class="at">Outliers =</span> outliers))</span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data,<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">sum</span>(missing_values) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">"None of the columns contains missing values"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="st">"Some columns contain missing values"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 19
-  Order_ID     Order_Date Ship_Date  Ship_Mode Customer_ID Customer_Name Segment
-  &lt;chr&gt;        &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;  
-1 CA-2016-152… 2016-11-08 2016-11-11 Second C… CG-12520    Claire Gute   Consum…
-2 CA-2016-152… 2016-11-08 2016-11-11 Second C… CG-12520    Claire Gute   Consum…
-3 CA-2016-138… 2016-06-12 2016-06-16 Second C… DV-13045    Darrin Van H… Corpor…
-4 US-2015-108… 2015-10-11 2015-10-18 Standard… SO-20335    Sean O'Donne… Consum…
-5 US-2015-108… 2015-10-11 2015-10-18 Standard… SO-20335    Sean O'Donne… Consum…
-# ℹ 12 more variables: City &lt;chr&gt;, State &lt;chr&gt;, Postal_Code &lt;dbl&gt;,
-#   Region &lt;chr&gt;, Product_ID &lt;chr&gt;, Category &lt;chr&gt;, `Sub-Category` &lt;chr&gt;,
-#   Product_Name &lt;chr&gt;, Sales &lt;dbl&gt;, Quantity &lt;dbl&gt;, Discount &lt;dbl&gt;,
-#   Profit &lt;dbl&gt;</code></pre>
+<pre><code>[1] "None of the columns contains missing values"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Optionally, print the missing values as a nice table using knitr</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the result into a data frame (table)</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>missing_values_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Column =</span> <span class="fu">names</span>(missing_values),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Missing_or_Empty =</span> missing_values</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Note that there are no missing values, thus we do not print them</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co"># kable(missing_values_table, caption = "Missing or Empty Values in Columns", format = "pipe")</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(missing_value, missing_values_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rm(missing_value, missing_values_table): object 'missing_value' not
+found</code></pre>
 </div>
 </div></div>
-<p>There is some more processing to do, such as removing outliers. However, by doing so we impose our own assumptions on the data (possibly the outliers are actual sales?). We will visualize and qualitatively evaluate the data first, and then decide what other processing steps to take.</p>
+<p>After these steps (and transposing the table for better document formatting), the data looks as follows:</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the first 5 rows of the data in a nice table with kable</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">head</span>(data,<span class="dv">5</span>), <span class="at">caption =</span> <span class="st">"First 5 Rows of the Data"</span>, <span class="at">format =</span> <span class="st">"pipe"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">t</span>(<span class="fu">head</span>(data, <span class="dv">3</span>)), <span class="at">caption =</span> <span class="st">"First 5 Rows of the Data (Transposed)"</span>, <span class="at">format =</span> <span class="st">"markdown"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
-<caption>First 5 Rows of the Data</caption>
+<caption>First 5 Rows of the Data (Transposed)</caption>
 <colgroup>
-<col style="width: 5%">
-<col style="width: 3%">
-<col style="width: 3%">
-<col style="width: 5%">
-<col style="width: 4%">
-<col style="width: 5%">
-<col style="width: 3%">
-<col style="width: 5%">
-<col style="width: 3%">
-<col style="width: 4%">
-<col style="width: 2%">
-<col style="width: 5%">
-<col style="width: 5%">
-<col style="width: 4%">
-<col style="width: 21%">
-<col style="width: 3%">
-<col style="width: 3%">
-<col style="width: 3%">
-<col style="width: 3%">
+<col style="width: 8%">
+<col style="width: 20%">
+<col style="width: 36%">
+<col style="width: 34%">
 </colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Order_ID</th>
-<th style="text-align: left;">Order_Date</th>
-<th style="text-align: left;">Ship_Date</th>
-<th style="text-align: left;">Ship_Mode</th>
-<th style="text-align: left;">Customer_ID</th>
-<th style="text-align: left;">Customer_Name</th>
-<th style="text-align: left;">Segment</th>
-<th style="text-align: left;">City</th>
-<th style="text-align: left;">State</th>
-<th style="text-align: right;">Postal_Code</th>
-<th style="text-align: left;">Region</th>
-<th style="text-align: left;">Product_ID</th>
-<th style="text-align: left;">Category</th>
-<th style="text-align: left;">Sub-Category</th>
-<th style="text-align: left;">Product_Name</th>
-<th style="text-align: right;">Sales</th>
-<th style="text-align: right;">Quantity</th>
-<th style="text-align: right;">Discount</th>
-<th style="text-align: right;">Profit</th>
-</tr>
-</thead>
 <tbody>
 <tr class="odd">
+<td style="text-align: left;">Order_ID</td>
 <td style="text-align: left;">CA-2016-152156</td>
-<td style="text-align: left;">2016-11-08</td>
-<td style="text-align: left;">2016-11-11</td>
-<td style="text-align: left;">Second Class</td>
-<td style="text-align: left;">CG-12520</td>
-<td style="text-align: left;">Claire Gute</td>
-<td style="text-align: left;">Consumer</td>
-<td style="text-align: left;">Henderson</td>
-<td style="text-align: left;">Kentucky</td>
-<td style="text-align: right;">42420</td>
-<td style="text-align: left;">South</td>
-<td style="text-align: left;">FUR-BO-10001798</td>
-<td style="text-align: left;">Furniture</td>
-<td style="text-align: left;">Bookcases</td>
-<td style="text-align: left;">Bush Somerset Collection Bookcase</td>
-<td style="text-align: right;">261.9600</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">41.9136</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">CA-2016-152156</td>
-<td style="text-align: left;">2016-11-08</td>
-<td style="text-align: left;">2016-11-11</td>
-<td style="text-align: left;">Second Class</td>
-<td style="text-align: left;">CG-12520</td>
-<td style="text-align: left;">Claire Gute</td>
-<td style="text-align: left;">Consumer</td>
-<td style="text-align: left;">Henderson</td>
-<td style="text-align: left;">Kentucky</td>
-<td style="text-align: right;">42420</td>
-<td style="text-align: left;">South</td>
-<td style="text-align: left;">FUR-CH-10000454</td>
-<td style="text-align: left;">Furniture</td>
-<td style="text-align: left;">Chairs</td>
-<td style="text-align: left;">Hon Deluxe Fabric Upholstered Stacking Chairs, Rounded Back</td>
-<td style="text-align: right;">731.9400</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">219.5820</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">CA-2016-138688</td>
-<td style="text-align: left;">2016-06-12</td>
-<td style="text-align: left;">2016-06-16</td>
-<td style="text-align: left;">Second Class</td>
-<td style="text-align: left;">DV-13045</td>
-<td style="text-align: left;">Darrin Van Huff</td>
-<td style="text-align: left;">Corporate</td>
-<td style="text-align: left;">Los Angeles</td>
-<td style="text-align: left;">California</td>
-<td style="text-align: right;">90036</td>
-<td style="text-align: left;">West</td>
-<td style="text-align: left;">OFF-LA-10000240</td>
-<td style="text-align: left;">Office Supplies</td>
-<td style="text-align: left;">Labels</td>
-<td style="text-align: left;">Self-Adhesive Address Labels for Typewriters by Universal</td>
-<td style="text-align: right;">14.6200</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0.00</td>
-<td style="text-align: right;">6.8714</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">US-2015-108966</td>
-<td style="text-align: left;">2015-10-11</td>
-<td style="text-align: left;">2015-10-18</td>
-<td style="text-align: left;">Standard Class</td>
-<td style="text-align: left;">SO-20335</td>
-<td style="text-align: left;">Sean O’Donnell</td>
-<td style="text-align: left;">Consumer</td>
-<td style="text-align: left;">Fort Lauderdale</td>
-<td style="text-align: left;">Florida</td>
-<td style="text-align: right;">33311</td>
-<td style="text-align: left;">South</td>
-<td style="text-align: left;">FUR-TA-10000577</td>
-<td style="text-align: left;">Furniture</td>
-<td style="text-align: left;">Tables</td>
-<td style="text-align: left;">Bretford CR4500 Series Slim Rectangular Table</td>
-<td style="text-align: right;">957.5775</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">0.45</td>
-<td style="text-align: right;">-383.0310</td>
+<td style="text-align: left;">Order_Date</td>
+<td style="text-align: left;">2016-11-08</td>
+<td style="text-align: left;">2016-11-08</td>
+<td style="text-align: left;">2016-06-12</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">US-2015-108966</td>
-<td style="text-align: left;">2015-10-11</td>
-<td style="text-align: left;">2015-10-18</td>
-<td style="text-align: left;">Standard Class</td>
-<td style="text-align: left;">SO-20335</td>
-<td style="text-align: left;">Sean O’Donnell</td>
+<td style="text-align: left;">Ship_Date</td>
+<td style="text-align: left;">2016-11-11</td>
+<td style="text-align: left;">2016-11-11</td>
+<td style="text-align: left;">2016-06-16</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ship_Mode</td>
+<td style="text-align: left;">Second Class</td>
+<td style="text-align: left;">Second Class</td>
+<td style="text-align: left;">Second Class</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Customer_ID</td>
+<td style="text-align: left;">CG-12520</td>
+<td style="text-align: left;">CG-12520</td>
+<td style="text-align: left;">DV-13045</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Customer_Name</td>
+<td style="text-align: left;">Claire Gute</td>
+<td style="text-align: left;">Claire Gute</td>
+<td style="text-align: left;">Darrin Van Huff</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Segment</td>
 <td style="text-align: left;">Consumer</td>
-<td style="text-align: left;">Fort Lauderdale</td>
-<td style="text-align: left;">Florida</td>
-<td style="text-align: right;">33311</td>
+<td style="text-align: left;">Consumer</td>
+<td style="text-align: left;">Corporate</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">City</td>
+<td style="text-align: left;">Henderson</td>
+<td style="text-align: left;">Henderson</td>
+<td style="text-align: left;">Los Angeles</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">State</td>
+<td style="text-align: left;">Kentucky</td>
+<td style="text-align: left;">Kentucky</td>
+<td style="text-align: left;">California</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Postal_Code</td>
+<td style="text-align: left;">42420</td>
+<td style="text-align: left;">42420</td>
+<td style="text-align: left;">90036</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Region</td>
 <td style="text-align: left;">South</td>
-<td style="text-align: left;">OFF-ST-10000760</td>
+<td style="text-align: left;">South</td>
+<td style="text-align: left;">West</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Product_ID</td>
+<td style="text-align: left;">FUR-BO-10001798</td>
+<td style="text-align: left;">FUR-CH-10000454</td>
+<td style="text-align: left;">OFF-LA-10000240</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Category</td>
+<td style="text-align: left;">Furniture</td>
+<td style="text-align: left;">Furniture</td>
 <td style="text-align: left;">Office Supplies</td>
-<td style="text-align: left;">Storage</td>
-<td style="text-align: left;">Eldon Fold ’N Roll Cart System</td>
-<td style="text-align: right;">22.3680</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">0.20</td>
-<td style="text-align: right;">2.5164</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sub-Category</td>
+<td style="text-align: left;">Bookcases</td>
+<td style="text-align: left;">Chairs</td>
+<td style="text-align: left;">Labels</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Product_Name</td>
+<td style="text-align: left;">Bush Somerset Collection Bookcase</td>
+<td style="text-align: left;">Hon Deluxe Fabric Upholstered Stacking Chairs, Rounded Back</td>
+<td style="text-align: left;">Self-Adhesive Address Labels for Typewriters by Universal</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sales</td>
+<td style="text-align: left;">261.96</td>
+<td style="text-align: left;">731.94</td>
+<td style="text-align: left;">14.62</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Quantity</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Discount</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Profit</td>
+<td style="text-align: left;">41.9136</td>
+<td style="text-align: left;">219.5820</td>
+<td style="text-align: left;">6.8714</td>
 </tr>
 </tbody>
 </table>
 </div>
 </div></div>
+<p>There is some more processing to do, such as removing outliers. However, by doing so we impose our own assumptions on the data (possibly the outliers are actual sales?). We will visualize and qualitatively evaluate the data first, and then decide what other processing steps to take.</p>
 </section>
 <section id="section" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="section"><span class="header-section-number">2</span> Section</h2>
@@ -762,29 +691,6 @@ Figure&nbsp;2: Map of La Palma
 </figure>
 </div>
 <p>La Palma is one of the west most islands in the Volcanic Archipelago of the Canary Islands (<a href="#fig-map" class="quarto-xref">Figure&nbsp;2</a>).</p>
-<div class="quarto-embed-nb-cell" data-notebook="/home/runner/work/Supply_Chain_Data_Analysis/Supply_Chain_Data_Analysis/notebooks/explore-earthquakes.qmd" data-notebook-title="Explore Earthquakes" data-notebook-cellid="cell-fig-spatial-plot">
-<div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div id="cell-fig-spatial-plot" class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>la_palma <span class="op">|&gt;</span> </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  ggplot(aes(Longitude, Latitude)) <span class="op">+</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  geom_point(aes(color <span class="op">=</span> Magnitude, size <span class="op">=</span> <span class="dv">40</span><span class="op">-</span>`Depth(km)`)) <span class="op">+</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  scale_color_viridis_c(direction <span class="op">=</span> <span class="op">-</span><span class="dv">1</span>) <span class="op">+</span> </span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  scale_size(<span class="bu">range</span> <span class="op">=</span> c(<span class="fl">0.5</span>, <span class="dv">2</span>), guide <span class="op">=</span> <span class="st">"none"</span>) <span class="op">+</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  theme_bw()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div id="fig-spatial-plot" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A scatterplot of earthquake locations plotting latitude against longitude.">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-spatial-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
-<a href="index_files/figure-html/notebooks-explore-earthquakes-fig-spatial-plot-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;3: Locations of earthquakes on La Palma since 2017"><img src="index_files/figure-html/notebooks-explore-earthquakes-fig-spatial-plot-output-1.png" class="img-fluid figure-img" alt="A scatterplot of earthquake locations plotting latitude against longitude."></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-spatial-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;3: Locations of earthquakes on La Palma since 2017
-</figcaption>
-</figure>
-</div>
-</div>
-</div></div>
-</div>
-<p><a href="#fig-spatial-plot" class="quarto-xref">Figure&nbsp;3</a> shows the location of recent Earthquakes on La Palma.</p>
 </section>
 <section id="sec-data-methods" class="level2" data-number="4">
 <h2 data-number="4" class="anchored" data-anchor-id="sec-data-methods"><span class="header-section-number">4</span> Data &amp; Methods</h2>

@@ -246,6 +246,8 @@ analysis, }\affiliation{4}{Group 10, }
 
 
 
+Introduction
+
 We analyze, forecast and interpret the
 \href{https://public.tableau.com/app/sample-data/sample_-_superstore.xls}{Superstore
 sales} provided by
@@ -285,31 +287,54 @@ We took the following pre-processing steps:
   ``\,``) per column.
 \end{itemize}
 
+\textsubscript{Source:
+\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
+Notebook}}
+
 \begin{verbatim}
-[1] "No missing values"
+[1] "None of the columns contains missing values"
 \end{verbatim}
 
 \textsubscript{Source:
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
 Notebook}}
 
-We also ran some descriptive statistics to check unlikely or impossible
-values, outliers, means, etc.
+After these steps (and transposing the table for better document
+formatting), the data looks as follows:
 
-\begin{verbatim}
-# A tibble: 5 x 19
-  Order_ID     Order_Date Ship_Date  Ship_Mode Customer_ID Customer_Name Segment
-  <chr>        <date>     <date>     <chr>     <chr>       <chr>         <chr>  
-1 CA-2016-152~ 2016-11-08 2016-11-11 Second C~ CG-12520    Claire Gute   Consum~
-2 CA-2016-152~ 2016-11-08 2016-11-11 Second C~ CG-12520    Claire Gute   Consum~
-3 CA-2016-138~ 2016-06-12 2016-06-16 Second C~ DV-13045    Darrin Van H~ Corpor~
-4 US-2015-108~ 2015-10-11 2015-10-18 Standard~ SO-20335    Sean O'Donne~ Consum~
-5 US-2015-108~ 2015-10-11 2015-10-18 Standard~ SO-20335    Sean O'Donne~ Consum~
-# i 12 more variables: City <chr>, State <chr>, Postal_Code <dbl>,
-#   Region <chr>, Product_ID <chr>, Category <chr>, `Sub-Category` <chr>,
-#   Product_Name <chr>, Sales <dbl>, Quantity <dbl>, Discount <dbl>,
-#   Profit <dbl>
-\end{verbatim}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.0843}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.2048}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3614}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 6\tabcolsep) * \real{0.3494}}@{}}
+\caption{First 5 Rows of the Data (Transposed)}\tabularnewline
+\toprule\noalign{}
+\endfirsthead
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Order\_ID & CA-2016-152156 & CA-2016-152156 & CA-2016-138688 \\
+Order\_Date & 2016-11-08 & 2016-11-08 & 2016-06-12 \\
+Ship\_Date & 2016-11-11 & 2016-11-11 & 2016-06-16 \\
+Ship\_Mode & Second Class & Second Class & Second Class \\
+Customer\_ID & CG-12520 & CG-12520 & DV-13045 \\
+Customer\_Name & Claire Gute & Claire Gute & Darrin Van Huff \\
+Segment & Consumer & Consumer & Corporate \\
+City & Henderson & Henderson & Los Angeles \\
+State & Kentucky & Kentucky & California \\
+Postal\_Code & 42420 & 42420 & 90036 \\
+Region & South & South & West \\
+Product\_ID & FUR-BO-10001798 & FUR-CH-10000454 & OFF-LA-10000240 \\
+Category & Furniture & Furniture & Office Supplies \\
+Sub-Category & Bookcases & Chairs & Labels \\
+Product\_Name & Bush Somerset Collection Bookcase & Hon Deluxe Fabric
+Upholstered Stacking Chairs, Rounded Back & Self-Adhesive Address Labels
+for Typewriters by Universal \\
+Sales & 261.96 & 731.94 & 14.62 \\
+Quantity & 2 & 3 & 2 \\
+Discount & 0 & 0 & 0 \\
+Profit & 41.9136 & 219.5820 & 6.8714 \\
+\end{longtable}
 
 \textsubscript{Source:
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
@@ -320,139 +345,6 @@ by doing so we impose our own assumptions on the data (possibly the
 outliers are actual sales?). We will visualize and qualitatively
 evaluate the data first, and then decide what other processing steps to
 take.
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0540}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0396}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0396}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0540}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0432}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0576}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0360}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0576}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0396}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0432}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0252}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0576}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0576}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0468}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.2158}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0324}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0324}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0324}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0360}}@{}}
-\caption{First 5 Rows of the Data}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Order\_ID
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Order\_Date
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Ship\_Date
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Ship\_Mode
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Customer\_ID
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Customer\_Name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Segment
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-City
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-State
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Postal\_Code
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Region
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Product\_ID
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Category
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Sub-Category
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Product\_Name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Sales
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Quantity
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Discount
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Profit
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Order\_ID
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Order\_Date
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Ship\_Date
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Ship\_Mode
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Customer\_ID
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Customer\_Name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Segment
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-City
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-State
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Postal\_Code
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Region
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Product\_ID
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Category
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Sub-Category
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Product\_Name
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Sales
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Quantity
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Discount
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Profit
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-CA-2016-152156 & 2016-11-08 & 2016-11-11 & Second Class & CG-12520 &
-Claire Gute & Consumer & Henderson & Kentucky & 42420 & South &
-FUR-BO-10001798 & Furniture & Bookcases & Bush Somerset Collection
-Bookcase & 261.9600 & 2 & 0.00 & 41.9136 \\
-CA-2016-152156 & 2016-11-08 & 2016-11-11 & Second Class & CG-12520 &
-Claire Gute & Consumer & Henderson & Kentucky & 42420 & South &
-FUR-CH-10000454 & Furniture & Chairs & Hon Deluxe Fabric Upholstered
-Stacking Chairs, Rounded Back & 731.9400 & 3 & 0.00 & 219.5820 \\
-CA-2016-138688 & 2016-06-12 & 2016-06-16 & Second Class & DV-13045 &
-Darrin Van Huff & Corporate & Los Angeles & California & 90036 & West &
-OFF-LA-10000240 & Office Supplies & Labels & Self-Adhesive Address
-Labels for Typewriters by Universal & 14.6200 & 2 & 0.00 & 6.8714 \\
-US-2015-108966 & 2015-10-11 & 2015-10-18 & Standard Class & SO-20335 &
-Sean O'Donnell & Consumer & Fort Lauderdale & Florida & 33311 & South &
-FUR-TA-10000577 & Furniture & Tables & Bretford CR4500 Series Slim
-Rectangular Table & 957.5775 & 5 & 0.45 & -383.0310 \\
-US-2015-108966 & 2015-10-11 & 2015-10-18 & Standard Class & SO-20335 &
-Sean O'Donnell & Consumer & Fort Lauderdale & Florida & 33311 & South &
-OFF-ST-10000760 & Office Supplies & Storage & Eldon Fold 'N Roll Cart
-System & 22.3680 & 2 & 0.20 & 2.5164 \\
-\end{longtable}
-
-\textsubscript{Source:
-\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
-Notebook}}
 
 \subsection{Section}\label{section}
 
@@ -564,26 +456,6 @@ colonization of the islands by Europeans in the late 1400s.
 
 La Palma is one of the west most islands in the Volcanic Archipelago of
 the Canary Islands (Figure~\ref{fig-map}).
-
-\begin{figure}[H]
-
-\centering{
-
-\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-latex/notebooks-explore-earthquakes-fig-spatial-plot-output-1.png}}
-
-}
-
-\caption{\label{fig-spatial-plot}Locations of earthquakes on La Palma
-since 2017}
-
-\end{figure}%
-
-\textsubscript{Source:
-\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/notebooks/explore-earthquakes-preview.html\#cell-fig-spatial-plot}{Explore
-Earthquakes}}
-
-Figure~\ref{fig-spatial-plot} shows the location of recent Earthquakes
-on La Palma.
 
 \subsection{Data \& Methods}\label{sec-data-methods}
 
