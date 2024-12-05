@@ -23,42 +23,88 @@ and Interchange DTD v1.2 20190208//EN" "JATS-archivearticle1.dtd">
 
 
 <title-group>
-<article-title>La Palma Earthquakes</article-title>
+<article-title>Supply Chain Data Analytics</article-title>
+<subtitle>Analyzing and Forcasting Supermarket Sales</subtitle>
 </title-group>
 
 <contrib-group>
 <contrib contrib-type="author" corresp="yes">
-<contrib-id contrib-id-type="orcid">0000-0002-0760-5497</contrib-id>
 <name>
-<surname>Purves</surname>
-<given-names>Steve</given-names>
+<surname>Brouwer</surname>
+<given-names>Stan</given-names>
 </name>
-<string-name>Steve Purves</string-name>
+<string-name>Stan Brouwer</string-name>
 
-<email>steve@curvenote.com</email>
-<role vocab="https://credit.niso.org" vocab-term="investigation" vocab-term-identifier="https://credit.niso.org/contributor-roles/investigation/">Investigation</role>
-<role vocab="https://credit.niso.org" vocab-term="project
-administration" vocab-term-identifier="https://credit.niso.org/contributor-roles/project-administration/">Project
-administration</role>
-<role vocab="https://credit.niso.org" vocab-term="software" vocab-term-identifier="https://credit.niso.org/contributor-roles/software/">Software</role>
-<role vocab="https://credit.niso.org" vocab-term="visualization" vocab-term-identifier="https://credit.niso.org/contributor-roles/visualization/">Visualization</role>
 <xref ref-type="aff" rid="aff-1">a</xref>
 <xref ref-type="corresp" rid="cor-1">&#x002A;</xref>
 </contrib>
 <contrib contrib-type="author">
-<contrib-id contrib-id-type="orcid">0000-0002-7859-8394</contrib-id>
 <name>
-<surname>Cockett</surname>
-<given-names>Rowan</given-names>
+<surname>Chan</surname>
+<given-names>Liz</given-names>
 </name>
-<string-name>Rowan Cockett</string-name>
+<string-name>Liz Chan</string-name>
 
-<xref ref-type="aff" rid="aff-1">a</xref>
+<xref ref-type="aff" rid="aff-2">b</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Lamberst</surname>
+<given-names>Maaike</given-names>
+</name>
+<string-name>Maaike Lamberst</string-name>
+
+<xref ref-type="aff" rid="aff-3">c</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Schroor</surname>
+<given-names>Niek</given-names>
+</name>
+<string-name>Niek Schroor</string-name>
+
+<xref ref-type="aff" rid="aff-4">d</xref>
 </contrib>
 </contrib-group>
 <aff id="aff-1">
 <institution-wrap>
-<institution>Curvenote</institution>
+<institution>Vrije Universiteit</institution>
+</institution-wrap>
+
+
+
+
+
+
+
+</aff>
+<aff id="aff-2">
+<institution-wrap>
+<institution>Master TSCM</institution>
+</institution-wrap>
+
+
+
+
+
+
+
+</aff>
+<aff id="aff-3">
+<institution-wrap>
+<institution>Supply Chain Data analysis</institution>
+</institution-wrap>
+
+
+
+
+
+
+
+</aff>
+<aff id="aff-4">
+<institution-wrap>
+<institution>Group 10</institution>
 </institution-wrap>
 
 
@@ -69,7 +115,7 @@ administration</role>
 
 </aff>
 <author-notes>
-<corresp id="cor-1">steve@curvenote.com</corresp>
+<corresp id="cor-1"></corresp>
 </author-notes>
 
 <pub-date date-type="pub" publication-format="electronic" iso-8601-date="2024-12-05">
@@ -87,17 +133,6 @@ administration</role>
 <history></history>
 
 
-<abstract>
-<p>In September 2021, a significant jump in seismic activity on the
-island of La Palma (Canary Islands, Spain) signaled the start of a
-volcanic crisis that still continues at the time of writing. Earthquake
-data is continually collected and published by the Instituto Geográphico
-Nacional (IGN). …</p>
-</abstract>
-<kwd-group kwd-group-type="author">
-<kwd>La Palma</kwd>
-<kwd>Earthquakes</kwd>
-</kwd-group>
 
 
 
@@ -107,8 +142,237 @@ Nacional (IGN). …</p>
 </front>
 
 <body>
+<p>We analyze, forecast and interpret the
+<ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore
+sales</ext-link> provided by
+<ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/learn/sample-data">Tableau</ext-link>
+using different statistical and machine learning methods.</p>
+<p>We describe our work in the PDF version. However, we would like to
+recommend reading our quarto manuscript <italic>here</italic> as it
+contains the <bold>relevant</bold> R code in the Article Notebook.</p>
+<sec id="data-pre-processing">
+  <title>1 Data Pre-processing</title>
+  <p>The superstore data set we selected is of high quality. Thus we do
+  the required data pre-processing, but included the hypothetical steps
+  we would take were our data of lower quality to communicate our
+  understanding of the data pre-processing process.</p>
+  <p>We took the following pre-processing steps:</p>
+  <list list-type="bullet">
+    <list-item>
+      <p>Improved column names by removing whitespaces</p>
+    </list-item>
+    <list-item>
+      <p>Removed the Row_ID column as it can be inferred by it’s
+      index</p>
+    </list-item>
+    <list-item>
+      <p>Removed all columns with a single unique value, as storing
+      these would be
+      <ext-link ext-link-type="uri" xlink:href="https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html">redundant</ext-link></p>
+    </list-item>
+    <list-item>
+      <p>Ensured machine-readable date formats in yyyy-mm-dd as these
+      usually differ per locale.</p>
+    </list-item>
+    <list-item>
+      <p>Ensured proper decimal separators</p>
+    </list-item>
+    <list-item>
+      <p>calculated the number of missing values (both NA and empty
+      string ““) per column.</p>
+    </list-item>
+  </list>
+  <preformat>[1] &quot;No missing values&quot;</preformat>
+  <p>We also ran some descriptive statistics to check unlikely or
+  impossible values, outliers, means, etc.</p>
+  <preformat># A tibble: 5 × 19
+  Order_ID     Order_Date Ship_Date  Ship_Mode Customer_ID Customer_Name Segment
+  &lt;chr&gt;        &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;  
+1 CA-2016-152… 2016-11-08 2016-11-11 Second C… CG-12520    Claire Gute   Consum…
+2 CA-2016-152… 2016-11-08 2016-11-11 Second C… CG-12520    Claire Gute   Consum…
+3 CA-2016-138… 2016-06-12 2016-06-16 Second C… DV-13045    Darrin Van H… Corpor…
+4 US-2015-108… 2015-10-11 2015-10-18 Standard… SO-20335    Sean O'Donne… Consum…
+5 US-2015-108… 2015-10-11 2015-10-18 Standard… SO-20335    Sean O'Donne… Consum…
+# ℹ 12 more variables: City &lt;chr&gt;, State &lt;chr&gt;, Postal_Code &lt;dbl&gt;,
+#   Region &lt;chr&gt;, Product_ID &lt;chr&gt;, Category &lt;chr&gt;, `Sub-Category` &lt;chr&gt;,
+#   Product_Name &lt;chr&gt;, Sales &lt;dbl&gt;, Quantity &lt;dbl&gt;, Discount &lt;dbl&gt;,
+#   Profit &lt;dbl&gt;</preformat>
+  <p>There is some more processing to do, such as removing outliers.
+  However, by doing so we impose our own assumptions on the data
+  (possibly the outliers are actual sales?). We will visualize and
+  qualitatively evaluate the data first, and then decide what other
+  processing steps to take.</p>
+  <table-wrap>
+    <caption>
+      <p>First 5 Rows of the Data</p>
+    </caption>
+    <table>
+      <colgroup>
+        <col width="5%" />
+        <col width="4%" />
+        <col width="4%" />
+        <col width="5%" />
+        <col width="4%" />
+        <col width="6%" />
+        <col width="4%" />
+        <col width="6%" />
+        <col width="4%" />
+        <col width="4%" />
+        <col width="3%" />
+        <col width="6%" />
+        <col width="6%" />
+        <col width="5%" />
+        <col width="22%" />
+        <col width="3%" />
+        <col width="3%" />
+        <col width="3%" />
+        <col width="4%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th align="left">Order_ID</th>
+          <th align="left">Order_Date</th>
+          <th align="left">Ship_Date</th>
+          <th align="left">Ship_Mode</th>
+          <th align="left">Customer_ID</th>
+          <th align="left">Customer_Name</th>
+          <th align="left">Segment</th>
+          <th align="left">City</th>
+          <th align="left">State</th>
+          <th align="right">Postal_Code</th>
+          <th align="left">Region</th>
+          <th align="left">Product_ID</th>
+          <th align="left">Category</th>
+          <th align="left">Sub-Category</th>
+          <th align="left">Product_Name</th>
+          <th align="right">Sales</th>
+          <th align="right">Quantity</th>
+          <th align="right">Discount</th>
+          <th align="right">Profit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="left">CA-2016-152156</td>
+          <td align="left">2016-11-08</td>
+          <td align="left">2016-11-11</td>
+          <td align="left">Second Class</td>
+          <td align="left">CG-12520</td>
+          <td align="left">Claire Gute</td>
+          <td align="left">Consumer</td>
+          <td align="left">Henderson</td>
+          <td align="left">Kentucky</td>
+          <td align="right">42420</td>
+          <td align="left">South</td>
+          <td align="left">FUR-BO-10001798</td>
+          <td align="left">Furniture</td>
+          <td align="left">Bookcases</td>
+          <td align="left">Bush Somerset Collection Bookcase</td>
+          <td align="right">261.9600</td>
+          <td align="right">2</td>
+          <td align="right">0.00</td>
+          <td align="right">41.9136</td>
+        </tr>
+        <tr>
+          <td align="left">CA-2016-152156</td>
+          <td align="left">2016-11-08</td>
+          <td align="left">2016-11-11</td>
+          <td align="left">Second Class</td>
+          <td align="left">CG-12520</td>
+          <td align="left">Claire Gute</td>
+          <td align="left">Consumer</td>
+          <td align="left">Henderson</td>
+          <td align="left">Kentucky</td>
+          <td align="right">42420</td>
+          <td align="left">South</td>
+          <td align="left">FUR-CH-10000454</td>
+          <td align="left">Furniture</td>
+          <td align="left">Chairs</td>
+          <td align="left">Hon Deluxe Fabric Upholstered Stacking
+          Chairs, Rounded Back</td>
+          <td align="right">731.9400</td>
+          <td align="right">3</td>
+          <td align="right">0.00</td>
+          <td align="right">219.5820</td>
+        </tr>
+        <tr>
+          <td align="left">CA-2016-138688</td>
+          <td align="left">2016-06-12</td>
+          <td align="left">2016-06-16</td>
+          <td align="left">Second Class</td>
+          <td align="left">DV-13045</td>
+          <td align="left">Darrin Van Huff</td>
+          <td align="left">Corporate</td>
+          <td align="left">Los Angeles</td>
+          <td align="left">California</td>
+          <td align="right">90036</td>
+          <td align="left">West</td>
+          <td align="left">OFF-LA-10000240</td>
+          <td align="left">Office Supplies</td>
+          <td align="left">Labels</td>
+          <td align="left">Self-Adhesive Address Labels for Typewriters
+          by Universal</td>
+          <td align="right">14.6200</td>
+          <td align="right">2</td>
+          <td align="right">0.00</td>
+          <td align="right">6.8714</td>
+        </tr>
+        <tr>
+          <td align="left">US-2015-108966</td>
+          <td align="left">2015-10-11</td>
+          <td align="left">2015-10-18</td>
+          <td align="left">Standard Class</td>
+          <td align="left">SO-20335</td>
+          <td align="left">Sean O’Donnell</td>
+          <td align="left">Consumer</td>
+          <td align="left">Fort Lauderdale</td>
+          <td align="left">Florida</td>
+          <td align="right">33311</td>
+          <td align="left">South</td>
+          <td align="left">FUR-TA-10000577</td>
+          <td align="left">Furniture</td>
+          <td align="left">Tables</td>
+          <td align="left">Bretford CR4500 Series Slim Rectangular
+          Table</td>
+          <td align="right">957.5775</td>
+          <td align="right">5</td>
+          <td align="right">0.45</td>
+          <td align="right">-383.0310</td>
+        </tr>
+        <tr>
+          <td align="left">US-2015-108966</td>
+          <td align="left">2015-10-11</td>
+          <td align="left">2015-10-18</td>
+          <td align="left">Standard Class</td>
+          <td align="left">SO-20335</td>
+          <td align="left">Sean O’Donnell</td>
+          <td align="left">Consumer</td>
+          <td align="left">Fort Lauderdale</td>
+          <td align="left">Florida</td>
+          <td align="right">33311</td>
+          <td align="left">South</td>
+          <td align="left">OFF-ST-10000760</td>
+          <td align="left">Office Supplies</td>
+          <td align="left">Storage</td>
+          <td align="left">Eldon Fold ’N Roll Cart System</td>
+          <td align="right">22.3680</td>
+          <td align="right">2</td>
+          <td align="right">0.20</td>
+          <td align="right">2.5164</td>
+        </tr>
+      </tbody>
+    </table>
+  </table-wrap>
+</sec>
+<sec id="section">
+  <title>2 Section</title>
+  <p>This is a simple placeholder for the manuscript’s main document
+  (<xref alt="knuth84?" rid="ref-knuth84" ref-type="bibr"><bold>knuth84?</bold></xref>).</p>
+  <code language="r script">1 + 1</code>
+  <preformat>[1] 2</preformat>
+</sec>
 <sec id="introduction">
-  <title>1 Introduction</title>
+  <title>3 Introduction</title>
   <fig id="fig-timeline">
     <caption><p>Figure 1: Timeline of recent earthquakes on La
     Palma</p></caption>
@@ -125,7 +389,7 @@ Nacional (IGN). …</p>
   <p>Eight eruptions have been recorded since the late 1400s
   (<xref alt="Figure 1" rid="fig-timeline">Figure 1</xref>).</p>
   <p>Data and methods are discussed in
-  <xref alt="Section 2" rid="sec-data-methods">Section 2</xref>.</p>
+  <xref alt="Section 4" rid="sec-data-methods">Section 4</xref>.</p>
   <p>Let <inline-formula><alternatives>
   <tex-math><![CDATA[x]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>x</mml:mi></mml:math></alternatives></inline-formula>
@@ -215,10 +479,10 @@ Nacional (IGN). …</p>
   the location of recent Earthquakes on La Palma.</p>
 </sec>
 <sec id="sec-data-methods">
-  <title>2 Data &amp; Methods</title>
+  <title>4 Data &amp; Methods</title>
 </sec>
 <sec id="conclusion">
-  <title>3 Conclusion</title>
+  <title>5 Conclusion</title>
 </sec>
 </body>
 
@@ -250,41 +514,87 @@ Nacional (IGN). …</p>
 <sub-article article-type="notebook" id="nb-8-nb-article">
 <front-stub>
 <title-group>
-<article-title>La Palma Earthquakes</article-title>
+<article-title>Supply Chain Data Analytics</article-title>
+<subtitle>Analyzing and Forcasting Supermarket Sales</subtitle>
 </title-group>
 <contrib-group>
 <contrib contrib-type="author" corresp="yes">
-<contrib-id contrib-id-type="orcid">0000-0002-0760-5497</contrib-id>
 <name>
-<surname>Purves</surname>
-<given-names>Steve</given-names>
+<surname>Brouwer</surname>
+<given-names>Stan</given-names>
 </name>
-<string-name>Steve Purves</string-name>
+<string-name>Stan Brouwer</string-name>
 
-<email>steve@curvenote.com</email>
-<role vocab="https://credit.niso.org" vocab-term="investigation" vocab-term-identifier="https://credit.niso.org/contributor-roles/investigation/">Investigation</role>
-<role vocab="https://credit.niso.org" vocab-term="project
-administration" vocab-term-identifier="https://credit.niso.org/contributor-roles/project-administration/">Project
-administration</role>
-<role vocab="https://credit.niso.org" vocab-term="software" vocab-term-identifier="https://credit.niso.org/contributor-roles/software/">Software</role>
-<role vocab="https://credit.niso.org" vocab-term="visualization" vocab-term-identifier="https://credit.niso.org/contributor-roles/visualization/">Visualization</role>
 <xref ref-type="aff" rid="aff-1-nb-article">a</xref>
 <xref ref-type="corresp" rid="cor-1-nb-article">&#x002A;</xref>
 </contrib>
 <contrib contrib-type="author">
-<contrib-id contrib-id-type="orcid">0000-0002-7859-8394</contrib-id>
 <name>
-<surname>Cockett</surname>
-<given-names>Rowan</given-names>
+<surname>Chan</surname>
+<given-names>Liz</given-names>
 </name>
-<string-name>Rowan Cockett</string-name>
+<string-name>Liz Chan</string-name>
 
-<xref ref-type="aff" rid="aff-1-nb-article">a</xref>
+<xref ref-type="aff" rid="aff-2-nb-article">b</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Lamberst</surname>
+<given-names>Maaike</given-names>
+</name>
+<string-name>Maaike Lamberst</string-name>
+
+<xref ref-type="aff" rid="aff-3-nb-article">c</xref>
+</contrib>
+<contrib contrib-type="author">
+<name>
+<surname>Schroor</surname>
+<given-names>Niek</given-names>
+</name>
+<string-name>Niek Schroor</string-name>
+
+<xref ref-type="aff" rid="aff-4-nb-article">d</xref>
 </contrib>
 </contrib-group>
 <aff id="aff-1-nb-article">
 <institution-wrap>
-<institution>Curvenote</institution>
+<institution>Vrije Universiteit</institution>
+</institution-wrap>
+
+
+
+
+
+
+
+</aff>
+<aff id="aff-2-nb-article">
+<institution-wrap>
+<institution>Master TSCM</institution>
+</institution-wrap>
+
+
+
+
+
+
+
+</aff>
+<aff id="aff-3-nb-article">
+<institution-wrap>
+<institution>Supply Chain Data analysis</institution>
+</institution-wrap>
+
+
+
+
+
+
+
+</aff>
+<aff id="aff-4-nb-article">
+<institution-wrap>
+<institution>Group 10</institution>
 </institution-wrap>
 
 
@@ -295,20 +605,411 @@ administration</role>
 
 </aff>
 <author-notes>
-<corresp id="cor-1-nb-article">steve@curvenote.com</corresp>
+<corresp id="cor-1-nb-article"></corresp>
 </author-notes>
-<abstract>
-<p>In September 2021, a significant jump in seismic activity on the
-island of La Palma (Canary Islands, Spain) signaled the start of a
-volcanic crisis that still continues at the time of writing. Earthquake
-data is continually collected and published by the Instituto Geográphico
-Nacional (IGN). …</p>
-</abstract>
 </front-stub>
 
 <body>
+<p>We analyze, forecast and interpret the
+<ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore
+sales</ext-link> provided by
+<ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/learn/sample-data">Tableau</ext-link>
+using different statistical and machine learning methods.</p>
+<p>We describe our work in the PDF version. However, we would like to
+recommend reading our quarto manuscript <italic>here</italic> as it
+contains the <bold>relevant</bold> R code in the Article Notebook.</p>
+<sec id="data-pre-processing-nb-article">
+  <title>1 Data Pre-processing</title>
+  <p>The superstore data set we selected is of high quality. Thus we do
+  the required data pre-processing, but included the hypothetical steps
+  we would take were our data of lower quality to communicate our
+  understanding of the data pre-processing process.</p>
+  <p>We took the following pre-processing steps:</p>
+  <sec specific-use="notebook-content">
+  <code language="r script"># Clear workspace
+rm(list = ls())
+# Function to load (and install if necessary) dependencies
+install_and_load &lt;- function(packages) {
+  install.packages(setdiff(packages, rownames(installed.packages())), dependencies = TRUE)
+  invisible(lapply(packages, require, character.only = TRUE))
+}
+install_and_load(c(&quot;tidyverse&quot;, &quot;readxl&quot;, &quot;ggplot2&quot;, &quot;lubridate&quot;, &quot;stats&quot;, &quot;Amelia&quot;,&quot;forecast&quot;, &quot;tseries&quot;, &quot;plotly&quot;, &quot;stringr&quot;, &quot;knitr&quot;))</code>
+  <boxed-text>
+    <preformat>Loading required package: tidyverse</preformat>
+  </boxed-text>
+  <boxed-text>
+    <preformat>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors
+Loading required package: readxl
+
+Loading required package: Amelia</preformat>
+  </boxed-text>
+  <boxed-text>
+    <preformat>Warning: package 'Amelia' was built under R version 4.3.3</preformat>
+  </boxed-text>
+  <boxed-text>
+    <preformat>Loading required package: Rcpp
+## 
+## Amelia II: Multiple Imputation
+## (Version 1.8.3, built: 2024-11-07)
+## Copyright (C) 2005-2024 James Honaker, Gary King and Matthew Blackwell
+## Refer to http://gking.harvard.edu/amelia/ for more information
+## 
+Loading required package: forecast</preformat>
+  </boxed-text>
+  <boxed-text>
+    <preformat>Warning: package 'forecast' was built under R version 4.3.3</preformat>
+  </boxed-text>
+  <boxed-text>
+    <preformat>Registered S3 method overwritten by 'quantmod':
+  method            from
+  as.zoo.data.frame zoo 
+Loading required package: tseries</preformat>
+  </boxed-text>
+  <boxed-text>
+    <preformat>Warning: package 'tseries' was built under R version 4.3.3</preformat>
+  </boxed-text>
+  <boxed-text>
+    <preformat>Loading required package: plotly
+
+Attaching package: 'plotly'
+
+The following object is masked from 'package:ggplot2':
+
+    last_plot
+
+The following object is masked from 'package:stats':
+
+    filter
+
+The following object is masked from 'package:graphics':
+
+    layout
+
+Loading required package: knitr</preformat>
+  </boxed-text>
+  <boxed-text>
+    <preformat>Warning: package 'knitr' was built under R version 4.3.3</preformat>
+  </boxed-text>
+  </sec>
+  <list list-type="bullet">
+    <list-item>
+      <p>Improved column names by removing whitespaces</p>
+    </list-item>
+    <list-item>
+      <p>Removed the Row_ID column as it can be inferred by it’s
+      index</p>
+    </list-item>
+    <list-item>
+      <p>Removed all columns with a single unique value, as storing
+      these would be
+      <ext-link ext-link-type="uri" xlink:href="https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html">redundant</ext-link></p>
+    </list-item>
+    <list-item>
+      <p>Ensured machine-readable date formats in yyyy-mm-dd as these
+      usually differ per locale.</p>
+    </list-item>
+    <list-item>
+      <p>Ensured proper decimal separators</p>
+    </list-item>
+    <list-item>
+      <p>calculated the number of missing values (both NA and empty
+      string ““) per column.</p>
+    </list-item>
+  </list>
+  <sec specific-use="notebook-content">
+  <code language="r script"># Load the data
+suppressWarnings({data &lt;- read_excel(&quot;data/sample_-_superstore.xls&quot;)}) # The Postal code column is stored as 'text' but coerced to numeric, causing warnings which we suppress
+
+# Improve column names (replace &quot; &quot;with &quot;_&quot;)
+colnames(data) &lt;- str_replace_all(colnames(data), &quot; &quot;, &quot;_&quot;)
+
+# Remove the 'Row_ID' column as it can be inferred by it's index
+data &lt;- subset(data, select = -`Row_ID`)
+
+# Remove all columns that have only one unique value, as storing these would be redundant
+data &lt;- data[, sapply(data, function(col) length(unique(col)) &gt; 1)]
+
+# Ensure a machine-readable date format as these are usually horrible in excel files
+data$Order_Date &lt;- as.Date(data$Order_Date, format = &quot;%Y-%m-%d&quot;)
+data$Ship_Date &lt;- as.Date(data$Ship_Date, format = &quot;%Y-%m-%d&quot;)
+
+# The readxl package by default uses the correct decimal separator (as opposed to base R)
+
+# Calculate the number of missing values per column.
+# The sample dates are likely in Unix time, and when these are converted to R date objects they are stored as Date objects (which are represented by 'double' datatypes). Comparing these dates to characters (empty strings) results in NA values. Thus we only check date values for NA. As Date objects are stored as doubles within R (amount of days since 1970-01-01), we can't check numeric columns for &quot; &quot; either. We thus only check character columns for &quot; &quot;.
+missing_values &lt;- sapply(data, function(col) {
+  if (inherits(col, &quot;Date&quot;)) {
+    sum(is.na(col))
+  } else if (is.character(col)) {
+    sum(is.na(col) | col == &quot;&quot;)
+  } else {
+    sum(is.na(col))
+  }
+})
+
+if (sum(missing_values) == 0) {
+  print(&quot;No missing values&quot;)
+}</code>
+  <boxed-text>
+    <preformat>[1] &quot;No missing values&quot;</preformat>
+  </boxed-text>
+  <code language="r script"># Optionally, print the missing values as a nice table using knitr
+# Convert the result into a data frame (table)
+missing_values_table &lt;- data.frame(
+  Column = names(missing_values),
+  Missing_or_Empty = missing_values
+)
+
+# Note that there are no missing values, thus we do not print them
+# kable(missing_values_table, caption = &quot;Missing or Empty Values in Columns&quot;, format = &quot;pipe&quot;)
+rm(missing_values, missing_values_table)</code>
+  </sec>
+  <p>We also ran some descriptive statistics to check unlikely or
+  impossible values, outliers, means, etc.</p>
+  <sec specific-use="notebook-content">
+  <code language="r script"># Select only numerical columns
+numerical_data &lt;- data %&gt;% select_if(is.numeric)
+
+# Apply sapply to calculate descriptive statistics for each numeric column
+descriptive_stats &lt;- sapply(numerical_data, function(col) {
+  # Remove NA values
+  col &lt;- na.omit(col)
+  
+  # Calculate basic statistics
+  min_val &lt;- min(col)
+  max_val &lt;- max(col)
+  mean_val &lt;- mean(col)
+  median_val &lt;- median(col)
+  
+  # 95% Confidence Interval (assuming normal distribution)
+  se &lt;- sd(col) / sqrt(length(col))  # Standard error
+  ci_lower &lt;- mean_val - 1.96 * se  # Lower bound of 95% CI
+  ci_upper &lt;- mean_val + 1.96 * se  # Upper bound of 95% CI
+  
+  # Calculate outliers (using 1.5 * IQR rule)
+  Q1 &lt;- quantile(col, 0.25)
+  Q3 &lt;- quantile(col, 0.75)
+  IQR &lt;- Q3 - Q1
+  outliers &lt;- sum(col &lt; (Q1 - 1.5 * IQR) | col &gt; (Q3 + 1.5 * IQR))  # Number of outliers
+  
+  # Return the statistics as a named vector
+  return(c(Min = min_val, 
+           Mean = mean_val, 
+           Max = max_val, 
+           Median = median_val, 
+           `95% CI Lower` = ci_lower, 
+           `95% CI Upper` = ci_upper, 
+           Outliers = outliers))
+})
+head(data,5)</code>
+  <boxed-text>
+    <preformat># A tibble: 5 × 19
+  Order_ID     Order_Date Ship_Date  Ship_Mode Customer_ID Customer_Name Segment
+  &lt;chr&gt;        &lt;date&gt;     &lt;date&gt;     &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;         &lt;chr&gt;  
+1 CA-2016-152… 2016-11-08 2016-11-11 Second C… CG-12520    Claire Gute   Consum…
+2 CA-2016-152… 2016-11-08 2016-11-11 Second C… CG-12520    Claire Gute   Consum…
+3 CA-2016-138… 2016-06-12 2016-06-16 Second C… DV-13045    Darrin Van H… Corpor…
+4 US-2015-108… 2015-10-11 2015-10-18 Standard… SO-20335    Sean O'Donne… Consum…
+5 US-2015-108… 2015-10-11 2015-10-18 Standard… SO-20335    Sean O'Donne… Consum…
+# ℹ 12 more variables: City &lt;chr&gt;, State &lt;chr&gt;, Postal_Code &lt;dbl&gt;,
+#   Region &lt;chr&gt;, Product_ID &lt;chr&gt;, Category &lt;chr&gt;, `Sub-Category` &lt;chr&gt;,
+#   Product_Name &lt;chr&gt;, Sales &lt;dbl&gt;, Quantity &lt;dbl&gt;, Discount &lt;dbl&gt;,
+#   Profit &lt;dbl&gt;</preformat>
+  </boxed-text>
+  </sec>
+  <p>There is some more processing to do, such as removing outliers.
+  However, by doing so we impose our own assumptions on the data
+  (possibly the outliers are actual sales?). We will visualize and
+  qualitatively evaluate the data first, and then decide what other
+  processing steps to take.</p>
+  <sec specific-use="notebook-content">
+  <code language="r script"># Display the first 5 rows of the data in a nice table with kable
+kable(head(data,5), caption = &quot;First 5 Rows of the Data&quot;, format = &quot;pipe&quot;)</code>
+  <table-wrap>
+    <caption>
+      <p>First 5 Rows of the Data</p>
+    </caption>
+    <table>
+      <colgroup>
+        <col width="5%" />
+        <col width="4%" />
+        <col width="4%" />
+        <col width="5%" />
+        <col width="4%" />
+        <col width="6%" />
+        <col width="4%" />
+        <col width="6%" />
+        <col width="4%" />
+        <col width="4%" />
+        <col width="3%" />
+        <col width="6%" />
+        <col width="6%" />
+        <col width="5%" />
+        <col width="22%" />
+        <col width="3%" />
+        <col width="3%" />
+        <col width="3%" />
+        <col width="4%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th align="left">Order_ID</th>
+          <th align="left">Order_Date</th>
+          <th align="left">Ship_Date</th>
+          <th align="left">Ship_Mode</th>
+          <th align="left">Customer_ID</th>
+          <th align="left">Customer_Name</th>
+          <th align="left">Segment</th>
+          <th align="left">City</th>
+          <th align="left">State</th>
+          <th align="right">Postal_Code</th>
+          <th align="left">Region</th>
+          <th align="left">Product_ID</th>
+          <th align="left">Category</th>
+          <th align="left">Sub-Category</th>
+          <th align="left">Product_Name</th>
+          <th align="right">Sales</th>
+          <th align="right">Quantity</th>
+          <th align="right">Discount</th>
+          <th align="right">Profit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="left">CA-2016-152156</td>
+          <td align="left">2016-11-08</td>
+          <td align="left">2016-11-11</td>
+          <td align="left">Second Class</td>
+          <td align="left">CG-12520</td>
+          <td align="left">Claire Gute</td>
+          <td align="left">Consumer</td>
+          <td align="left">Henderson</td>
+          <td align="left">Kentucky</td>
+          <td align="right">42420</td>
+          <td align="left">South</td>
+          <td align="left">FUR-BO-10001798</td>
+          <td align="left">Furniture</td>
+          <td align="left">Bookcases</td>
+          <td align="left">Bush Somerset Collection Bookcase</td>
+          <td align="right">261.9600</td>
+          <td align="right">2</td>
+          <td align="right">0.00</td>
+          <td align="right">41.9136</td>
+        </tr>
+        <tr>
+          <td align="left">CA-2016-152156</td>
+          <td align="left">2016-11-08</td>
+          <td align="left">2016-11-11</td>
+          <td align="left">Second Class</td>
+          <td align="left">CG-12520</td>
+          <td align="left">Claire Gute</td>
+          <td align="left">Consumer</td>
+          <td align="left">Henderson</td>
+          <td align="left">Kentucky</td>
+          <td align="right">42420</td>
+          <td align="left">South</td>
+          <td align="left">FUR-CH-10000454</td>
+          <td align="left">Furniture</td>
+          <td align="left">Chairs</td>
+          <td align="left">Hon Deluxe Fabric Upholstered Stacking
+          Chairs, Rounded Back</td>
+          <td align="right">731.9400</td>
+          <td align="right">3</td>
+          <td align="right">0.00</td>
+          <td align="right">219.5820</td>
+        </tr>
+        <tr>
+          <td align="left">CA-2016-138688</td>
+          <td align="left">2016-06-12</td>
+          <td align="left">2016-06-16</td>
+          <td align="left">Second Class</td>
+          <td align="left">DV-13045</td>
+          <td align="left">Darrin Van Huff</td>
+          <td align="left">Corporate</td>
+          <td align="left">Los Angeles</td>
+          <td align="left">California</td>
+          <td align="right">90036</td>
+          <td align="left">West</td>
+          <td align="left">OFF-LA-10000240</td>
+          <td align="left">Office Supplies</td>
+          <td align="left">Labels</td>
+          <td align="left">Self-Adhesive Address Labels for Typewriters
+          by Universal</td>
+          <td align="right">14.6200</td>
+          <td align="right">2</td>
+          <td align="right">0.00</td>
+          <td align="right">6.8714</td>
+        </tr>
+        <tr>
+          <td align="left">US-2015-108966</td>
+          <td align="left">2015-10-11</td>
+          <td align="left">2015-10-18</td>
+          <td align="left">Standard Class</td>
+          <td align="left">SO-20335</td>
+          <td align="left">Sean O’Donnell</td>
+          <td align="left">Consumer</td>
+          <td align="left">Fort Lauderdale</td>
+          <td align="left">Florida</td>
+          <td align="right">33311</td>
+          <td align="left">South</td>
+          <td align="left">FUR-TA-10000577</td>
+          <td align="left">Furniture</td>
+          <td align="left">Tables</td>
+          <td align="left">Bretford CR4500 Series Slim Rectangular
+          Table</td>
+          <td align="right">957.5775</td>
+          <td align="right">5</td>
+          <td align="right">0.45</td>
+          <td align="right">-383.0310</td>
+        </tr>
+        <tr>
+          <td align="left">US-2015-108966</td>
+          <td align="left">2015-10-11</td>
+          <td align="left">2015-10-18</td>
+          <td align="left">Standard Class</td>
+          <td align="left">SO-20335</td>
+          <td align="left">Sean O’Donnell</td>
+          <td align="left">Consumer</td>
+          <td align="left">Fort Lauderdale</td>
+          <td align="left">Florida</td>
+          <td align="right">33311</td>
+          <td align="left">South</td>
+          <td align="left">OFF-ST-10000760</td>
+          <td align="left">Office Supplies</td>
+          <td align="left">Storage</td>
+          <td align="left">Eldon Fold ’N Roll Cart System</td>
+          <td align="right">22.3680</td>
+          <td align="right">2</td>
+          <td align="right">0.20</td>
+          <td align="right">2.5164</td>
+        </tr>
+      </tbody>
+    </table>
+  </table-wrap>
+  </sec>
+</sec>
+<sec id="section-nb-article">
+  <title>2 Section</title>
+  <p>This is a simple placeholder for the manuscript’s main document
+  (<xref alt="knuth84?" rid="ref-knuth84-nb-article" ref-type="bibr"><bold>knuth84?</bold></xref>).</p>
+  <sec specific-use="notebook-content">
+  <code language="r script">1 + 1</code>
+  <boxed-text>
+    <preformat>[1] 2</preformat>
+  </boxed-text>
+  </sec>
+</sec>
 <sec id="introduction-nb-article">
-  <title>1 Introduction</title>
+  <title>3 Introduction</title>
   <sec specific-use="notebook-content">
   <code language="r script">eruptions &lt;- c(1492, 1585, 1646, 1677, 1712, 1949, 1971, 2021)
 n_eruptions &lt;- length(eruptions)</code>
@@ -343,7 +1044,7 @@ avg_years_between_eruptions</code>
   <p>Eight eruptions have been recorded since the late 1400s
   (<xref alt="Figure 1" rid="fig-timeline-nb-article">Figure 1</xref>).</p>
   <p>Data and methods are discussed in
-  <xref alt="Section 2" rid="sec-data-methods-nb-article">Section 2</xref>.</p>
+  <xref alt="Section 4" rid="sec-data-methods-nb-article">Section 4</xref>.</p>
   <p>Let <inline-formula><alternatives>
   <tex-math><![CDATA[x]]></tex-math>
   <mml:math display="inline" xmlns:mml="http://www.w3.org/1998/Math/MathML"><mml:mi>x</mml:mi></mml:math></alternatives></inline-formula>
@@ -443,10 +1144,10 @@ avg_years_between_eruptions</code>
   the location of recent Earthquakes on La Palma.</p>
 </sec>
 <sec id="sec-data-methods-nb-article">
-  <title>2 Data &amp; Methods</title>
+  <title>4 Data &amp; Methods</title>
 </sec>
 <sec id="conclusion-nb-article">
-  <title>3 Conclusion</title>
+  <title>5 Conclusion</title>
 </sec>
 </body>
 

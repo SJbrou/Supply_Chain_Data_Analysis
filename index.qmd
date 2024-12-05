@@ -1,39 +1,173 @@
 ---
-title: La Palma Earthquakes
-author:
-  - name: Steve Purves
-    orcid: 0000-0002-0760-5497
+title: Supply Chain Data Analytics
+subtitle: Analyzing and Forcasting Supermarket Sales
+authors:
+  - name: Stan Brouwer
+    orchid: 0009-0006-3447-0096
+    affiliation: Vrije Universiteit
     corresponding: true
-    email: steve@curvenote.com
-    roles:
-      - Investigation
-      - Project administration
-      - Software
-      - Visualization
-    affiliations:
-      - Curvenote
-  - name: Rowan Cockett
-    orcid: 0000-0002-7859-8394
-    corresponding: false
-    roles: []
-    affiliations:
-      - Curvenote
-keywords:
-  - La Palma
-  - Earthquakes
-abstract: |
-  In September 2021, a significant jump in seismic activity on the island of La Palma (Canary Islands, Spain) signaled the start of a volcanic crisis that still continues at the time of writing. Earthquake data is continually collected and published by the Instituto Geográphico Nacional (IGN). ...
-plain-language-summary: |
-  Earthquake data for the island of La Palma from the September 2021 eruption is found ...
-key-points:
-  - A web scraping script was developed to pull data from the Instituto Geogràphico Nacional into a machine-readable form for analysis
-  - Earthquake events on La Palma are consistent with the presence of both mantle and crustal reservoirs.
+  - name: Liz Chan
+    affiliation: Master TSCM
+  - name: Maaike Lamberst
+    affiliation: Supply Chain Data analysis
+  - name: Niek Schroor
+    affiliation: Group 10
+
 date: last-modified
 bibliography: references.bib
 citation:
   container-title: Earth and Space Science
 number-sections: true
 ---
+
+We analyze, forecast and interpret the [Superstore sales](https://public.tableau.com/app/sample-data/sample_-_superstore.xls) provided by [Tableau](https://public.tableau.com/app/learn/sample-data) using different statistical and machine learning methods.
+
+We describe our work in the PDF version. However, we would like to recommend reading our quarto manuscript *here* as it contains the **relevant** R code in the Article Notebook.
+
+## Data Pre-processing
+
+The superstore data set we selected is of high quality. Thus we do the required data pre-processing, but included the hypothetical steps we would take were our data of lower quality to communicate our understanding of the data pre-processing process.
+
+We took the following pre-processing steps:
+
+```{r}
+#| label: setup
+#| include: false
+#| output: false
+
+# Clear workspace
+rm(list = ls())
+# Function to load (and install if necessary) dependencies
+install_and_load <- function(packages) {
+  install.packages(setdiff(packages, rownames(installed.packages())), dependencies = TRUE)
+  invisible(lapply(packages, require, character.only = TRUE))
+}
+install_and_load(c("tidyverse", "readxl", "ggplot2", "lubridate", "stats", "Amelia","forecast", "tseries", "plotly", "stringr", "knitr"))
+```
+
+-   Improved column names by removing whitespaces
+-   Removed the <code>Row_ID</code> column as it can be inferred by it's index
+-   Removed all columns with a single unique value, as storing these would be [redundant](https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html)
+-   Ensured machine-readable date formats in yyyy-mm-dd as these usually differ per locale.
+-   Ensured proper decimal separators
+-   calculated the number of missing values (both NA and empty string "") per column.
+
+```{r}
+#| label: data_preprocessing
+
+# Load the data
+suppressWarnings({data <- read_excel("data/sample_-_superstore.xls")}) # The Postal code column is stored as 'text' but coerced to numeric, causing warnings which we suppress
+
+# Improve column names (replace " "with "_")
+colnames(data) <- str_replace_all(colnames(data), " ", "_")
+
+# Remove the 'Row_ID' column as it can be inferred by it's index
+data <- subset(data, select = -`Row_ID`)
+
+# Remove all columns that have only one unique value, as storing these would be redundant
+data <- data[, sapply(data, function(col) length(unique(col)) > 1)]
+
+# Ensure a machine-readable date format as these are usually horrible in excel files
+data$Order_Date <- as.Date(data$Order_Date, format = "%Y-%m-%d")
+data$Ship_Date <- as.Date(data$Ship_Date, format = "%Y-%m-%d")
+
+# The readxl package by default uses the correct decimal separator (as opposed to base R)
+
+# Calculate the number of missing values per column.
+# The sample dates are likely in Unix time, and when these are converted to R date objects they are stored as Date objects (which are represented by 'double' datatypes). Comparing these dates to characters (empty strings) results in NA values. Thus we only check date values for NA. As Date objects are stored as doubles within R (amount of days since 1970-01-01), we can't check numeric columns for " " either. We thus only check character columns for " ".
+missing_values <- sapply(data, function(col) {
+  if (inherits(col, "Date")) {
+    sum(is.na(col))
+  } else if (is.character(col)) {
+    sum(is.na(col) | col == "")
+  } else {
+    sum(is.na(col))
+  }
+})
+
+if (sum(missing_values) == 0) {
+  print("No missing values")
+}
+
+
+# Optionally, print the missing values as a nice table using knitr
+# Convert the result into a data frame (table)
+missing_values_table <- data.frame(
+  Column = names(missing_values),
+  Missing_or_Empty = missing_values
+)
+
+# Note that there are no missing values, thus we do not print them
+# kable(missing_values_table, caption = "Missing or Empty Values in Columns", format = "pipe")
+rm(missing_values, missing_values_table)
+```
+
+We also ran some descriptive statistics to check unlikely or impossible values, outliers, means, etc.
+
+```{r descriptive_statistics, warning=FALSE, message=FALSE}
+
+# Select only numerical columns
+numerical_data <- data %>% select_if(is.numeric)
+
+# Apply sapply to calculate descriptive statistics for each numeric column
+descriptive_stats <- sapply(numerical_data, function(col) {
+  # Remove NA values
+  col <- na.omit(col)
+  
+  # Calculate basic statistics
+  min_val <- min(col)
+  max_val <- max(col)
+  mean_val <- mean(col)
+  median_val <- median(col)
+  
+  # 95% Confidence Interval (assuming normal distribution)
+  se <- sd(col) / sqrt(length(col))  # Standard error
+  ci_lower <- mean_val - 1.96 * se  # Lower bound of 95% CI
+  ci_upper <- mean_val + 1.96 * se  # Upper bound of 95% CI
+  
+  # Calculate outliers (using 1.5 * IQR rule)
+  Q1 <- quantile(col, 0.25)
+  Q3 <- quantile(col, 0.75)
+  IQR <- Q3 - Q1
+  outliers <- sum(col < (Q1 - 1.5 * IQR) | col > (Q3 + 1.5 * IQR))  # Number of outliers
+  
+  # Return the statistics as a named vector
+  return(c(Min = min_val, 
+           Mean = mean_val, 
+           Max = max_val, 
+           Median = median_val, 
+           `95% CI Lower` = ci_lower, 
+           `95% CI Upper` = ci_upper, 
+           Outliers = outliers))
+})
+head(data,5)
+
+```
+
+
+
+
+There is some more processing to do, such as removing outliers. However, by doing so we impose our own assumptions on the data (possibly the outliers are actual sales?). We will visualize and qualitatively evaluate the data first, and then decide what other processing steps to take. 
+
+
+```{r}
+# Display the first 5 rows of the data in a nice table with kable
+kable(head(data,5), caption = "First 5 Rows of the Data", format = "pipe")
+
+```
+
+
+
+## Section
+
+This is a simple placeholder for the manuscript's main document [@knuth84].
+
+```{r echo=TRUE}
+1 + 1
+```
+
+
+
 
 ## Introduction
 

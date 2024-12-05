@@ -64,6 +64,46 @@
 \fi
 \makeatother
 
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{241,243,245}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
@@ -177,9 +217,7 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
-  pdftitle={La Palma Earthquakes},
-  pdfauthor={Steve Purves; Rowan Cockett},
-  pdfkeywords={La Palma, Earthquakes},
+  pdftitle={Supply Chain Data Analytics},
   colorlinks=true,
   linkcolor={blue},
   filecolor={Maroon},
@@ -193,29 +231,249 @@
 \draftfalse
 
 \begin{document}
-\title{La Palma Earthquakes}
+\title{Supply Chain Data Analytics}
 
-\authors{Steve Purves\affil{1}, Rowan Cockett\affil{1}}
-\affiliation{1}{Curvenote, }
-\correspondingauthor{Steve Purves}{steve@curvenote.com}
-
-
-\begin{abstract}
-In September 2021, a significant jump in seismic activity on the island
-of La Palma (Canary Islands, Spain) signaled the start of a volcanic
-crisis that still continues at the time of writing. Earthquake data is
-continually collected and published by the Instituto Geográphico
-Nacional (IGN). \ldots{}
-\end{abstract}
-
-\section*{Plain Language Summary}
-Earthquake data for the island of La Palma from the September 2021
-eruption is found \ldots{}
+\authors{Stan Brouwer\affil{1}, Liz Chan\affil{2}, Maaike
+Lamberst\affil{3}, Niek Schroor\affil{4}}
+\affiliation{1}{Vrije Universiteit, }\affiliation{2}{Master
+TSCM, }\affiliation{3}{Supply Chain Data
+analysis, }\affiliation{4}{Group 10, }
+\correspondingauthor{Stan Brouwer}{}
 
 
 
 
-\section{Introduction}\label{introduction}
+
+
+
+We analyze, forecast and interpret the
+\href{https://public.tableau.com/app/sample-data/sample_-_superstore.xls}{Superstore
+sales} provided by
+\href{https://public.tableau.com/app/learn/sample-data}{Tableau} using
+different statistical and machine learning methods.
+
+We describe our work in the PDF version. However, we would like to
+recommend reading our quarto manuscript \emph{here} as it contains the
+\textbf{relevant} R code in the Article Notebook.
+
+\subsection{Data Pre-processing}\label{data-pre-processing}
+
+The superstore data set we selected is of high quality. Thus we do the
+required data pre-processing, but included the hypothetical steps we
+would take were our data of lower quality to communicate our
+understanding of the data pre-processing process.
+
+We took the following pre-processing steps:
+
+\begin{itemize}
+\tightlist
+\item
+  Improved column names by removing whitespaces
+\item
+  Removed the Row\_ID column as it can be inferred by it's index
+\item
+  Removed all columns with a single unique value, as storing these would
+  be
+  \href{https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html}{redundant}
+\item
+  Ensured machine-readable date formats in yyyy-mm-dd as these usually
+  differ per locale.
+\item
+  Ensured proper decimal separators
+\item
+  calculated the number of missing values (both NA and empty string
+  ``\,``) per column.
+\end{itemize}
+
+\begin{verbatim}
+[1] "No missing values"
+\end{verbatim}
+
+\textsubscript{Source:
+\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
+Notebook}}
+
+We also ran some descriptive statistics to check unlikely or impossible
+values, outliers, means, etc.
+
+\begin{verbatim}
+# A tibble: 5 x 19
+  Order_ID     Order_Date Ship_Date  Ship_Mode Customer_ID Customer_Name Segment
+  <chr>        <date>     <date>     <chr>     <chr>       <chr>         <chr>  
+1 CA-2016-152~ 2016-11-08 2016-11-11 Second C~ CG-12520    Claire Gute   Consum~
+2 CA-2016-152~ 2016-11-08 2016-11-11 Second C~ CG-12520    Claire Gute   Consum~
+3 CA-2016-138~ 2016-06-12 2016-06-16 Second C~ DV-13045    Darrin Van H~ Corpor~
+4 US-2015-108~ 2015-10-11 2015-10-18 Standard~ SO-20335    Sean O'Donne~ Consum~
+5 US-2015-108~ 2015-10-11 2015-10-18 Standard~ SO-20335    Sean O'Donne~ Consum~
+# i 12 more variables: City <chr>, State <chr>, Postal_Code <dbl>,
+#   Region <chr>, Product_ID <chr>, Category <chr>, `Sub-Category` <chr>,
+#   Product_Name <chr>, Sales <dbl>, Quantity <dbl>, Discount <dbl>,
+#   Profit <dbl>
+\end{verbatim}
+
+\textsubscript{Source:
+\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
+Notebook}}
+
+There is some more processing to do, such as removing outliers. However,
+by doing so we impose our own assumptions on the data (possibly the
+outliers are actual sales?). We will visualize and qualitatively
+evaluate the data first, and then decide what other processing steps to
+take.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0540}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0396}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0396}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0540}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0432}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0576}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0360}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0576}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0396}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0432}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0252}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0576}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0576}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0468}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.2158}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0324}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0324}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0324}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 36\tabcolsep) * \real{0.0360}}@{}}
+\caption{First 5 Rows of the Data}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Order\_ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Order\_Date
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ship\_Date
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ship\_Mode
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Customer\_ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Customer\_Name
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Segment
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+City
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+State
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Postal\_Code
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Region
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Product\_ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Sub-Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Product\_Name
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Sales
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Quantity
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Discount
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Profit
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Order\_ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Order\_Date
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ship\_Date
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Ship\_Mode
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Customer\_ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Customer\_Name
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Segment
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+City
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+State
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Postal\_Code
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Region
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Product\_ID
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Sub-Category
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Product\_Name
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Sales
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Quantity
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Discount
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Profit
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+CA-2016-152156 & 2016-11-08 & 2016-11-11 & Second Class & CG-12520 &
+Claire Gute & Consumer & Henderson & Kentucky & 42420 & South &
+FUR-BO-10001798 & Furniture & Bookcases & Bush Somerset Collection
+Bookcase & 261.9600 & 2 & 0.00 & 41.9136 \\
+CA-2016-152156 & 2016-11-08 & 2016-11-11 & Second Class & CG-12520 &
+Claire Gute & Consumer & Henderson & Kentucky & 42420 & South &
+FUR-CH-10000454 & Furniture & Chairs & Hon Deluxe Fabric Upholstered
+Stacking Chairs, Rounded Back & 731.9400 & 3 & 0.00 & 219.5820 \\
+CA-2016-138688 & 2016-06-12 & 2016-06-16 & Second Class & DV-13045 &
+Darrin Van Huff & Corporate & Los Angeles & California & 90036 & West &
+OFF-LA-10000240 & Office Supplies & Labels & Self-Adhesive Address
+Labels for Typewriters by Universal & 14.6200 & 2 & 0.00 & 6.8714 \\
+US-2015-108966 & 2015-10-11 & 2015-10-18 & Standard Class & SO-20335 &
+Sean O'Donnell & Consumer & Fort Lauderdale & Florida & 33311 & South &
+FUR-TA-10000577 & Furniture & Tables & Bretford CR4500 Series Slim
+Rectangular Table & 957.5775 & 5 & 0.45 & -383.0310 \\
+US-2015-108966 & 2015-10-11 & 2015-10-18 & Standard Class & SO-20335 &
+Sean O'Donnell & Consumer & Fort Lauderdale & Florida & 33311 & South &
+OFF-ST-10000760 & Office Supplies & Storage & Eldon Fold 'N Roll Cart
+System & 22.3680 & 2 & 0.20 & 2.5164 \\
+\end{longtable}
+
+\textsubscript{Source:
+\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
+Notebook}}
+
+\subsection{Section}\label{section}
+
+This is a simple placeholder for the manuscript's main document
+(\textbf{knuth84?}).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DecValTok{1} \SpecialCharTok{+} \DecValTok{1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+[1] 2
+\end{verbatim}
+
+\textsubscript{Source:
+\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
+Notebook}}
+
+\subsection{Introduction}\label{introduction}
 
 \textsubscript{Source:
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
@@ -327,12 +585,12 @@ Earthquakes}}
 Figure~\ref{fig-spatial-plot} shows the location of recent Earthquakes
 on La Palma.
 
-\section{Data \& Methods}\label{sec-data-methods}
+\subsection{Data \& Methods}\label{sec-data-methods}
 
-\section{Conclusion}\label{conclusion}
+\subsection{Conclusion}\label{conclusion}
 
-\section*{References}\label{references}
-\addcontentsline{toc}{section}{References}
+\subsection*{References}\label{references}
+\addcontentsline{toc}{subsection}{References}
 
 \phantomsection\label{refs}
 \begin{CSLReferences}{1}{0}
