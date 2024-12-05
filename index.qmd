@@ -53,11 +53,10 @@ install_and_load(c("tidyverse", "readxl", "ggplot2", "lubridate", "stats", "Amel
 -   Removed all columns with a single unique value, as storing these would be [redundant](https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html)
 -   Ensured machine-readable date formats in yyyy-mm-dd as these usually differ per locale.
 -   Ensured proper decimal separators
--   calculated the number of missing values (both NA and empty string "") per column.
+-   Calculated the number of missing values (both NA and empty string "") per column.
 
 ```{r}
 #| label: data_preprocessing
-#| echo: false
 
 # Load the data
 suppressWarnings({data <- read_excel("data/sample_-_superstore.xls")}) # The Postal code column is stored as 'text' but coerced to numeric, causing warnings which we suppress
@@ -78,7 +77,7 @@ data$Ship_Date <- as.Date(data$Ship_Date, format = "%Y-%m-%d")
 # The readxl package by default uses the correct decimal separator (as opposed to base R)
 
 # Calculate the number of missing values per column.
-# The sample dates are likely in Unix time, and when these are converted to R date objects they are stored as Date objects (which are represented by 'double' datatypes). Comparing these dates to characters (empty strings) results in NA values. Thus we only check date values for NA. As Date objects are stored as doubles within R (amount of days since 1970-01-01), we can't check numeric columns for " " either. We thus only check character columns for " ".
+# Origional dates and R date objects are in unix time, which return NA when compared to text (empty string). These dates are stored as 'double' datatype, Thus we check character columns for empty strings, and all columns for NA values. 
 missing_values <- sapply(data, function(col) {
   if (inherits(col, "Date")) {
     sum(is.na(col))
@@ -88,24 +87,23 @@ missing_values <- sapply(data, function(col) {
     sum(is.na(col))
   }
 })
-```
 
-```{r}
+
 if (sum(missing_values) == 0) {
-  print("None of the columns contains missing values")
+  print("None of the columns contains missing values") # We print to enforce the "Source: Article notebook
   } else {
   print("Some columns contain missing values")
 }
 
-# Optionally, print the missing values as a nice table using knitr
-# Convert the result into a data frame (table)
+# Optionally, print the missing values as a nice table
 missing_values_table <- data.frame(
   Column = names(missing_values),
   Missing_or_Empty = missing_values
 )
-
 # Note that there are no missing values, thus we do not print them
 # kable(missing_values_table, caption = "Missing or Empty Values in Columns", format = "pipe")
+
+
 rm(missing_value, missing_values_table)
 ```
 
@@ -116,15 +114,155 @@ kable(t(head(data, 3)), caption = "First 5 Rows of the Data (Transposed)", forma
 
 ```
 
+There is some more processing to do, for instance the removing of outliers. However, by doing so we impose our own assumptions on the data. Let's start by evaluating the descriptive statistics of our data and check if further processing is required. 
+
+```{r}
+#| label: descriptive statistics
+
+descriptive_statistics <- function(column) {
+  if (is.numeric(column)) {
+    stats <- list(
+      Min = min(column, na.rm = TRUE), # Note that handling NA values increases robustness (and I copied the funciton from some of my earlier work)
+      Max = max(column, na.rm = TRUE),
+      Mean = mean(column, na.rm = TRUE),
+      Median = median(column, na.rm = TRUE),
+      StdDev = sd(column, na.rm = TRUE)
+    )
+  } else if (inherits(column, "Date")) {
+    stats <- list(
+      Earliest = format(min(column, na.rm = TRUE), "%Y-%m-%d"),
+      Latest = format(max(column, na.rm = TRUE), "%Y-%m-%d")
+    )
+  } else if (is.character(column)) {
+    stats <- list(
+      Unique = length(unique(column)),
+      Mode = names(sort(table(column), decreasing = TRUE)[1])
+    )
+  } else {
+    stats <- NULL
+  }
+  return(stats)
+}
+
+# Call function on dataframe
+descriptive_stats <- lapply(data, descriptive_statistics)
+
+# Separate to tables dependent on data type
+numeric_stats <- as.data.frame(do.call(rbind, lapply(names(data), function(col_name) {
+  if (is.numeric(data[[col_name]])) {
+    c(Column = col_name, descriptive_stats[[col_name]])
+  }
+})), stringsAsFactors = FALSE)
+date_stats <- as.data.frame(do.call(rbind, lapply(names(data), function(col_name) {
+  if (inherits(data[[col_name]], "Date")) {
+    c(Column = col_name, descriptive_stats[[col_name]])
+  }
+})), stringsAsFactors = FALSE)
+character_stats <- as.data.frame(do.call(rbind, lapply(names(data), function(col_name) {
+  if (is.character(data[[col_name]])) {
+    c(Column = col_name, descriptive_stats[[col_name]])
+  }
+})), stringsAsFactors = FALSE)
+
+# Output tables
+kable(
+  numeric_stats,
+  caption = "Descriptive Statistics for Numeric Columns",
+  format = "pipe")
+
+kable(
+  date_stats,
+  caption = "Descriptive Statistics for Date Columns",
+  format = "pipe")
+
+# Let's not render the character table as it contains little relevant information
+#kable(
+#  character_stats,
+#  caption = "Descriptive Statistics for Text Columns",
+#  format = "pipe")
+```
+
+We inspected the orders with the lowest and highers price (<code>Sales</code> in USD). The most expensive orders were professional printers, camera's and teleconferencing units with high unit prices, and these orders often were of high <code>Quantity</code>. The orders with the lowest price where often binders, had a high <code>Discount</code> rate, and often a <code>Quantity</code> of just one. 
+
+We were fascinated by the orders with a negative <code>profit</code>. These all had high <code>Discount</code> rates, and often concerned the same items, such as the <code>Cubify CubeX 3D Printer Triple Head Print</code>. The orders with a negative <code>Profit</code> where often part of a larger order (for instance <code>CA-2016-108196</code>), and placed by customers that placed multiple orders. We suspect these negative <code>Profit</code>'s to be caused by faulty items that receive discounts, general discount codes, or volumne discounts. However, due to especially the high discounts on orders with negative profits, we assume these to be valid orders. This decision has also been influenced by the high quality of the data. As we found no missing values whatshowever, we suspect the chance of some weird but valid orders to be higher than encountering mistakes here. *[this paragraph could use some rewriting]*
 
 
-There is some more processing to do, such as removing outliers. However, by doing so we impose our own assumptions on the data (possibly the outliers are actual sales?). We will visualize and qualitatively evaluate the data first, and then decide what other processing steps to take. 
+## Data Visualization
+
+```{r}
+#| label: data_viz1
+
+# Sum of Quantity for top products
+top_products <- data %>%
+  group_by(Product_Name) %>%
+  summarize(total_quantity = sum(Quantity, na.rm = TRUE)) %>%
+  arrange(desc(total_quantity)) %>%
+  slice_head(n = 20) %>%  # Top 20 products
+  mutate(ProdName8 = substr(Product_Name, 1, 8)) # Truncate product names to the first 8 characters
+
+# View the result
+top_products
+
+# Plot with ggplot and ggplotly
+ggplot(top_products, aes(x = reorder(ProdName8, -total_quantity), y = total_quantity)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Top 20 Most Sold Products",
+       x = "Product ID",
+       y = "Total Quantity") +
+  theme_minimal() +
+  coord_flip()
 
 
 
 
 
-## Section
+# Aggregate quantity by Product Name and Order Date to create a time series
+time_series_data <- data %>%
+  group_by(Product_Name, Order_Date) %>%
+  summarize(total_quantity = sum(Quantity, na.rm = TRUE)) %>%
+  ungroup()
+# Filter for the top products by total quantity sold (adjust as needed)
+top_products <- time_series_data %>%
+  group_by(Product_Name) %>%
+  summarize(total_quantity = sum(total_quantity)) %>%
+  arrange(desc(total_quantity)) %>%
+  slice_head(n = 10)  # Select top 10 products
+
+# Filter the time-series data for only these top products
+filtered_time_series_data <- time_series_data %>%
+  filter(Product_Name %in% top_products$Product_Name) %>%
+  mutate(ProdName8 = substr(Product_Name, 1, 8)) # Product names can be quite long and mess up layouts. Lets only plot the first 8 chars.
+
+
+# Plot using the truncated product name
+ggplot(filtered_time_series_data, aes(x = Order_Date, y = total_quantity, color = ProdName8)) +
+  geom_line(size = 1) +
+  labs(title = "Quantity Sold Over Time per Product",
+       x = "Order Date",
+       y = "Quantity Sold") +
+  theme_minimal() +
+  theme(legend.position = "bottom") +
+  scale_color_discrete(name = "Product Name")
+
+
+
+# Count frequency of top 20 products
+top_products <- data %>%
+  count(Product_Name, sort = TRUE) %>%
+  top_n(20, n) %>%
+  mutate(ProdName8 = substr(Product_Name, 1, 8))
+
+# Plot!
+ggplot(top_products, aes(x = reorder(`ProdName8`, -n), y = n)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  labs(title = "Top 20 Most Sold Products",
+       x = "Product Name",
+       y = "Quantity sold") +
+  theme_minimal() +
+  coord_flip()
+```
+
+
 
 This is a simple placeholder for the manuscript's main document [@knuth84].
 

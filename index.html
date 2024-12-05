@@ -220,7 +220,7 @@ window.Quarto = {
    
   <ul>
   <li><a href="#data-pre-processing" id="toc-data-pre-processing" class="nav-link active" data-scroll-target="#data-pre-processing"><span class="header-section-number">1</span> Data Pre-processing</a></li>
-  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"><span class="header-section-number">2</span> Section</a></li>
+  <li><a href="#data-visualization" id="toc-data-visualization" class="nav-link" data-scroll-target="#data-visualization"><span class="header-section-number">2</span> Data Visualization</a></li>
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">3</span> Introduction</a></li>
   <li><a href="#sec-data-methods" id="toc-sec-data-methods" class="nav-link" data-scroll-target="#sec-data-methods"><span class="header-section-number">4</span> Data &amp; Methods</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"><span class="header-section-number">5</span> Conclusion</a></li>
@@ -252,7 +252,7 @@ Introduction
 <li>Removed all columns with a single unique value, as storing these would be <a href="https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html">redundant</a></li>
 <li>Ensured machine-readable date formats in yyyy-mm-dd as these usually differ per locale.</li>
 <li>Ensured proper decimal separators</li>
-<li>calculated the number of missing values (both NA and empty string ““) per column.</li>
+<li>Calculated the number of missing values (both NA and empty string ““) per column.</li>
 </ul>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
@@ -389,13 +389,146 @@ Introduction
 </table>
 </div>
 </div>
-<p>There is some more processing to do, such as removing outliers. However, by doing so we impose our own assumptions on the data (possibly the outliers are actual sales?). We will visualize and qualitatively evaluate the data first, and then decide what other processing steps to take.</p>
+<p>There is some more processing to do, for instance the removing of outliers. However, by doing so we impose our own assumptions on the data. Let’s start by evaluating the descriptive statistics of our data and check if further processing is required.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Descriptive Statistics for Numeric Columns</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Column</th>
+<th style="text-align: left;">Min</th>
+<th style="text-align: left;">Max</th>
+<th style="text-align: left;">Mean</th>
+<th style="text-align: left;">Median</th>
+<th style="text-align: left;">StdDev</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Postal_Code</td>
+<td style="text-align: left;">1040</td>
+<td style="text-align: left;">99301</td>
+<td style="text-align: left;">55190.38</td>
+<td style="text-align: left;">56430.5</td>
+<td style="text-align: left;">32063.69</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sales</td>
+<td style="text-align: left;">0.444</td>
+<td style="text-align: left;">22638.48</td>
+<td style="text-align: left;">229.858</td>
+<td style="text-align: left;">54.49</td>
+<td style="text-align: left;">623.2451</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Quantity</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">3.789574</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">2.22511</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Discount</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0.8</td>
+<td style="text-align: left;">0.1562027</td>
+<td style="text-align: left;">0.2</td>
+<td style="text-align: left;">0.206452</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Profit</td>
+<td style="text-align: left;">-6599.978</td>
+<td style="text-align: left;">8399.976</td>
+<td style="text-align: left;">28.6569</td>
+<td style="text-align: left;">8.6665</td>
+<td style="text-align: left;">234.2601</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Descriptive Statistics for Date Columns</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Column</th>
+<th style="text-align: left;">Earliest</th>
+<th style="text-align: left;">Latest</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Order_Date</td>
+<td style="text-align: left;">2014-01-03</td>
+<td style="text-align: left;">2017-12-30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ship_Date</td>
+<td style="text-align: left;">2014-01-07</td>
+<td style="text-align: left;">2018-01-05</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>We inspected the orders with the lowest and highers price (<code>Sales</code> in USD). The most expensive orders were professional printers, camera’s and teleconferencing units with high unit prices, and these orders often were of high <code>Quantity</code>. The orders with the lowest price where often binders, had a high <code>Discount</code> rate, and often a <code>Quantity</code> of just one.</p>
+<p>We were fascinated by the orders with a negative <code>profit</code>. These all had high <code>Discount</code> rates, and often concerned the same items, such as the <code>Cubify CubeX 3D Printer Triple Head Print</code>. The orders with a negative <code>Profit</code> where often part of a larger order (for instance <code>CA-2016-108196</code>), and placed by customers that placed multiple orders. We suspect these negative <code>Profit</code>’s to be caused by faulty items that receive discounts, general discount codes, or volumne discounts. However, due to especially the high discounts on orders with negative profits, we assume these to be valid orders. This decision has also been influenced by the high quality of the data. As we found no missing values whatshowever, we suspect the chance of some weird but valid orders to be higher than encountering mistakes here. <em>[this paragraph could use some rewriting]</em></p>
 </section>
-<section id="section" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="section"><span class="header-section-number">2</span> Section</h2>
+<section id="data-visualization" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="data-visualization"><span class="header-section-number">2</span> Data Visualization</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 3
+   Product_Name                                         total_quantity ProdName8
+   &lt;chr&gt;                                                         &lt;dbl&gt; &lt;chr&gt;    
+ 1 Staples                                                         215 "Staples"
+ 2 Staple envelope                                                 170 "Staple …
+ 3 Easy-staple paper                                               150 "Easy-st…
+ 4 Staples in misc. colors                                          86 "Staples…
+ 5 KI Adjustable-Height Table                                       74 "KI Adju…
+ 6 Avery Non-Stick Binders                                          71 "Avery N…
+ 7 Storex Dura Pro Binders                                          71 "Storex …
+ 8 GBC Premium Transparent Covers with Diagonal Lined …             67 "GBC Pre…
+ 9 Situations Contoured Folding Chairs, 4/Set                       64 "Situati…
+10 Staple-based wall hangings                                       62 "Staple-…
+11 Chromcraft Round Conference Tables                               61 "Chromcr…
+12 Eldon Wave Desk Accessories                                      61 "Eldon W…
+13 Staple remover                                                   61 "Staple …
+14 Global Wood Trimmed Manager's Task Chair, Khaki                  59 "Global …
+15 Wilson Jones Turn Tabs Binder Tool for Ring Binders              59 "Wilson …
+16 Kingston Digital DataTraveler 16GB USB 2.0                       57 "Kingsto…
+17 Fellowes Officeware Wire Shelving                                55 "Fellowe…
+18 Global High-Back Leather Tilter, Burgundy                        54 "Global …
+19 SAFCO Arco Folding Chair                                         53 "SAFCO A…
+20 Xerox 226                                                        53 "Xerox 2…</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/data_viz1-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="index_files/figure-html/data_viz1-1.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/data_viz1-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="index_files/figure-html/data_viz1-2.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/data_viz1-3.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="index_files/figure-html/data_viz1-3.png" class="img-fluid figure-img" width="672"></a></p>
+</figure>
+</div>
+</div>
+</div>
 <p>This is a simple placeholder for the manuscript’s main document <span class="citation" data-cites="knuth84">(<a href="#ref-knuth84" role="doc-biblioref"><strong>knuth84?</strong></a>)</span>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 2</code></pre>
 </div>
@@ -408,7 +541,7 @@ Introduction
 <div id="fig-timeline" class="quarto-float quarto-figure quarto-figure-center anchored" alt="An event plot of the years of the last 8 eruptions on La Palma.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="index_files/figure-html/fig-timeline-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;1: Timeline of recent earthquakes on La Palma"><img src="index_files/figure-html/fig-timeline-1.png" class="img-fluid figure-img" alt="An event plot of the years of the last 8 eruptions on La Palma." width="576"></a>
+<a href="index_files/figure-html/fig-timeline-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;1: Timeline of recent earthquakes on La Palma"><img src="index_files/figure-html/fig-timeline-1.png" class="img-fluid figure-img" alt="An event plot of the years of the last 8 eruptions on La Palma." width="576"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-timeline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Timeline of recent earthquakes on La Palma
@@ -481,7 +614,7 @@ Table&nbsp;1: Recent historic eruptions on La Palma
 <div id="fig-map" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="images/la-palma-map.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;2: Map of La Palma"><img src="images/la-palma-map.png" class="img-fluid figure-img"></a>
+<a href="images/la-palma-map.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Figure&nbsp;2: Map of La Palma"><img src="images/la-palma-map.png" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-map-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;2: Map of La Palma

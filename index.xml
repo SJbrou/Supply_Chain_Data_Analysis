@@ -179,7 +179,7 @@ contains the <bold>relevant</bold> R code in the Article Notebook.</p>
       <p>Ensured proper decimal separators</p>
     </list-item>
     <list-item>
-      <p>calculated the number of missing values (both NA and empty
+      <p>Calculated the number of missing values (both NA and empty
       string ““) per column.</p>
     </list-item>
   </list>
@@ -317,14 +317,143 @@ contains the <bold>relevant</bold> R code in the Article Notebook.</p>
       </tbody>
     </table>
   </table-wrap>
-  <p>There is some more processing to do, such as removing outliers.
-  However, by doing so we impose our own assumptions on the data
-  (possibly the outliers are actual sales?). We will visualize and
-  qualitatively evaluate the data first, and then decide what other
-  processing steps to take.</p>
+  <p>There is some more processing to do, for instance the removing of
+  outliers. However, by doing so we impose our own assumptions on the
+  data. Let’s start by evaluating the descriptive statistics of our data
+  and check if further processing is required.</p>
+  <table-wrap>
+    <caption>
+      <p>Descriptive Statistics for Numeric Columns</p>
+    </caption>
+    <table>
+      <thead>
+        <tr>
+          <th align="left">Column</th>
+          <th align="left">Min</th>
+          <th align="left">Max</th>
+          <th align="left">Mean</th>
+          <th align="left">Median</th>
+          <th align="left">StdDev</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="left">Postal_Code</td>
+          <td align="left">1040</td>
+          <td align="left">99301</td>
+          <td align="left">55190.38</td>
+          <td align="left">56430.5</td>
+          <td align="left">32063.69</td>
+        </tr>
+        <tr>
+          <td align="left">Sales</td>
+          <td align="left">0.444</td>
+          <td align="left">22638.48</td>
+          <td align="left">229.858</td>
+          <td align="left">54.49</td>
+          <td align="left">623.2451</td>
+        </tr>
+        <tr>
+          <td align="left">Quantity</td>
+          <td align="left">1</td>
+          <td align="left">14</td>
+          <td align="left">3.789574</td>
+          <td align="left">3</td>
+          <td align="left">2.22511</td>
+        </tr>
+        <tr>
+          <td align="left">Discount</td>
+          <td align="left">0</td>
+          <td align="left">0.8</td>
+          <td align="left">0.1562027</td>
+          <td align="left">0.2</td>
+          <td align="left">0.206452</td>
+        </tr>
+        <tr>
+          <td align="left">Profit</td>
+          <td align="left">-6599.978</td>
+          <td align="left">8399.976</td>
+          <td align="left">28.6569</td>
+          <td align="left">8.6665</td>
+          <td align="left">234.2601</td>
+        </tr>
+      </tbody>
+    </table>
+  </table-wrap>
+  <table-wrap>
+    <caption>
+      <p>Descriptive Statistics for Date Columns</p>
+    </caption>
+    <table>
+      <thead>
+        <tr>
+          <th align="left">Column</th>
+          <th align="left">Earliest</th>
+          <th align="left">Latest</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="left">Order_Date</td>
+          <td align="left">2014-01-03</td>
+          <td align="left">2017-12-30</td>
+        </tr>
+        <tr>
+          <td align="left">Ship_Date</td>
+          <td align="left">2014-01-07</td>
+          <td align="left">2018-01-05</td>
+        </tr>
+      </tbody>
+    </table>
+  </table-wrap>
+  <p>We inspected the orders with the lowest and highers price (Sales in
+  USD). The most expensive orders were professional printers, camera’s
+  and teleconferencing units with high unit prices, and these orders
+  often were of high Quantity. The orders with the lowest price where
+  often binders, had a high Discount rate, and often a Quantity of just
+  one.</p>
+  <p>We were fascinated by the orders with a negative profit. These all
+  had high Discount rates, and often concerned the same items, such as
+  the Cubify CubeX 3D Printer Triple Head Print. The orders with a
+  negative Profit where often part of a larger order (for instance
+  CA-2016-108196), and placed by customers that placed multiple orders.
+  We suspect these negative Profit’s to be caused by faulty items that
+  receive discounts, general discount codes, or volumne discounts.
+  However, due to especially the high discounts on orders with negative
+  profits, we assume these to be valid orders. This decision has also
+  been influenced by the high quality of the data. As we found no
+  missing values whatshowever, we suspect the chance of some weird but
+  valid orders to be higher than encountering mistakes here.
+  <italic>[this paragraph could use some rewriting]</italic></p>
 </sec>
-<sec id="section">
-  <title>2 Section</title>
+<sec id="data-visualization">
+  <title>2 Data Visualization</title>
+  <preformat># A tibble: 20 × 3
+   Product_Name                                         total_quantity ProdName8
+   &lt;chr&gt;                                                         &lt;dbl&gt; &lt;chr&gt;    
+ 1 Staples                                                         215 &quot;Staples&quot;
+ 2 Staple envelope                                                 170 &quot;Staple …
+ 3 Easy-staple paper                                               150 &quot;Easy-st…
+ 4 Staples in misc. colors                                          86 &quot;Staples…
+ 5 KI Adjustable-Height Table                                       74 &quot;KI Adju…
+ 6 Avery Non-Stick Binders                                          71 &quot;Avery N…
+ 7 Storex Dura Pro Binders                                          71 &quot;Storex …
+ 8 GBC Premium Transparent Covers with Diagonal Lined …             67 &quot;GBC Pre…
+ 9 Situations Contoured Folding Chairs, 4/Set                       64 &quot;Situati…
+10 Staple-based wall hangings                                       62 &quot;Staple-…
+11 Chromcraft Round Conference Tables                               61 &quot;Chromcr…
+12 Eldon Wave Desk Accessories                                      61 &quot;Eldon W…
+13 Staple remover                                                   61 &quot;Staple …
+14 Global Wood Trimmed Manager's Task Chair, Khaki                  59 &quot;Global …
+15 Wilson Jones Turn Tabs Binder Tool for Ring Binders              59 &quot;Wilson …
+16 Kingston Digital DataTraveler 16GB USB 2.0                       57 &quot;Kingsto…
+17 Fellowes Officeware Wire Shelving                                55 &quot;Fellowe…
+18 Global High-Back Leather Tilter, Burgundy                        54 &quot;Global …
+19 SAFCO Arco Folding Chair                                         53 &quot;SAFCO A…
+20 Xerox 226                                                        53 &quot;Xerox 2…</preformat>
+  <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/data_viz1-1.png" />
+  <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/data_viz1-2.png" />
+  <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/data_viz1-3.png" />
   <p>This is a simple placeholder for the manuscript’s main document
   (<xref alt="knuth84?" rid="ref-knuth84" ref-type="bibr"><bold>knuth84?</bold></xref>).</p>
   <code language="r script">1 + 1</code>
@@ -674,7 +803,7 @@ Loading required package: knitr</preformat>
       <p>Ensured proper decimal separators</p>
     </list-item>
     <list-item>
-      <p>calculated the number of missing values (both NA and empty
+      <p>Calculated the number of missing values (both NA and empty
       string ““) per column.</p>
     </list-item>
   </list>
@@ -698,7 +827,7 @@ data$Ship_Date &lt;- as.Date(data$Ship_Date, format = &quot;%Y-%m-%d&quot;)
 # The readxl package by default uses the correct decimal separator (as opposed to base R)
 
 # Calculate the number of missing values per column.
-# The sample dates are likely in Unix time, and when these are converted to R date objects they are stored as Date objects (which are represented by 'double' datatypes). Comparing these dates to characters (empty strings) results in NA values. Thus we only check date values for NA. As Date objects are stored as doubles within R (amount of days since 1970-01-01), we can't check numeric columns for &quot; &quot; either. We thus only check character columns for &quot; &quot;.
+# Origional dates and R date objects are in unix time, which return NA when compared to text (empty string). These dates are stored as 'double' datatype, Thus we check character columns for empty strings, and all columns for NA values. 
 missing_values &lt;- sapply(data, function(col) {
   if (inherits(col, &quot;Date&quot;)) {
     sum(is.na(col))
@@ -707,26 +836,26 @@ missing_values &lt;- sapply(data, function(col) {
   } else {
     sum(is.na(col))
   }
-})</code>
-  </sec>
-  <sec specific-use="notebook-content">
-  <code language="r script">if (sum(missing_values) == 0) {
-  print(&quot;None of the columns contains missing values&quot;)
+})
+
+
+if (sum(missing_values) == 0) {
+  print(&quot;None of the columns contains missing values&quot;) # We print to enforce the &quot;Source: Article notebook
   } else {
   print(&quot;Some columns contain missing values&quot;)
 }</code>
   <boxed-text>
     <preformat>[1] &quot;None of the columns contains missing values&quot;</preformat>
   </boxed-text>
-  <code language="r script"># Optionally, print the missing values as a nice table using knitr
-# Convert the result into a data frame (table)
+  <code language="r script"># Optionally, print the missing values as a nice table
 missing_values_table &lt;- data.frame(
   Column = names(missing_values),
   Missing_or_Empty = missing_values
 )
-
 # Note that there are no missing values, thus we do not print them
 # kable(missing_values_table, caption = &quot;Missing or Empty Values in Columns&quot;, format = &quot;pipe&quot;)
+
+
 rm(missing_value, missing_values_table)</code>
   <boxed-text>
     <preformat>Warning in rm(missing_value, missing_values_table): object 'missing_value' not
@@ -869,14 +998,275 @@ found</preformat>
     </table>
   </table-wrap>
   </sec>
-  <p>There is some more processing to do, such as removing outliers.
-  However, by doing so we impose our own assumptions on the data
-  (possibly the outliers are actual sales?). We will visualize and
-  qualitatively evaluate the data first, and then decide what other
-  processing steps to take.</p>
+  <p>There is some more processing to do, for instance the removing of
+  outliers. However, by doing so we impose our own assumptions on the
+  data. Let’s start by evaluating the descriptive statistics of our data
+  and check if further processing is required.</p>
+  <sec specific-use="notebook-content">
+  <code language="r script">descriptive_statistics &lt;- function(column) {
+  if (is.numeric(column)) {
+    stats &lt;- list(
+      Min = min(column, na.rm = TRUE), # Note that handling NA values increases robustness (and I copied the funciton from some of my earlier work)
+      Max = max(column, na.rm = TRUE),
+      Mean = mean(column, na.rm = TRUE),
+      Median = median(column, na.rm = TRUE),
+      StdDev = sd(column, na.rm = TRUE)
+    )
+  } else if (inherits(column, &quot;Date&quot;)) {
+    stats &lt;- list(
+      Earliest = format(min(column, na.rm = TRUE), &quot;%Y-%m-%d&quot;),
+      Latest = format(max(column, na.rm = TRUE), &quot;%Y-%m-%d&quot;)
+    )
+  } else if (is.character(column)) {
+    stats &lt;- list(
+      Unique = length(unique(column)),
+      Mode = names(sort(table(column), decreasing = TRUE)[1])
+    )
+  } else {
+    stats &lt;- NULL
+  }
+  return(stats)
+}
+
+# Call function on dataframe
+descriptive_stats &lt;- lapply(data, descriptive_statistics)
+
+# Separate to tables dependent on data type
+numeric_stats &lt;- as.data.frame(do.call(rbind, lapply(names(data), function(col_name) {
+  if (is.numeric(data[[col_name]])) {
+    c(Column = col_name, descriptive_stats[[col_name]])
+  }
+})), stringsAsFactors = FALSE)
+date_stats &lt;- as.data.frame(do.call(rbind, lapply(names(data), function(col_name) {
+  if (inherits(data[[col_name]], &quot;Date&quot;)) {
+    c(Column = col_name, descriptive_stats[[col_name]])
+  }
+})), stringsAsFactors = FALSE)
+character_stats &lt;- as.data.frame(do.call(rbind, lapply(names(data), function(col_name) {
+  if (is.character(data[[col_name]])) {
+    c(Column = col_name, descriptive_stats[[col_name]])
+  }
+})), stringsAsFactors = FALSE)
+
+# Output tables
+kable(
+  numeric_stats,
+  caption = &quot;Descriptive Statistics for Numeric Columns&quot;,
+  format = &quot;pipe&quot;)</code>
+  <table-wrap>
+    <caption>
+      <p>Descriptive Statistics for Numeric Columns</p>
+    </caption>
+    <table>
+      <thead>
+        <tr>
+          <th align="left">Column</th>
+          <th align="left">Min</th>
+          <th align="left">Max</th>
+          <th align="left">Mean</th>
+          <th align="left">Median</th>
+          <th align="left">StdDev</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="left">Postal_Code</td>
+          <td align="left">1040</td>
+          <td align="left">99301</td>
+          <td align="left">55190.38</td>
+          <td align="left">56430.5</td>
+          <td align="left">32063.69</td>
+        </tr>
+        <tr>
+          <td align="left">Sales</td>
+          <td align="left">0.444</td>
+          <td align="left">22638.48</td>
+          <td align="left">229.858</td>
+          <td align="left">54.49</td>
+          <td align="left">623.2451</td>
+        </tr>
+        <tr>
+          <td align="left">Quantity</td>
+          <td align="left">1</td>
+          <td align="left">14</td>
+          <td align="left">3.789574</td>
+          <td align="left">3</td>
+          <td align="left">2.22511</td>
+        </tr>
+        <tr>
+          <td align="left">Discount</td>
+          <td align="left">0</td>
+          <td align="left">0.8</td>
+          <td align="left">0.1562027</td>
+          <td align="left">0.2</td>
+          <td align="left">0.206452</td>
+        </tr>
+        <tr>
+          <td align="left">Profit</td>
+          <td align="left">-6599.978</td>
+          <td align="left">8399.976</td>
+          <td align="left">28.6569</td>
+          <td align="left">8.6665</td>
+          <td align="left">234.2601</td>
+        </tr>
+      </tbody>
+    </table>
+  </table-wrap>
+  <code language="r script">kable(
+  date_stats,
+  caption = &quot;Descriptive Statistics for Date Columns&quot;,
+  format = &quot;pipe&quot;)</code>
+  <table-wrap>
+    <caption>
+      <p>Descriptive Statistics for Date Columns</p>
+    </caption>
+    <table>
+      <thead>
+        <tr>
+          <th align="left">Column</th>
+          <th align="left">Earliest</th>
+          <th align="left">Latest</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td align="left">Order_Date</td>
+          <td align="left">2014-01-03</td>
+          <td align="left">2017-12-30</td>
+        </tr>
+        <tr>
+          <td align="left">Ship_Date</td>
+          <td align="left">2014-01-07</td>
+          <td align="left">2018-01-05</td>
+        </tr>
+      </tbody>
+    </table>
+  </table-wrap>
+  <code language="r script"># Let's not render the character table as it contains little relevant information
+#kable(
+#  character_stats,
+#  caption = &quot;Descriptive Statistics for Text Columns&quot;,
+#  format = &quot;pipe&quot;)</code>
+  </sec>
+  <p>We inspected the orders with the lowest and highers price (Sales in
+  USD). The most expensive orders were professional printers, camera’s
+  and teleconferencing units with high unit prices, and these orders
+  often were of high Quantity. The orders with the lowest price where
+  often binders, had a high Discount rate, and often a Quantity of just
+  one.</p>
+  <p>We were fascinated by the orders with a negative profit. These all
+  had high Discount rates, and often concerned the same items, such as
+  the Cubify CubeX 3D Printer Triple Head Print. The orders with a
+  negative Profit where often part of a larger order (for instance
+  CA-2016-108196), and placed by customers that placed multiple orders.
+  We suspect these negative Profit’s to be caused by faulty items that
+  receive discounts, general discount codes, or volumne discounts.
+  However, due to especially the high discounts on orders with negative
+  profits, we assume these to be valid orders. This decision has also
+  been influenced by the high quality of the data. As we found no
+  missing values whatshowever, we suspect the chance of some weird but
+  valid orders to be higher than encountering mistakes here.
+  <italic>[this paragraph could use some rewriting]</italic></p>
 </sec>
-<sec id="section-nb-article">
-  <title>2 Section</title>
+<sec id="data-visualization-nb-article">
+  <title>2 Data Visualization</title>
+  <sec specific-use="notebook-content">
+  <code language="r script"># Sum of Quantity for top products
+top_products &lt;- data %&gt;%
+  group_by(Product_Name) %&gt;%
+  summarize(total_quantity = sum(Quantity, na.rm = TRUE)) %&gt;%
+  arrange(desc(total_quantity)) %&gt;%
+  slice_head(n = 20) %&gt;%  # Top 20 products
+  mutate(ProdName8 = substr(Product_Name, 1, 8)) # Truncate product names to the first 8 characters
+
+# View the result
+top_products</code>
+  <boxed-text>
+    <preformat># A tibble: 20 × 3
+   Product_Name                                         total_quantity ProdName8
+   &lt;chr&gt;                                                         &lt;dbl&gt; &lt;chr&gt;    
+ 1 Staples                                                         215 &quot;Staples&quot;
+ 2 Staple envelope                                                 170 &quot;Staple …
+ 3 Easy-staple paper                                               150 &quot;Easy-st…
+ 4 Staples in misc. colors                                          86 &quot;Staples…
+ 5 KI Adjustable-Height Table                                       74 &quot;KI Adju…
+ 6 Avery Non-Stick Binders                                          71 &quot;Avery N…
+ 7 Storex Dura Pro Binders                                          71 &quot;Storex …
+ 8 GBC Premium Transparent Covers with Diagonal Lined …             67 &quot;GBC Pre…
+ 9 Situations Contoured Folding Chairs, 4/Set                       64 &quot;Situati…
+10 Staple-based wall hangings                                       62 &quot;Staple-…
+11 Chromcraft Round Conference Tables                               61 &quot;Chromcr…
+12 Eldon Wave Desk Accessories                                      61 &quot;Eldon W…
+13 Staple remover                                                   61 &quot;Staple …
+14 Global Wood Trimmed Manager's Task Chair, Khaki                  59 &quot;Global …
+15 Wilson Jones Turn Tabs Binder Tool for Ring Binders              59 &quot;Wilson …
+16 Kingston Digital DataTraveler 16GB USB 2.0                       57 &quot;Kingsto…
+17 Fellowes Officeware Wire Shelving                                55 &quot;Fellowe…
+18 Global High-Back Leather Tilter, Burgundy                        54 &quot;Global …
+19 SAFCO Arco Folding Chair                                         53 &quot;SAFCO A…
+20 Xerox 226                                                        53 &quot;Xerox 2…</preformat>
+  </boxed-text>
+  <code language="r script"># Plot with ggplot and ggplotly
+ggplot(top_products, aes(x = reorder(ProdName8, -total_quantity), y = total_quantity)) +
+  geom_bar(stat = &quot;identity&quot;, fill = &quot;steelblue&quot;) +
+  labs(title = &quot;Top 20 Most Sold Products&quot;,
+       x = &quot;Product ID&quot;,
+       y = &quot;Total Quantity&quot;) +
+  theme_minimal() +
+  coord_flip()</code>
+  <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/data_viz1-1.png" />
+  <code language="r script"># Aggregate quantity by Product Name and Order Date to create a time series
+time_series_data &lt;- data %&gt;%
+  group_by(Product_Name, Order_Date) %&gt;%
+  summarize(total_quantity = sum(Quantity, na.rm = TRUE)) %&gt;%
+  ungroup()</code>
+  <boxed-text>
+    <preformat>`summarise()` has grouped output by 'Product_Name'. You can override using the
+`.groups` argument.</preformat>
+  </boxed-text>
+  <code language="r script"># Filter for the top products by total quantity sold (adjust as needed)
+top_products &lt;- time_series_data %&gt;%
+  group_by(Product_Name) %&gt;%
+  summarize(total_quantity = sum(total_quantity)) %&gt;%
+  arrange(desc(total_quantity)) %&gt;%
+  slice_head(n = 10)  # Select top 10 products
+
+# Filter the time-series data for only these top products
+filtered_time_series_data &lt;- time_series_data %&gt;%
+  filter(Product_Name %in% top_products$Product_Name) %&gt;%
+  mutate(ProdName8 = substr(Product_Name, 1, 8)) # Product names can be quite long and mess up layouts. Lets only plot the first 8 chars.
+
+
+# Plot using the truncated product name
+ggplot(filtered_time_series_data, aes(x = Order_Date, y = total_quantity, color = ProdName8)) +
+  geom_line(size = 1) +
+  labs(title = &quot;Quantity Sold Over Time per Product&quot;,
+       x = &quot;Order Date&quot;,
+       y = &quot;Quantity Sold&quot;) +
+  theme_minimal() +
+  theme(legend.position = &quot;bottom&quot;) +
+  scale_color_discrete(name = &quot;Product Name&quot;)</code>
+  <boxed-text>
+    <preformat>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</preformat>
+  </boxed-text>
+  <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/data_viz1-2.png" />
+  <code language="r script"># Count frequency of top 20 products
+top_products &lt;- data %&gt;%
+  count(Product_Name, sort = TRUE) %&gt;%
+  top_n(20, n) %&gt;%
+  mutate(ProdName8 = substr(Product_Name, 1, 8))
+
+# Plot!
+ggplot(top_products, aes(x = reorder(`ProdName8`, -n), y = n)) +
+  geom_bar(stat = &quot;identity&quot;, fill = &quot;steelblue&quot;) +
+  labs(title = &quot;Top 20 Most Sold Products&quot;,
+       x = &quot;Product Name&quot;,
+       y = &quot;Quantity sold&quot;) +
+  theme_minimal() +
+  coord_flip()</code>
+  <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/data_viz1-3.png" />
+  </sec>
   <p>This is a simple placeholder for the manuscript’s main document
   (<xref alt="knuth84?" rid="ref-knuth84-nb-article" ref-type="bibr"><bold>knuth84?</bold></xref>).</p>
   <sec specific-use="notebook-content">

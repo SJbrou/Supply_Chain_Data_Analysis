@@ -283,13 +283,9 @@ We took the following pre-processing steps:
 \item
   Ensured proper decimal separators
 \item
-  calculated the number of missing values (both NA and empty string
+  Calculated the number of missing values (both NA and empty string
   ``\,``) per column.
 \end{itemize}
-
-\textsubscript{Source:
-\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
-Notebook}}
 
 \begin{verbatim}
 [1] "None of the columns contains missing values"
@@ -340,13 +336,107 @@ Profit & 41.9136 & 219.5820 & 6.8714 \\
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
 Notebook}}
 
-There is some more processing to do, such as removing outliers. However,
-by doing so we impose our own assumptions on the data (possibly the
-outliers are actual sales?). We will visualize and qualitatively
-evaluate the data first, and then decide what other processing steps to
-take.
+There is some more processing to do, for instance the removing of
+outliers. However, by doing so we impose our own assumptions on the
+data. Let's start by evaluating the descriptive statistics of our data
+and check if further processing is required.
 
-\subsection{Section}\label{section}
+\begin{longtable}[]{@{}llllll@{}}
+\caption{Descriptive Statistics for Numeric Columns}\tabularnewline
+\toprule\noalign{}
+Column & Min & Max & Mean & Median & StdDev \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Column & Min & Max & Mean & Median & StdDev \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Postal\_Code & 1040 & 99301 & 55190.38 & 56430.5 & 32063.69 \\
+Sales & 0.444 & 22638.48 & 229.858 & 54.49 & 623.2451 \\
+Quantity & 1 & 14 & 3.789574 & 3 & 2.22511 \\
+Discount & 0 & 0.8 & 0.1562027 & 0.2 & 0.206452 \\
+Profit & -6599.978 & 8399.976 & 28.6569 & 8.6665 & 234.2601 \\
+\end{longtable}
+
+\begin{longtable}[]{@{}lll@{}}
+\caption{Descriptive Statistics for Date Columns}\tabularnewline
+\toprule\noalign{}
+Column & Earliest & Latest \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Column & Earliest & Latest \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Order\_Date & 2014-01-03 & 2017-12-30 \\
+Ship\_Date & 2014-01-07 & 2018-01-05 \\
+\end{longtable}
+
+\textsubscript{Source:
+\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
+Notebook}}
+
+We inspected the orders with the lowest and highers price (Sales in
+USD). The most expensive orders were professional printers, camera's and
+teleconferencing units with high unit prices, and these orders often
+were of high Quantity. The orders with the lowest price where often
+binders, had a high Discount rate, and often a Quantity of just one.
+
+We were fascinated by the orders with a negative profit. These all had
+high Discount rates, and often concerned the same items, such as the
+Cubify CubeX 3D Printer Triple Head Print. The orders with a negative
+Profit where often part of a larger order (for instance CA-2016-108196),
+and placed by customers that placed multiple orders. We suspect these
+negative Profit's to be caused by faulty items that receive discounts,
+general discount codes, or volumne discounts. However, due to especially
+the high discounts on orders with negative profits, we assume these to
+be valid orders. This decision has also been influenced by the high
+quality of the data. As we found no missing values whatshowever, we
+suspect the chance of some weird but valid orders to be higher than
+encountering mistakes here. \emph{{[}this paragraph could use some
+rewriting{]}}
+
+\subsection{Data Visualization}\label{data-visualization}
+
+\begin{verbatim}
+# A tibble: 20 x 3
+   Product_Name                                         total_quantity ProdName8
+   <chr>                                                         <dbl> <chr>    
+ 1 Staples                                                         215 "Staples"
+ 2 Staple envelope                                                 170 "Staple ~
+ 3 Easy-staple paper                                               150 "Easy-st~
+ 4 Staples in misc. colors                                          86 "Staples~
+ 5 KI Adjustable-Height Table                                       74 "KI Adju~
+ 6 Avery Non-Stick Binders                                          71 "Avery N~
+ 7 Storex Dura Pro Binders                                          71 "Storex ~
+ 8 GBC Premium Transparent Covers with Diagonal Lined ~             67 "GBC Pre~
+ 9 Situations Contoured Folding Chairs, 4/Set                       64 "Situati~
+10 Staple-based wall hangings                                       62 "Staple-~
+11 Chromcraft Round Conference Tables                               61 "Chromcr~
+12 Eldon Wave Desk Accessories                                      61 "Eldon W~
+13 Staple remover                                                   61 "Staple ~
+14 Global Wood Trimmed Manager's Task Chair, Khaki                  59 "Global ~
+15 Wilson Jones Turn Tabs Binder Tool for Ring Binders              59 "Wilson ~
+16 Kingston Digital DataTraveler 16GB USB 2.0                       57 "Kingsto~
+17 Fellowes Officeware Wire Shelving                                55 "Fellowe~
+18 Global High-Back Leather Tilter, Burgundy                        54 "Global ~
+19 SAFCO Arco Folding Chair                                         53 "SAFCO A~
+20 Xerox 226                                                        53 "Xerox 2~
+\end{verbatim}
+
+\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/data_viz1-1.pdf}}
+
+\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/data_viz1-2.pdf}}
+
+\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/data_viz1-3.pdf}}
+
+\textsubscript{Source:
+\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
+Notebook}}
 
 This is a simple placeholder for the manuscript's main document
 (\textbf{knuth84?}).
