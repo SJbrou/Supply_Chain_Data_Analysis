@@ -61,8 +61,9 @@ install_and_load(c("tidyverse", "readxl", "ggplot2", "lubridate", "stats", "Amel
 # Load the data
 suppressWarnings({data <- read_excel("data/sample_-_superstore.xls")}) # The Postal code column is stored as 'text' but coerced to numeric, causing warnings which we suppress
 
-# Improve column names (replace " "with "_")
+# Improve column names
 colnames(data) <- str_replace_all(colnames(data), " ", "_")
+colnames(data) <- str_replace_all(colnames(data), "-", "_")
 
 # Remove the 'Row_ID' column as it can be inferred by it's index
 data <- subset(data, select = -`Row_ID`)
@@ -114,7 +115,7 @@ kable(t(head(data, 3)), caption = "First 5 Rows of the Data (Transposed)", forma
 
 ```
 
-There is some more processing to do, for instance the removing of outliers. However, by doing so we impose our own assumptions on the data. Let's start by evaluating the descriptive statistics of our data and check if further processing is required. 
+There is some more processing to do, for instance the removal of outliers. However, by doing so we impose our own assumptions on the data. Let's start by evaluating the descriptive statistics of our data and check if further processing is required. 
 
 ```{r}
 #| label: descriptive statistics
@@ -184,37 +185,31 @@ kable(
 
 We inspected the orders with the lowest and highers price (<code>Sales</code> in USD). The most expensive orders were professional printers, camera's and teleconferencing units with high unit prices, and these orders often were of high <code>Quantity</code>. The orders with the lowest price where often binders, had a high <code>Discount</code> rate, and often a <code>Quantity</code> of just one. 
 
-We were fascinated by the orders with a negative <code>profit</code>. These all had high <code>Discount</code> rates, and often concerned the same items, such as the <code>Cubify CubeX 3D Printer Triple Head Print</code>. The orders with a negative <code>Profit</code> where often part of a larger order (for instance <code>CA-2016-108196</code>), and placed by customers that placed multiple orders. We suspect these negative <code>Profit</code>'s to be caused by faulty items that receive discounts, general discount codes, or volumne discounts. However, due to especially the high discounts on orders with negative profits, we assume these to be valid orders. This decision has also been influenced by the high quality of the data. As we found no missing values whatshowever, we suspect the chance of some weird but valid orders to be higher than encountering mistakes here. *[this paragraph could use some rewriting]*
+We were fascinated by the orders with a negative <code>profit</code>. These all had high <code>Discount</code> rates, and often concerned the same items, such as the <code>Cubify CubeX 3D Printer Triple Head Print</code>. The orders with a negative <code>Profit</code> where often part of a larger order (for instance <code>CA-2016-108196</code>), and placed by customers that placed multiple orders. We suspect these negative <code>Profit</code>'s to be caused by faulty items that receive discounts, general discount codes, or volume discounts. However, due to especially the high discounts on orders with negative profits, we assume these to be valid orders. This decision has also been influenced by the high quality of the data. As we found no missing values whats however, we suspect the chance of some weird but valid orders to be higher than encountering mistakes here. *[this paragraph could use some rewriting]*
 
+In figure x we plotted the sales of the most popular products. Unfortunately, the sales of individual products were too low to determine any meaningfull trends. 
 
-## Data Visualization
+```{r message=FALSE, warnng=FALSE, error=FALSE}
+#| label: Quantity_top_products
+#| fig-cap: Figure x Sale quantity of the most popular products
 
-```{r}
-#| label: data_viz1
-
-# Sum of Quantity for top products
-top_products <- data %>%
-  group_by(Product_Name) %>%
-  summarize(total_quantity = sum(Quantity, na.rm = TRUE)) %>%
-  arrange(desc(total_quantity)) %>%
-  slice_head(n = 20) %>%  # Top 20 products
-  mutate(ProdName8 = substr(Product_Name, 1, 8)) # Truncate product names to the first 8 characters
-
-# View the result
-top_products
-
-# Plot with ggplot and ggplotly
-ggplot(top_products, aes(x = reorder(ProdName8, -total_quantity), y = total_quantity)) +
-  geom_bar(stat = "identity", fill = "steelblue") +
-  labs(title = "Top 20 Most Sold Products",
-       x = "Product ID",
-       y = "Total Quantity") +
-  theme_minimal() +
-  coord_flip()
-
-
-
-
+# Optionally: print top 10 sale quantity barplot
+# # Sum of Quantity for top products
+# top_products <- data %>%
+#   group_by(Product_Name) %>%
+#   summarize(total_quantity = sum(Quantity, na.rm = TRUE)) %>%
+#   arrange(desc(total_quantity)) %>%
+#   slice_head(n = 10) %>% 
+#   mutate(ProdName8 = substr(Product_Name, 1, 8)) # Truncate product names to the first 8 characters. Long names mess up formatting
+# 
+# # Plot
+# ggplot(top_products, aes(x = reorder(ProdName8, -total_quantity), y = total_quantity)) +
+#   geom_bar(stat = "identity", fill = "steelblue") +
+#   labs(title = "Top 20 Most Sold Products",
+#        x = "Product ID",
+#        y = "Total Quantity") +
+#   theme_minimal() +
+#   coord_flip()
 
 # Aggregate quantity by Product Name and Order Date to create a time series
 time_series_data <- data %>%
@@ -231,115 +226,207 @@ top_products <- time_series_data %>%
 # Filter the time-series data for only these top products
 filtered_time_series_data <- time_series_data %>%
   filter(Product_Name %in% top_products$Product_Name) %>%
-  mutate(ProdName8 = substr(Product_Name, 1, 8)) # Product names can be quite long and mess up layouts. Lets only plot the first 8 chars.
+  mutate(ProdName10 = substr(Product_Name, 1, 10)) # Product names can be quite long and mess up layouts. Lets only plot the first 10 chars.
 
+# Here we do some special plotting. We want to show the plot with only one selected line by default, but make sure that the other 9 top sold products can be selected. We first create the ggplotly object, and than modify the visibility of the traces
 
-# Plot using the truncated product name
-ggplot(filtered_time_series_data, aes(x = Order_Date, y = total_quantity, color = ProdName8)) +
+# Creating the ggplotly object
+p_ly <- ggplotly(ggplot(filtered_time_series_data, aes(x = Order_Date, y = total_quantity, color = ProdName10)) +
   geom_line(size = 1) +
   labs(title = "Quantity Sold Over Time per Product",
        x = "Order Date",
        y = "Quantity Sold") +
   theme_minimal() +
   theme(legend.position = "bottom") +
-  scale_color_discrete(name = "Product Name")
+  scale_color_discrete(name = "Product Name"))
+
+# Modify the visibility of traces
+for (i in seq_along(p_ly$x$data)) {
+  if (i == 1) {
+    p_ly$x$data[[i]]$visible <- TRUE  # Make the first trace visible
+  } else {
+    p_ly$x$data[[i]]$visible <- "legendonly"  # Hide the rest
+  }
+}
+
+# Plot
+p_ly
+```
 
 
+Our proposed workaround is to aggregate products by their <code>Sub_Category</code>, and treating them as a single product for the rest of the assignment, which we plotted in figure X.
 
+```{r}
+#| label: Aggregated_Sub_Category_sales
+#| fig-caption: Aggregated Sub_Category sales (toggle )
+
+# Bar plots
+
+# # Count frequency of top 20 products
+# top_products <- data %>%
+#   count(Product_Name, sort = TRUE) %>%
+#   top_n(20, n) %>%
+#   mutate(ProdName8 = substr(Product_Name, 1, 8))
+# 
+# # Plot!
+# ggplot(top_products, aes(x = reorder(`ProdName8`, -n), y = n)) +
+#   geom_bar(stat = "identity", fill = "steelblue") +
+#   labs(title = "Top 20 Most Sold Products",
+#        x = "Product Name",
+#        y = "Quantity sold") +
+#   theme_minimal() +
+#   coord_flip()
+# 
 # Count frequency of top 20 products
-top_products <- data %>%
-  count(Product_Name, sort = TRUE) %>%
-  top_n(20, n) %>%
-  mutate(ProdName8 = substr(Product_Name, 1, 8))
+top_categories <- data %>%
+  count(Sub_Category, sort = TRUE)
+# 
+# # Plot!
+# ggplot(top_categories, aes(x = reorder(Sub_Category, -n), y = n)) +
+#   geom_bar(stat = "identity", fill = "steelblue") +
+#   labs(title = "Sub_Categories sorted",
+#        x = "Product Name",
+#        y = "Quantity sold") +
+#   theme_minimal() +
+#   coord_flip()
 
-# Plot!
-ggplot(top_products, aes(x = reorder(`ProdName8`, -n), y = n)) +
-  geom_bar(stat = "identity", fill = "steelblue") +
-  labs(title = "Top 20 Most Sold Products",
-       x = "Product Name",
-       y = "Quantity sold") +
-  theme_minimal() +
-  coord_flip()
+# Find top 10 most sold product names
+top_10_categories <- top_categories$Sub_Category[0:10]
+
+# Filter the data for  top 10 products
+top_10_data <- data %>% filter(Sub_Category %in% top_10_categories)
+
+# calculate sales per month
+top_10_data <- top_10_data %>%
+  mutate(Month = floor_date(Order_Date, unit = "month"))
+
+# Aggregate data by month for each sub-category
+top_10_data_aggregated <- top_10_data %>%
+  group_by(Month, Sub_Category) %>%
+  summarise(Sales_Count = n(), .groups = 'drop')
+
+# Some special interactive plot formatting (see previous plot)
+p_ly <- ggplotly(ggplot(top_10_data_aggregated, aes(x = Month, y = Sales_Count, color = Sub_Category, group = Sub_Category)) +
+    geom_line(size = 1) +
+    geom_point(size = 2) +
+    labs(title = "Monthly Sales for the Top 3 Most Sold Products",
+         x = "Month",
+         y = "Sales Count",
+         color = "Product Name") +
+    theme_minimal())
+
+# Modify the visibility of traces
+for (i in seq_along(p_ly$x$data)) {
+  if (i == 1) {
+    p_ly$x$data[[i]]$visible <- TRUE  # Make the first trace visible
+  } else {
+    p_ly$x$data[[i]]$visible <- "legendonly"  # Hide the rest
+  }
+}
+
+# Plot
+p_ly
 ```
 
+These aggregated sales start to show trends and seasonality, and are much more useful to base predictions on! We will use these aggregated sub-categories for the rest of the assignment.
 
+To properly finish our data pre-processing we ran some statistics on the aggregated sub-category sales. Table x contains soem descriptive statistics.
 
-This is a simple placeholder for the manuscript's main document [@knuth84].
-
-```{r echo=TRUE}
-1 + 1
-```
-
-
-
-
-## Introduction
 
 ```{r}
-eruptions <- c(1492, 1585, 1646, 1677, 1712, 1949, 1971, 2021)
-n_eruptions <- length(eruptions)
+#| label: sub_category_descriptive_statistics_table
+#| 
+library(dplyr)
+library(kableExtra)
+
+# Summarize the data
+outlier_summary <- data %>%
+  group_by(Sub_Category) %>%
+  summarize(
+    Min = round(min(Quantity), 2),
+    Mean = round(mean(Quantity), 2),
+    Max = round(max(Quantity), 2),
+    Sd = round(sd(Quantity), 2),
+    CI_lower = round(Mean - 1.96 * (Sd / sqrt(n())), 2),
+    CI_upper = round(Mean + 1.96 * (Sd / sqrt(n())), 2),
+    .groups = "drop"
+  )
+
+
+# Output tables
+kable(
+  outlier_summary,
+  caption = "Statistics for Sub_Category quantity",
+  format = "pipe")
+
 ```
+
+The statistics for the sales aggregated by product category look valid. We can further inspect them by visualizing them as histogram and visually check for anomalies. Figure y contains histograms of the quantities per sub-category. 
 
 ```{r}
-#| label: fig-timeline
-#| fig-cap: Timeline of recent earthquakes on La Palma
-#| fig-alt: An event plot of the years of the last 8 eruptions on La Palma.
-#| fig-height: 1.5
-#| fig-width: 6
-par(mar = c(3, 1, 1, 1) + 0.1)
-plot(eruptions, rep(0, n_eruptions), 
-  pch = "|", axes = FALSE)
-axis(1)
-box()
+#| label: sub_category_histograms
+
+sub_categories <- unique(data$Sub_Category)
+
+p <- plot_ly()
+for (i in seq_along(sub_categories)) {
+  sub <- sub_categories[i]
+  subset_data <- data %>% filter(Sub_Category == sub)
+  p <- add_trace(
+    p,
+    x = subset_data$Quantity,
+    type = "histogram",
+    name = sub,
+    visible = ifelse(i == 1, TRUE, FALSE)
+  )
+}
+
+# We add a drop down menu for Sub_Category as toggling visibility in default ggplot2 adds the histograms up. Instead we want to be able to show each histogram seperately. 
+dropdown_buttons <- lapply(seq_along(sub_categories), function(i) {
+  list(
+    method = "update",
+    args = list(
+      list(visible = lapply(seq_along(sub_categories), function(j) j == i)),
+      list(xaxis = list(title = "Quantity", autorange = TRUE), 
+           yaxis = list(title = "Frequency", autorange = TRUE))
+    ),
+    label = sub_categories[i]
+  )
+})
+
+# Style drop down layout
+p <- p %>%
+  layout(
+    title = "Distribution of Quantity Sold per Order by Sub-Category",
+    xaxis = list(title = "Quantity"),
+    yaxis = list(title = "Frequency"),
+    showlegend = FALSE,  # Drop down instead of legend
+    updatemenus = list(
+      list(
+        type = "dropdown",
+        buttons = dropdown_buttons,
+        direction = "down",
+        x = 0.99,
+        y = 0.99,
+        showactive = TRUE,
+        xanchor = "left",
+        yanchor = "top"
+      )
+    )
+  )
+p
 ```
 
-```{r}
-#| output: false
-avg_years_between_eruptions <- mean(diff(eruptions[-n_eruptions]))
-avg_years_between_eruptions
-```
+The histograms show that the quantities are not normally distributed, but have a right-skewed distribution. This is expected as most orders contain a small number of items, but some orders contain a large number of items. We will not remove these outliers as they are valid orders.
 
-Based on data up to and including 1971, eruptions on La Palma happen every `{r} round(avg_years_between_eruptions, 1)` years on average.
+As the data we are going to use seems valid, we move on to exploring the trends and visualizing our data.
 
-Studies of the magma systems feeding the volcano, such as @marrero2019, have proposed that there are two main magma reservoirs feeding the Cumbre Vieja volcano; one in the mantle (30-40km depth) which charges and in turn feeds a shallower crustal reservoir (10-20km depth).
+## Data Visualization
 
-Eight eruptions have been recorded since the late 1400s (@fig-timeline).
 
-Data and methods are discussed in @sec-data-methods.
 
-Let $x$ denote the number of eruptions in a year. Then, $x$ can be modeled by a Poisson distribution
 
-$$
-p(x) = \frac{e^{-\lambda} \lambda^{x}}{x !}
-$$ {#eq-poisson}
 
-where $\lambda$ is the rate of eruptions per year. Using @eq-poisson, the probability of an eruption in the next $t$ years can be calculated.
+some text for the visualization
 
-| Name                 | Year   |
-| -------------------- | ------ |
-| Current              | 2021   |
-| Teneguía             | 1971   |
-| Nambroque            | 1949   |
-| El Charco            | 1712   |
-| Volcán San Antonio   | 1677   |
-| Volcán San Martin    | 1646   |
-| Tajuya near El Paso  | 1585   |
-| Montaña Quemada      | 1492   |
 
-: Recent historic eruptions on La Palma {#tbl-history}
-
-@tbl-history summarises the eruptions recorded since the colonization of the islands by Europeans in the late 1400s.
-
-![Map of La Palma](images/la-palma-map.png){#fig-map}
-
-La Palma is one of the west most islands in the Volcanic Archipelago of the Canary Islands (@fig-map). 
-
-## Data & Methods {#sec-data-methods}
-
-## Conclusion
-
-## References {.unnumbered}
-
-:::{#refs}
-
-:::
