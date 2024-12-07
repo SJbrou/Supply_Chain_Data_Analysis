@@ -64,46 +64,6 @@
 \fi
 \makeatother
 
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\usepackage{framed}
-\definecolor{shadecolor}{RGB}{241,243,245}
-\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.40,0.45,0.13}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.28,0.35,0.67}{#1}}
-\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.46,0.62}{#1}}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.68,0.00,0.00}{#1}}
-\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.00,0.23,0.31}{#1}}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.07,0.07,0.07}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.13,0.47,0.30}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.37,0.37,0.37}{\textit{#1}}}
 
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
@@ -131,40 +91,21 @@
 % Set default figure placement to htbp
 \def\fps@figure{htbp}
 \makeatother
-% definitions for citeproc citations
-\NewDocumentCommand\citeproctext{}{}
-\NewDocumentCommand\citeproc{mm}{%
-  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
-\makeatletter
- % allow citations to break across lines
- \let\@cite@ofmt\@firstofone
- % avoid brackets around text for \cite:
- \def\@biblabel#1{}
- \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
-\makeatother
-\newlength{\cslhangindent}
-\setlength{\cslhangindent}{1.5em}
-\newlength{\csllabelwidth}
-\setlength{\csllabelwidth}{3em}
-\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
- {\begin{list}{}{%
-  \setlength{\itemindent}{0pt}
-  \setlength{\leftmargin}{0pt}
-  \setlength{\parsep}{0pt}
-  % turn on hanging indent if param 1 is 1
-  \ifodd #1
-   \setlength{\leftmargin}{\cslhangindent}
-   \setlength{\itemindent}{-1\cslhangindent}
-  \fi
-  % set entry spacing
-  \setlength{\itemsep}{#2\baselineskip}}}
- {\end{list}}
-\usepackage{calc}
-\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
-\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
 
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
 \usepackage{url} %this package should fix any errors with URLs in refs.
 \usepackage{lineno}
 \usepackage[inline]{trackchanges} %for better track changes. finalnew option will compile document with changes incorporated.
@@ -322,7 +263,7 @@ Postal\_Code & 42420 & 42420 & 90036 \\
 Region & South & South & West \\
 Product\_ID & FUR-BO-10001798 & FUR-CH-10000454 & OFF-LA-10000240 \\
 Category & Furniture & Furniture & Office Supplies \\
-Sub-Category & Bookcases & Chairs & Labels \\
+Sub\_Category & Bookcases & Chairs & Labels \\
 Product\_Name & Bush Somerset Collection Bookcase & Hon Deluxe Fabric
 Upholstered Stacking Chairs, Rounded Back & Self-Adhesive Address Labels
 for Typewriters by Universal \\
@@ -336,7 +277,7 @@ Profit & 41.9136 & 219.5820 & 6.8714 \\
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
 Notebook}}
 
-There is some more processing to do, for instance the removing of
+There is some more processing to do, for instance the removal of
 outliers. However, by doing so we impose our own assumptions on the
 data. Let's start by evaluating the descriptive statistics of our data
 and check if further processing is required.
@@ -392,85 +333,25 @@ Cubify CubeX 3D Printer Triple Head Print. The orders with a negative
 Profit where often part of a larger order (for instance CA-2016-108196),
 and placed by customers that placed multiple orders. We suspect these
 negative Profit's to be caused by faulty items that receive discounts,
-general discount codes, or volumne discounts. However, due to especially
+general discount codes, or volume discounts. However, due to especially
 the high discounts on orders with negative profits, we assume these to
 be valid orders. This decision has also been influenced by the high
-quality of the data. As we found no missing values whatshowever, we
+quality of the data. As we found no missing values whats however, we
 suspect the chance of some weird but valid orders to be higher than
 encountering mistakes here. \emph{{[}this paragraph could use some
 rewriting{]}}
 
-\subsection{Data Visualization}\label{data-visualization}
+In figure x we plotted the sales of the most popular products.
+Unfortunately, the sales of individual products were too low to
+determine any meaningfull trends.
 
-\begin{verbatim}
-# A tibble: 20 x 3
-   Product_Name                                         total_quantity ProdName8
-   <chr>                                                         <dbl> <chr>    
- 1 Staples                                                         215 "Staples"
- 2 Staple envelope                                                 170 "Staple ~
- 3 Easy-staple paper                                               150 "Easy-st~
- 4 Staples in misc. colors                                          86 "Staples~
- 5 KI Adjustable-Height Table                                       74 "KI Adju~
- 6 Avery Non-Stick Binders                                          71 "Avery N~
- 7 Storex Dura Pro Binders                                          71 "Storex ~
- 8 GBC Premium Transparent Covers with Diagonal Lined ~             67 "GBC Pre~
- 9 Situations Contoured Folding Chairs, 4/Set                       64 "Situati~
-10 Staple-based wall hangings                                       62 "Staple-~
-11 Chromcraft Round Conference Tables                               61 "Chromcr~
-12 Eldon Wave Desk Accessories                                      61 "Eldon W~
-13 Staple remover                                                   61 "Staple ~
-14 Global Wood Trimmed Manager's Task Chair, Khaki                  59 "Global ~
-15 Wilson Jones Turn Tabs Binder Tool for Ring Binders              59 "Wilson ~
-16 Kingston Digital DataTraveler 16GB USB 2.0                       57 "Kingsto~
-17 Fellowes Officeware Wire Shelving                                55 "Fellowe~
-18 Global High-Back Leather Tilter, Burgundy                        54 "Global ~
-19 SAFCO Arco Folding Chair                                         53 "SAFCO A~
-20 Xerox 226                                                        53 "Xerox 2~
-\end{verbatim}
-
-\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/data_viz1-1.pdf}}
-
-\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/data_viz1-2.pdf}}
-
-\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/data_viz1-3.pdf}}
-
-\textsubscript{Source:
-\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
-Notebook}}
-
-This is a simple placeholder for the manuscript's main document
-(\textbf{knuth84?}).
-
-\begin{Shaded}
-\begin{Highlighting}[]
-\DecValTok{1} \SpecialCharTok{+} \DecValTok{1}
-\end{Highlighting}
-\end{Shaded}
-
-\begin{verbatim}
-[1] 2
-\end{verbatim}
-
-\textsubscript{Source:
-\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
-Notebook}}
-
-\subsection{Introduction}\label{introduction}
-
-\textsubscript{Source:
-\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
-Notebook}}
-
-\phantomsection\label{cell-fig-timeline}
 \begin{figure}[H]
 
-\centering{
-
-\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/fig-timeline-1.pdf}}
+{\centering \pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/Quantity_top_products-1.pdf}}
 
 }
 
-\caption{\label{fig-timeline}Timeline of recent earthquakes on La Palma}
+\caption{Figure x Sale quantity of the most popular products}
 
 \end{figure}%
 
@@ -478,94 +359,81 @@ Notebook}}
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
 Notebook}}
 
+Our proposed workaround is to aggregate products by their Sub\_Category,
+and treating them as a single product for the rest of the assignment,
+which we plotted in figure X.
+
+\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/Aggregated_Sub_Category_sales-1.pdf}}
+
 \textsubscript{Source:
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
 Notebook}}
 
-Based on data up to and including 1971, eruptions on La Palma happen
-every 79.8 years on average.
+These aggregated sales start to show trends and seasonality, and are
+much more useful to base predictions on! We will use these aggregated
+sub-categories for the rest of the assignment.
 
-Studies of the magma systems feeding the volcano, such as Marrero et al.
-(2019), have proposed that there are two main magma reservoirs feeding
-the Cumbre Vieja volcano; one in the mantle (30-40km depth) which
-charges and in turn feeds a shallower crustal reservoir (10-20km depth).
+To properly finish our data pre-processing we ran some statistics on the
+aggregated sub-category sales. Table x contains soem descriptive
+statistics.
 
-Eight eruptions have been recorded since the late 1400s
-(Figure~\ref{fig-timeline}).
-
-Data and methods are discussed in Section~\ref{sec-data-methods}.
-
-Let \(x\) denote the number of eruptions in a year. Then, \(x\) can be
-modeled by a Poisson distribution
-
-\begin{equation}\phantomsection\label{eq-poisson}{
-p(x) = \frac{e^{-\lambda} \lambda^{x}}{x !}
-}\end{equation}
-
-where \(\lambda\) is the rate of eruptions per year. Using
-Equation~\ref{eq-poisson}, the probability of an eruption in the next
-\(t\) years can be calculated.
-
-\begin{longtable}[]{@{}ll@{}}
-\caption{Recent historic eruptions on La
-Palma}\label{tbl-history}\tabularnewline
+\begin{longtable}[]{@{}lrrrrrr@{}}
+\caption{Statistics for Sub\_Category quantity}\tabularnewline
 \toprule\noalign{}
-Name & Year \\
+Sub\_Category & Min & Mean & Max & Sd & CI\_lower & CI\_upper \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Name & Year \\
+Sub\_Category & Min & Mean & Max & Sd & CI\_lower & CI\_upper \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-Current & 2021 \\
-Teneguía & 1971 \\
-Nambroque & 1949 \\
-El Charco & 1712 \\
-Volcán San Antonio & 1677 \\
-Volcán San Martin & 1646 \\
-Tajuya near El Paso & 1585 \\
-Montaña Quemada & 1492 \\
+Accessories & 1 & 3.84 & 14 & 2.28 & 3.68 & 4.00 \\
+Appliances & 1 & 3.71 & 14 & 2.12 & 3.52 & 3.90 \\
+Art & 1 & 3.77 & 14 & 2.13 & 3.62 & 3.92 \\
+Binders & 1 & 3.92 & 14 & 2.29 & 3.80 & 4.04 \\
+Bookcases & 1 & 3.81 & 13 & 2.28 & 3.51 & 4.11 \\
+Chairs & 1 & 3.82 & 14 & 2.28 & 3.64 & 4.00 \\
+Copiers & 1 & 3.44 & 9 & 1.83 & 3.01 & 3.87 \\
+Envelopes & 1 & 3.57 & 9 & 2.05 & 3.32 & 3.82 \\
+Fasteners & 1 & 4.21 & 14 & 2.41 & 3.89 & 4.53 \\
+Furnishings & 1 & 3.72 & 14 & 2.16 & 3.58 & 3.86 \\
+Labels & 1 & 3.85 & 14 & 2.35 & 3.61 & 4.09 \\
+Machines & 1 & 3.83 & 11 & 2.17 & 3.43 & 4.23 \\
+Paper & 1 & 3.78 & 14 & 2.23 & 3.66 & 3.90 \\
+Phones & 1 & 3.70 & 14 & 2.19 & 3.56 & 3.84 \\
+Storage & 1 & 3.73 & 14 & 2.19 & 3.58 & 3.88 \\
+Supplies & 1 & 3.41 & 10 & 1.84 & 3.15 & 3.67 \\
+Tables & 1 & 3.89 & 13 & 2.45 & 3.62 & 4.16 \\
 \end{longtable}
 
-Table~\ref{tbl-history} summarises the eruptions recorded since the
-colonization of the islands by Europeans in the late 1400s.
+\textsubscript{Source:
+\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
+Notebook}}
 
-\begin{figure}
+The statistics for the sales aggregated by product category look valid.
+We can further inspect them by visualizing them as histogram and
+visually check for anomalies. Figure y contains histograms of the
+quantities per sub-category.
 
-\centering{
+\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/sub_category_histograms-1.pdf}}
 
-\pandocbounded{\includegraphics[keepaspectratio]{images/la-palma-map.png}}
+\textsubscript{Source:
+\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
+Notebook}}
 
-}
+The histograms show that the quantities are not normally distributed,
+but have a right-skewed distribution. This is expected as most orders
+contain a small number of items, but some orders contain a large number
+of items. We will not remove these outliers as they are valid orders.
 
-\caption{\label{fig-map}Map of La Palma}
+As the data we are going to use seems valid, we move on to exploring the
+trends and visualizing our data.
 
-\end{figure}%
+\subsection{Data Visualization}\label{data-visualization}
 
-La Palma is one of the west most islands in the Volcanic Archipelago of
-the Canary Islands (Figure~\ref{fig-map}).
-
-\subsection{Data \& Methods}\label{sec-data-methods}
-
-\subsection{Conclusion}\label{conclusion}
-
-\subsection*{References}\label{references}
-\addcontentsline{toc}{subsection}{References}
-
-\phantomsection\label{refs}
-\begin{CSLReferences}{1}{0}
-\vspace{1em}
-
-\bibitem[\citeproctext]{ref-marrero2019}
-Marrero, J., García, A., Berrocoso, M., Llinares, Á., Rodríguez-Losada,
-A., \& Ortiz, R. (2019). Strategies for the development of volcanic
-hazard maps in monogenetic volcanic fields: The example of {La} {Palma}
-({Canary} {Islands}). \emph{Journal of Applied Volcanology}, \emph{8}.
-\url{https://doi.org/10.1186/s13617-019-0085-5}
-
-\end{CSLReferences}
+some text for the visualization
 
 
 
