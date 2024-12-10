@@ -430,3 +430,582 @@ As the data we are going to use seems valid, we move on to exploring the trends 
 some text for the visualization
 
 
+
+
+## Forecasting Method Evaluation
+
+Let's forecast sales for the three most sold sub-categories:
+
+```{r}
+# Find top 3 most sold product names
+top_3_subcategories <- top_categories$Sub_Category[0:3]
+
+# Filter the data for  top 3 products
+top_3_data <- data %>% filter(Sub_Category %in% top_3_subcategories)
+
+# calculate sales per month
+top_3_data <- top_3_data %>%
+  mutate(Month = floor_date(Order_Date, unit = "month"))
+
+# Aggregate data by month for each product
+top_3_data_aggregated <- top_3_data %>%
+  group_by(Month, Sub_Category) %>%
+  summarise(Sales_Count = n(), .groups = 'drop')
+
+# Create a time series object for each product
+ts_data <- top_3_data_aggregated %>%
+  pivot_wider(names_from = Sub_Category, values_from = Sales_Count, values_fill = 0) %>%
+  select(-Month) %>%
+  as.matrix()
+
+# Create a time series object
+ts_data <- ts(ts_data, start = c(2014, 1), end = c(2017, 12), frequency = 12)
+
+# Create a time series list for each subcategory
+ts_list <- list()
+
+for (subcategory in top_3_subcategories) {
+  # Filter data for the subcategory
+  subcategory_data <- top_3_data_aggregated %>% filter(Sub_Category == subcategory)
+
+  # Create a time series object (assuming monthly data from January 2014 to December 2017)
+  ts_list[[subcategory]] <- ts(subcategory_data$Sales_Count,
+                                start = c(2014, 1),
+                                end = c(2017, 12),
+                                frequency = 12)
+}
+
+
+#### 4 A
+# Step 4: Apply forecasting methods to the top 3 sub-categories
+forecast_results <- list()  # Store results
+
+for (subcategory in names(ts_list)) {
+  ts_current <- ts_list[[subcategory]]
+
+  # Split the data into training and validation sets (70% training, 30% testing)
+  train_size <- floor(0.7 * length(ts_current))
+  train_ts <- window(ts_current, end = c(2014 + (train_size - 1) %/% 12, (train_size - 1) %% 12 + 1))
+  test_ts <- window(ts_current, start = c(2014 + train_size %/% 12, train_size %% 12 + 1))
+
+  # 1. ARIMA
+  arima_model <- auto.arima(train_ts)
+  arima_forecast <- forecast(arima_model, h = length(test_ts))
+  arima_accuracy <- accuracy(arima_forecast, test_ts)
+
+  # 2. Holt-Winters
+  hw_model <- HoltWinters(train_ts)
+  hw_forecast <- forecast(hw_model, h = length(test_ts))
+  hw_accuracy <- accuracy(hw_forecast, test_ts)
+
+  # 3. ETS
+  ets_model <- ets(train_ts)
+  ets_forecast <- forecast(ets_model, h = length(test_ts))
+  ets_accuracy <- accuracy(ets_forecast, test_ts)
+
+  # Store results
+  forecast_results[[subcategory]] <- list(
+    ARIMA = list(Model = arima_model, Forecast = arima_forecast, Accuracy = arima_accuracy),
+    HoltWinters = list(Model = hw_model, Forecast = hw_forecast, Accuracy = hw_accuracy),
+    ETS = list(Model = ets_model, Forecast = ets_forecast, Accuracy = ets_accuracy)
+  )
+}
+
+# Step 5: Print results
+for (subcategory in names(forecast_results)) {
+  cat("\n\nResults for Sub_Category:", subcategory, "\n")
+
+  cat("\nARIMA Accuracy:\n")
+  print(forecast_results[[subcategory]]$ARIMA$Accuracy)
+
+  cat("\nHolt-Winters Accuracy:\n")
+  print(forecast_results[[subcategory]]$HoltWinters$Accuracy)
+
+  cat("\nETS Accuracy:\n")
+  print(forecast_results[[subcategory]]$ETS$Accuracy)
+}
+
+# Step 6: Visualization of Forecasts
+for (subcategory in names(forecast_results)) {
+  plot(forecast_results[[subcategory]]$ARIMA$Forecast, main = paste("ARIMA Forecast for", subcategory))
+  lines(test_ts, col = "red", lty = 2)
+
+  plot(forecast_results[[subcategory]]$HoltWinters$Forecast, main = paste("Holt-Winters Forecast for", subcategory))
+  lines(test_ts, col = "red", lty = 2)
+
+  plot(forecast_results[[subcategory]]$ETS$Forecast, main = paste("ETS Forecast for", subcategory))
+  lines(test_ts, col = "red", lty = 2)
+}
+
+#more stationary tests
+# Perform KPSS Test for the top 3 subcategories
+top_3_subcategories <- top_categories$Sub_Category[0:3]
+
+for (subcategory in top_3_subcategories) {
+  if (subcategory %in% names(ts_list)) {
+    ts_current <- ts_list[[subcategory]]
+    cat("\nKPSS Test for Sub-Category:", subcategory, "\n")
+    print(kpss.test(ts_current))
+  } else {
+    cat("\nSub-Category not found in ts_list:", subcategory, "\n")
+  }
+}
+
+#Because the all the 3 subcategory are non stationary because of a P value which is <=0.05 we need to use differencing
+# Apply differencing to each of the top 3 subcategories
+differenced_series <- list()
+
+for (subcategory in top_3_subcategories) {
+  if (subcategory %in% names(ts_list)) {
+    ts_current <- ts_list[[subcategory]]  # Get the time series for the subcategory
+    ts_diff <- diff(ts_current, differences = 1)  # Apply first-order differencing
+    differenced_series[[subcategory]] <- ts_diff  # Store the differenced series
+
+    # Recheck stationarity with KPSS test
+    cat("\nKPSS Test for Differenced Sub-Category:", subcategory, "\n")
+    print(kpss.test(ts_diff))
+  } else {
+    cat("\nSub-Category not found in ts_list:", subcategory, "\n")
+  }
+}
+# Now P value is larger then 0.05 so we have stationary data
+# Plot the differenced series for each subcategory
+for (subcategory in top_3_subcategories) {
+  if (subcategory %in% names(differenced_series)) {
+    ts_diff <- differenced_series[[subcategory]]
+    cat("\nPlotting Differenced Series for Sub-Category:", subcategory, "\n")
+    plot(ts_diff, main = paste("Differenced Series for Sub-Category:", subcategory),
+         ylab = "Differenced Values", xlab = "Time")
+  }
+}
+
+#NEW FORECASTING FOR 4A with stationary data
+# Step 4: Apply forecasting methods to the differenced top 3 sub-categories
+forecast_results <- list()  # Store results
+
+for (subcategory in names(differenced_series)) {
+  ts_current <- differenced_series[[subcategory]]  # Use the differenced series
+
+  # Split the data into training and validation sets (70% training, 30% testing)
+  train_size <- floor(0.7 * length(ts_current))
+  train_ts <- window(ts_current, end = c(2014 + (train_size - 1) %/% 12, (train_size - 1) %% 12 + 1))
+  test_ts <- window(ts_current, start = c(2014 + train_size %/% 12, train_size %% 12 + 1))
+
+  # 1. ARIMA
+  arima_model <- auto.arima(train_ts)
+  arima_forecast <- forecast(arima_model, h = length(test_ts))
+  arima_accuracy <- accuracy(arima_forecast, test_ts)
+
+  # 2. Holt-Winters
+  hw_model <- HoltWinters(train_ts)
+  hw_forecast <- forecast(hw_model, h = length(test_ts))
+  hw_accuracy <- accuracy(hw_forecast, test_ts)
+
+  # 3. ETS
+  ets_model <- ets(train_ts)
+  ets_forecast <- forecast(ets_model, h = length(test_ts))
+  ets_accuracy <- accuracy(ets_forecast, test_ts)
+
+  # Store results
+  forecast_results[[subcategory]] <- list(
+    ARIMA = list(Model = arima_model, Forecast = arima_forecast, Accuracy = arima_accuracy),
+    HoltWinters = list(Model = hw_model, Forecast = hw_forecast, Accuracy = hw_accuracy),
+    ETS = list(Model = ets_model, Forecast = ets_forecast, Accuracy = ets_accuracy)
+  )
+}
+
+# Step 5: Print results
+for (subcategory in names(forecast_results)) {
+  cat("\n\nResults for Sub_Category:", subcategory, "\n")
+
+  cat("\nARIMA Accuracy:\n")
+  print(forecast_results[[subcategory]]$ARIMA$Accuracy)
+
+  cat("\nHolt-Winters Accuracy:\n")
+  print(forecast_results[[subcategory]]$HoltWinters$Accuracy)
+
+  cat("\nETS Accuracy:\n")
+  print(forecast_results[[subcategory]]$ETS$Accuracy)
+}
+
+# Step 6: Visualization of Forecasts
+for (subcategory in names(forecast_results)) {
+  plot(forecast_results[[subcategory]]$ARIMA$Forecast,
+       main = paste("ARIMA Forecast for", subcategory),
+       ylab = "Differenced Values", xlab = "Time")
+  lines(test_ts, col = "red", lty = 2)
+
+  plot(forecast_results[[subcategory]]$HoltWinters$Forecast,
+       main = paste("Holt-Winters Forecast for", subcategory),
+       ylab = "Differenced Values", xlab = "Time")
+  lines(test_ts, col = "red", lty = 2)
+
+  plot(forecast_results[[subcategory]]$ETS$Forecast,
+       main = paste("ETS Forecast for", subcategory),
+       ylab = "Differenced Values", xlab = "Time")
+  lines(test_ts, col = "red", lty = 2)
+}
+
+# Perform KPSS Test for the differenced series in the top 3 subcategories
+for (subcategory in top_3_subcategories) {
+  if (subcategory %in% names(differenced_series)) {
+    ts_current <- differenced_series[[subcategory]]  # Get the differenced series
+    cat("\nKPSS Test for Differenced Sub-Category:", subcategory, "\n")
+    print(kpss.test(ts_current))
+  } else {
+    cat("\nSub-Category not found in differenced_series:", subcategory, "\n")
+  }
+}
+# now they are all 0.1
+```
+
+## Clustering (4B)
+
+```{r}
+# 4B
+# 4B: Group Products into Clusters and Apply Forecasting Techniques
+# Step 1: Extract Time-Series Features for Clustering
+time_series_features <- data.frame()
+
+for (subcategory in names(ts_list)) {
+  ts_current <- ts_list[[subcategory]]
+
+  # Decompose the time series to extract features
+  decomposition <- decompose(ts_current)
+  trend_strength <- var(decomposition$trend, na.rm = TRUE) / var(ts_current, na.rm = TRUE)
+  seasonal_strength <- var(decomposition$seasonal, na.rm = TRUE) / var(ts_current, na.rm = TRUE)
+  random_strength <- var(decomposition$random, na.rm = TRUE) / var(ts_current, na.rm = TRUE)
+
+  # Store extracted features
+  time_series_features <- rbind(time_series_features,
+                                data.frame(SubCategory = subcategory,
+                                           TrendStrength = trend_strength,
+                                           SeasonalStrength = seasonal_strength,
+                                           RandomStrength = random_strength))
+}
+
+# Step 2: Normalize the Features for Clustering
+time_series_features_scaled <- time_series_features %>%
+  select(-SubCategory) %>%
+  scale()
+
+# verify rows
+nrow(time_series_features_scaled)
+
+# Step 3: Perform K-Means Clustering
+# Determine the number of clusters dynamically
+k <- min(3, nrow(time_series_features_scaled))  # Set k to the smaller of 3 or the number of rows
+# Hierarchical Clustering
+distance_matrix <- dist(time_series_features_scaled)  # Calculate distance matrix
+hc <- hclust(distance_matrix)  # Perform hierarchical clustering
+time_series_features$Cluster <- cutree(hc, k = k)  # Cut tree into 'k' clusters
+# Add cluster information to the original data
+time_series_features$Cluster <- cutree(hc, k = k)
+
+# Step 4: Apply Forecasting Techniques to Each Cluster
+forecast_results_by_cluster <- list()
+
+for (cluster_id in unique(time_series_features$Cluster)) {
+  cat("\nProcessing Cluster:", cluster_id, "\n")
+
+  # Get subcategories in the current cluster
+  subcategories_in_cluster <- time_series_features$SubCategory[time_series_features$Cluster == cluster_id]
+
+  # Initialize storage for cluster results
+  cluster_forecast_results <- list()
+
+  for (subcategory in subcategories_in_cluster) {
+    if (subcategory %in% names(ts_list)) {
+      ts_current <- ts_list[[subcategory]]  # Access the time series
+
+      # Split the data into training and validation sets (70% training, 30% testing)
+      train_size <- floor(0.7 * length(ts_current))
+      train_ts <- window(ts_current, end = c(2014 + (train_size - 1) %/% 12, (train_size - 1) %% 12 + 1))
+      test_ts <- window(ts_current, start = c(2014 + train_size %/% 12, train_size %% 12 + 1))
+
+      # 1. ARIMA
+      arima_model <- auto.arima(train_ts)
+      arima_forecast <- forecast(arima_model, h = length(test_ts))
+      arima_accuracy <- accuracy(arima_forecast, test_ts)
+
+      # 2. Holt-Winters
+      hw_model <- HoltWinters(train_ts)
+      hw_forecast <- forecast(hw_model, h = length(test_ts))
+      hw_accuracy <- accuracy(hw_forecast, test_ts)
+
+      # 3. ETS
+      ets_model <- ets(train_ts)
+      ets_forecast <- forecast(ets_model, h = length(test_ts))
+      ets_accuracy <- accuracy(ets_forecast, test_ts)
+
+      # Store results for the subcategory
+      cluster_forecast_results[[subcategory]] <- list(
+        ARIMA = list(Model = arima_model, Forecast = arima_forecast, Accuracy = arima_accuracy),
+        HoltWinters = list(Model = hw_model, Forecast = hw_forecast, Accuracy = hw_accuracy),
+        ETS = list(Model = ets_model, Forecast = ets_forecast, Accuracy = ets_accuracy)
+      )
+    } else {
+      cat("\nSub-Category not found in ts_list:", subcategory, "\n")
+    }
+  }
+
+  # Store results for the cluster
+  forecast_results_by_cluster[[paste0("Cluster_", cluster_id)]] <- cluster_forecast_results
+}
+
+# Step 5: Print Forecasting Accuracy for Each Cluster
+for (cluster_id in names(forecast_results_by_cluster)) {
+  cat("\n\nResults for", cluster_id, "\n")
+  cluster_results <- forecast_results_by_cluster[[cluster_id]]
+
+  for (subcategory in names(cluster_results)) {
+    cat("\nSub-Category:", subcategory, "\n")
+
+    cat("\nARIMA Accuracy:\n")
+    print(cluster_results[[subcategory]]$ARIMA$Accuracy)
+
+    cat("\nHolt-Winters Accuracy:\n")
+    print(cluster_results[[subcategory]]$HoltWinters$Accuracy)
+
+    cat("\nETS Accuracy:\n")
+    print(cluster_results[[subcategory]]$ETS$Accuracy)
+  }
+}
+
+## Step 6: Visualize the Clusters
+library(ggplot2)
+
+ggplot(time_series_features, aes(x = TrendStrength, y = SeasonalStrength, color = as.factor(Cluster))) +
+  geom_point(size = 3) +
+  labs(title = "Clusters of Subcategories Based on Time-Series Features",
+       x = "Trend Strength", y = "Seasonal Strength", color = "Cluster") +
+  theme_minimal()
+#
+#check
+#residual diagnostic
+for (cluster_id in names(forecast_results_by_cluster)) {
+  cluster_results <- forecast_results_by_cluster[[cluster_id]]
+  for (subcategory in names(cluster_results)) {
+    cat("\nResidual Diagnostics for Sub-Category:", subcategory, "\n")
+    checkresiduals(cluster_results[[subcategory]]$ARIMA$Model)
+  }
+}
+# P-value is higher then 0.1 so we have stationary data, this is good
+#cluster level metrics
+cluster_metrics <- data.frame()
+for (cluster_id in names(forecast_results_by_cluster)) {
+  cluster_results <- forecast_results_by_cluster[[cluster_id]]
+  cluster_rmse <- sapply(cluster_results, function(x) x$ARIMA$Accuracy["Test set", "RMSE"])
+  cluster_mape <- sapply(cluster_results, function(x) x$ARIMA$Accuracy["Test set", "MAPE"])
+  cluster_metrics <- rbind(cluster_metrics, data.frame(Cluster = cluster_id, MeanRMSE = mean(cluster_rmse), MeanMAPE = mean(cluster_mape)))
+}
+print(cluster_metrics)
+
+
+```
+
+
+
+## 5A
+
+
+```{r}
+
+#Binders->choose ARIMA
+binders_ts <- ts_list[["Binders"]]
+arima_model <- auto.arima(binders_ts)
+summary(arima_model)
+arima_forecast <- forecast(arima_model, h = 12)
+print(arima_forecast)
+plot(arima_forecast, main = "ARIMA Forecast for Binders (Next 12 Months)")
+
+#Paper->choose ETS
+paper_ts <- ts_list[["Paper"]]
+ets_model <- ets(paper_ts)
+summary(ets_model)
+ets_forecast <- forecast(ets_model, h = 12)
+print(ets_forecast)
+plot(ets_forecast, main = "ETS Forecast for Paper (Next 12 Months)")
+
+#Furnishings->choose ETS
+furnishings_ts <- ts_list[["Furnishings"]]
+ets_model <- ets(furnishings_ts)
+summary(ets_model)
+ets_forecast <- forecast(ets_model, h = 12)
+print(ets_forecast)
+plot(ets_forecast, main = "ETS Forecast for Furnishings (Next 12 Months)")
+
+```
+
+## 5B
+
+```{r}
+#Cluster_Binders->Holt-Winters
+cluster_id <- 1
+subcategory <- "Binders"
+hw_model <- forecast_results_by_cluster[[paste0("Cluster_", cluster_id)]][[subcategory]]$HoltWinters$Model
+hw_forecast <- forecast(hw_model, h = 12)
+print(hw_forecast)
+plot(hw_forecast, main = "Holt-Winters Forecast for Binders (Next 12 Months)", xlab = "Time", ylab = "Forecasted Values")
+
+#Cluster_paper->ETS
+cluster_id <- 2
+subcategory <- "Paper"
+ets_model <- forecast_results_by_cluster[[paste0("Cluster_", cluster_id)]][[subcategory]]$ETS$Model
+ets_forecast <- forecast(ets_model, h = 12)
+print(ets_forecast)
+plot(ets_forecast, main = "ETS Forecast for Paper (Next 12 Months)", xlab = "Time", ylab = "Forecasted Values")
+
+#Cluster_Furnishings->Holt-Winters
+cluster_id <- 3
+subcategory <- "Furnishings"
+hw_model <- forecast_results_by_cluster[[paste0("Cluster_", cluster_id)]][[subcategory]]$HoltWinters$Model
+hw_forecast <- forecast(hw_model, h = 12)
+print(hw_forecast)
+plot(hw_forecast, main = "Holt-Winters Forecast for Furnishings (Next 12 Months)", xlab = "Time", ylab = "Forecasted Values")
+
+```
+### Some other part?
+
+```{r}
+# Check for missing values
+missing_values <- colSums(is.na(data))
+print(missing_values)  # Print missing values for reference
+# heat map
+library(Amelia)
+missmap(data, main = "Missing Data Pattern")
+#distribution of key variables
+#plot Quantity
+ggplot(data, aes(x = Quantity)) +
+  geom_histogram(binwidth = 1, fill = "steelblue") +
+  labs(title = "Distribution of Quantity", x = "Quantity", y = "Frequency") +
+  theme_minimal()
+#plot sales
+ggplot(data, aes(x = Sales)) +
+  geom_histogram(binwidth = 50, fill = "tomato") +
+  labs(title = "Distribution of Sales", x = "Sales", y = "Frequency") +
+  theme_minimal()
+# plot profit
+ggplot(data, aes(x = Profit)) +
+  geom_histogram(binwidth = 10, fill = "purple") +
+  labs(title = "Distribution of Profit", x = "Profit", y = "Frequency") +
+  theme_minimal()
+# time based trends
+data$Order_Date <- as.Date(data$Order_Date, format = "%Y-%m-%d")  # Ensure date format
+time_series <- data %>%
+  group_by(Order_Date) %>%
+  summarize(total_sales = sum(Sales), total_profit = sum(Profit), total_quantity = sum(Quantity))
+
+ggplot(time_series, aes(x = Order_Date)) +
+  geom_line(aes(y = total_sales, color = "Sales")) +
+  geom_line(aes(y = total_profit, color = "Profit")) +
+  geom_line(aes(y = total_quantity, color = "Quantity")) +
+  labs(title = "Sales, Profit, and Quantity Over Time", x = "Date", y = "Value") +
+  theme_minimal() +
+  scale_color_manual(name = "Metrics", values = c("Sales" = "blue", "Profit" = "green", "Quantity" = "red"))
+
+#sales by category and sub category
+category_sales <- data %>%
+  group_by(Category, Sub_Category) %>%
+  summarize(total_sales = sum(Sales))
+
+ggplot(category_sales, aes(x = reorder(Sub_Category, -total_sales), y = total_sales, fill = Category)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Sales by Category and Sub-Category", x = "Sub-Category", y = "Total Sales") +
+  theme_minimal() +
+  coord_flip()
+
+#Outliers detection
+#Quantity
+ggplot(data, aes(x = Category, y = Quantity)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Quantity by Category", x = "Category", y = "Quantity")
+#sales
+ggplot(data, aes(x = Category, y = Sales)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Sales by Category", x = "Category", y = "Sales")
+
+#profit
+ggplot(data, aes(x = Category, y = Profit)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Profit by Category", x = "Category", y = "Profit")
+#Geo visualization
+
+us_map <- map_data("state")
+if("State" %in% colnames(data)) {
+  state_sales <- data %>%
+    group_by(State) %>%
+    summarize(total_sales = sum(Sales))
+
+  # Convert state names to lowercase to match map data
+  state_sales$State <- tolower(state_sales$State)
+
+  # Merge state sales data with map data
+  state_sales_map <- merge(us_map, state_sales, by.x = "region", by.y = "State", all.x = TRUE)
+
+  # Plot sales by state
+  ggplot(state_sales_map, aes(long, lat, group = group, fill = total_sales)) +
+    geom_polygon(color = "white") +
+    scale_fill_continuous(low = "lightblue", high = "darkblue", na.value = "gray90") +
+    labs(title = "Sales by State", fill = "Total Sales") +
+    theme_void() +
+    coord_fixed(1.3)
+}
+
+# correlation matrix
+numerical_data <- data %>% select(where(is.numeric))
+
+cor_matrix <- cor(numerical_data, use = "complete.obs")
+
+# Convert the correlation matrix to a long format
+cor_data <- as.data.frame(as.table(cor_matrix))
+
+# Plot the correlation matrix using ggplot2
+ggplot(cor_data, aes(Var1, Var2, fill = Freq)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", high = "red", mid = "white",
+                       midpoint = 0, limit = c(-1, 1), space = "Lab",
+                       name="Correlation") +
+  geom_text(aes(label = round(Freq, 2)), color = "black", size = 4) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,
+                                   size = 12, hjust = 1)) +
+  coord_fixed() +
+  labs(title = "Correlation Matrix of Key Variables", x = "", y = "")
+```
+
+
+### Forecasting??
+```{r}
+
+#Aggregate sales per month
+monthly_sales <- data %>%
+  mutate(Month = floor_date(Order_Date, "month")) %>%
+  group_by(Month) %>%
+  summarize(total_sales = sum(Sales))
+#Convert to time series
+sales_ts <- ts(monthly_sales$total_sales, frequency = 12, start = c(year(min(monthly_sales$Month)), month(min(monthly_sales$Month))))
+#Arima model
+arima_model <- auto.arima(sales_ts)
+arima_forecast <- forecast(arima_model, h = 12)
+autoplot(arima_forecast) + labs(title = "ARIMA Forecast for Monthly Sales")
+#Holts winter model
+hw_model <- HoltWinters(sales_ts)
+hw_forecast <- forecast(hw_model, h = 12)
+autoplot(hw_forecast) + labs(title = "Holt-Winters Forecast for Monthly Sales")
+# clustering for segmentation
+library(cluster)
+#data clustering
+clustering_data <- data %>%
+  select(Sales, Quantity, Discount, Profit) %>%
+  na.omit()
+set.seed(123)
+kmeans_model <- kmeans(clustering_data, centers = 3)
+data$Cluster <- as.factor(kmeans_model$cluster)
+# visualize clustering result
+ggplot(data, aes(x = Sales, y = Profit, color = Cluster)) +
+  geom_point(alpha = 0.6) +
+  labs(title = "K-Means Clustering of Sales and Profit", x = "Sales", y = "Profit") +
+  theme_minimal()
+
+```
