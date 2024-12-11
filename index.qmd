@@ -16,6 +16,11 @@ authors:
 date: last-modified
 bibliography: references.bib
 number-sections: true
+
+output:
+  html: default
+  pdf: default
+prefer-html: true
 ---
 
 ## Data selection
@@ -31,7 +36,7 @@ We describe our work in the PDF version. However, we would like to recommend rea
 The superstore data set we selected is of high quality: At first glance (which needs to be verified during the visualization), the data appears to have been recorded regularly and without interruptions. There is no sign of a sudden structural change. Since the data are consumer products, it should contain both trends and seasonality.
 Nevertheless, we have included hypothetical steps to demonstrate our understanding of the data preprocessing procedure. In detail, we did:
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, error=FALSE}
 #| label: setup
 
 # Clear workspace
@@ -44,12 +49,12 @@ install_and_load <- function(packages) {
 install_and_load(c("tidyverse", "readxl", "ggplot2", "lubridate", "stats", "Amelia","forecast", "tseries", "plotly", "stringr", "knitr", "kableExtra"))
 ```
 
--   Improved column names by removing whitespaces
--   Removed the <code>Row_ID</code> column as it can be inferred by it's index
--   Removed all columns with a single unique value, as storing these would be [redundant](https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html)
--   Ensured machine-readable date formats in yyyy-mm-dd as these usually differ per locale.
--   Ensured proper decimal separators
--   Calculated the number of missing values (both NA and empty string "") per column.
+-   Remove whitespaces from column names
+-   Remove the <code>Row_ID</code> column as it can be inferred by it's index
+-   Remove all columns with a single unique value, as storing these would be [redundant](https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html)
+-   Ensure machine-readable date formats in <code>yyyy-mm-dd</code> as these usually differ per locale.
+-   Ensure proper decimal separators
+-   Calculate the number of missing values (both NA and empty string "") per column.
 
 ```{r}
 #| label: data_preprocessing
@@ -102,10 +107,7 @@ rm(missing_values, missing_values_table)
 After these steps (and transposing the table for better document formatting), the data looks as follows:
 ```{r}
 #| label: data_table1
-dat_table <- t(head(data,))
-
 kable(t(head(data, 3)), caption = "First 3 Rows of the Data (Transposed)", format = "markdown")
-
 ```
 
 We did not find any missing values, confirming the quality of the data set. There is some more processing to do, for instance the removal of outliers. However, by doing so we impose our own assumptions on the data. Let's start by evaluating the descriptive statistics of our data and check if further processing is required.
@@ -157,8 +159,10 @@ character_stats <- as.data.frame(do.call(rbind, lapply(names(data), function(col
     c(Column = col_name, descriptive_stats[[col_name]])
   }
 })), stringsAsFactors = FALSE)
+```
 
-# Output tables
+```{r}
+#| Label: Descriptive_Output_tables
 kable(
   numeric_stats,
   caption = "Descriptive Statistics for Numeric Columns",
@@ -179,8 +183,6 @@ In figure x we plotted the quantities of the most sold products. Unfortunately, 
 
 ```{r message=FALSE, warnng=FALSE, error=FALSE}
 #| label: Quantity_top_products
-#| fig-cap: Figure X Sale quantity of the most popular products
-
 # Optionally: print top 10 sale quantity barplot
 # # Sum of Quantity for top products
 # top_products <- data %>%
@@ -217,6 +219,13 @@ filtered_time_series_data <- time_series_data %>%
   mutate(ProdName10 = substr(Product_Name, 1, 10)) # Product names can be quite long and mess up layouts. Lets only plot the first 10 chars.
 
 # Here we do some special plotting. We want to show the plot with only one selected line by default, but make sure that the other 9 top sold products can be selected. We first create the ggplotly object, and than modify the visibility of the traces
+```
+
+```{r}
+#| label: Top_Products_Quantity
+#| fig-cap: Figure X Sale quantity of the most popular products
+
+# Plot interactive figure in html, plot ggplot2 in pdf:
 
 # Creating the ggplotly object
 p_ly <- ggplotly(ggplot(filtered_time_series_data, aes(x = Order_Date, y = total_quantity, color = ProdName10)) +
@@ -548,8 +557,6 @@ for (subcategory in names(forecast_results)) {
 
 ```
 
-test1
-
 ```{r message=FALSE, warning=FALSE, error=FALSE}
 #| label: Results2
 options(warn = -1)
@@ -599,8 +606,6 @@ for (subcategory in top_3_subcategories) {
 
 ```
 
-test2
-
 ```{r}
 #| label: results3
 # Time differenced plots
@@ -637,7 +642,6 @@ combined_diff_plot(differenced_series, top_3_subcategories)
 
 ```
  
- test3
  
 ```{r}
 #| label: Results4
@@ -732,7 +736,7 @@ for (subcategory in names(forecast_results)) {
 
 ```
 
-test4
+
 
 ```{r}
 #| label: KPSStest
@@ -806,7 +810,7 @@ time_series_features_scaled <- time_series_features %>%
   scale()
 
 # verify rows
-nrow(time_series_features_scaled)
+# nrow(time_series_features_scaled)
 
 # Step 3: Perform K-Means Clustering
 # Determine the number of clusters dynamically
@@ -822,8 +826,6 @@ time_series_features$Cluster <- cutree(hc, k = k)
 forecast_results_by_cluster <- list()
 
 for (cluster_id in unique(time_series_features$Cluster)) {
-  cat("\nProcessing Cluster:", cluster_id, "\n")
-
   # Get subcategories in the current cluster
   subcategories_in_cluster <- time_series_features$SubCategory[time_series_features$Cluster == cluster_id]
 
