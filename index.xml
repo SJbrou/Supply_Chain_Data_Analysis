@@ -5,18 +5,6 @@ and Interchange DTD v1.2 20190208//EN" "JATS-archivearticle1.dtd">
 <article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink" dtd-version="1.2" article-type="other">
 
 <front>
-<journal-meta>
-<journal-id></journal-id>
-
-<journal-title-group>
-<journal-title>Earth and Space Science</journal-title>
-</journal-title-group>
-<issn></issn>
-
-<publisher>
-<publisher-name></publisher-name>
-</publisher>
-</journal-meta>
 
 
 <article-meta>
@@ -118,11 +106,7 @@ and Interchange DTD v1.2 20190208//EN" "JATS-archivearticle1.dtd">
 <corresp id="cor-1"></corresp>
 </author-notes>
 
-<pub-date date-type="pub" publication-format="electronic" iso-8601-date="2024-12-07">
-<year>2024</year>
-<month>12</month>
-<day>7</day>
-</pub-date>
+
 
 
 
@@ -142,53 +126,61 @@ and Interchange DTD v1.2 20190208//EN" "JATS-archivearticle1.dtd">
 </front>
 
 <body>
-<p>Introduction</p>
-<p>We analyze, forecast and interpret the
-<ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore
-sales</ext-link> provided by
-<ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/learn/sample-data">Tableau</ext-link>
-using different statistical and machine learning methods.</p>
-<p>We describe our work in the PDF version. However, we would like to
-recommend reading our quarto manuscript <italic>here</italic> as it
-contains the <bold>relevant</bold> R code in the Article Notebook.</p>
+<sec id="data-selection">
+  <title>1 Data selection</title>
+  <p>We analyze, forecast and interpret the
+  <ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore
+  sales</ext-link> provided by
+  <ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/learn/sample-data">Tableau</ext-link>
+  using different statistical and machine learning methods.</p>
+  <p>The dataset provided contains information about products, sales and
+  profits of a fictitious US company. The dataset contains about 10,000
+  rows with 1,850 unique product names and 17 product subcategories,
+  covering four consecutive years on a daily basis.</p>
+  <p>We describe our work in the PDF version. However, we would like to
+  recommend reading our quarto manuscript <italic>here</italic> as it
+  contains the <bold>relevant</bold> R code in the Article Notebook.</p>
+</sec>
 <sec id="data-pre-processing">
-  <title>1 Data Pre-processing</title>
-  <p>The superstore data set we selected is of high quality. Thus we do
-  the required data pre-processing, but included the hypothetical steps
-  we would take were our data of lower quality to communicate our
-  understanding of the data pre-processing process.</p>
-  <p>We took the following pre-processing steps:</p>
+  <title>2 Data Pre-processing</title>
+  <p>The superstore data set we selected is of high quality: At first
+  glance (which needs to be verified during the visualization), the data
+  appears to have been recorded regularly and without interruptions.
+  There is no sign of a sudden structural change. Since the data are
+  consumer products, it should contain both trends and seasonality.
+  Nevertheless, we have included hypothetical steps to demonstrate our
+  understanding of the data preprocessing procedure. In detail, we
+  did:</p>
   <list list-type="bullet">
     <list-item>
-      <p>Improved column names by removing whitespaces</p>
+      <p>Remove whitespaces from column names</p>
     </list-item>
     <list-item>
-      <p>Removed the Row_ID column as it can be inferred by it’s
+      <p>Remove the Row_ID column as it can be inferred by it’s
       index</p>
     </list-item>
     <list-item>
-      <p>Removed all columns with a single unique value, as storing
-      these would be
+      <p>Remove all columns with a single unique value, as storing these
+      would be
       <ext-link ext-link-type="uri" xlink:href="https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html">redundant</ext-link></p>
     </list-item>
     <list-item>
-      <p>Ensured machine-readable date formats in yyyy-mm-dd as these
+      <p>Ensure machine-readable date formats in yyyy-mm-dd as these
       usually differ per locale.</p>
     </list-item>
     <list-item>
-      <p>Ensured proper decimal separators</p>
+      <p>Ensure proper decimal separators</p>
     </list-item>
     <list-item>
-      <p>Calculated the number of missing values (both NA and empty
+      <p>Calculate the number of missing values (both NA and empty
       string ““) per column.</p>
     </list-item>
   </list>
-  <preformat>[1] &quot;None of the columns contains missing values&quot;</preformat>
   <p>After these steps (and transposing the table for better document
   formatting), the data looks as follows:</p>
   <table-wrap>
     <caption>
-      <p>First 5 Rows of the Data (Transposed)</p>
+      <p>First 3 Rows of the Data (Transposed)</p>
     </caption>
     <table>
       <colgroup>
@@ -317,10 +309,12 @@ contains the <bold>relevant</bold> R code in the Article Notebook.</p>
       </tbody>
     </table>
   </table-wrap>
-  <p>There is some more processing to do, for instance the removal of
-  outliers. However, by doing so we impose our own assumptions on the
-  data. Let’s start by evaluating the descriptive statistics of our data
-  and check if further processing is required.</p>
+  <p>We did not find any missing values, confirming the quality of the
+  data set. There is some more processing to do, for instance the
+  removal of outliers. However, by doing so we impose our own
+  assumptions on the data. Let’s start by evaluating the descriptive
+  statistics of our data and check if further processing is
+  required.</p>
   <table-wrap>
     <caption>
       <p>Descriptive Statistics for Numeric Columns</p>
@@ -406,43 +400,39 @@ contains the <bold>relevant</bold> R code in the Article Notebook.</p>
       </tbody>
     </table>
   </table-wrap>
-  <p>We inspected the orders with the lowest and highers price (Sales in
-  USD). The most expensive orders were professional printers, camera’s
-  and teleconferencing units with high unit prices, and these orders
-  often were of high Quantity. The orders with the lowest price where
-  often binders, had a high Discount rate, and often a Quantity of just
-  one.</p>
-  <p>We were fascinated by the orders with a negative profit. These all
-  had high Discount rates, and often concerned the same items, such as
-  the Cubify CubeX 3D Printer Triple Head Print. The orders with a
-  negative Profit where often part of a larger order (for instance
-  CA-2016-108196), and placed by customers that placed multiple orders.
-  We suspect these negative Profit’s to be caused by faulty items that
-  receive discounts, general discount codes, or volume discounts.
-  However, due to especially the high discounts on orders with negative
-  profits, we assume these to be valid orders. This decision has also
-  been influenced by the high quality of the data. As we found no
-  missing values whats however, we suspect the chance of some weird but
-  valid orders to be higher than encountering mistakes here.
-  <italic>[this paragraph could use some rewriting]</italic></p>
-  <p>In figure x we plotted the sales of the most popular products.
-  Unfortunately, the sales of individual products were too low to
-  determine any meaningfull trends.</p>
+  <p>We inspect the orders with the lowest and highest Sales amount (in
+  USD). The most expensive orders were professional printers, cameras
+  and teleconferencing units with high unit prices. The orders with the
+  lowest sales amount were often binders and had a high Discount
+  rate.</p>
+  <p>Interestingly there are orders with a negative profit. They
+  typically have high Discount rates and often concern the same item,
+  such as the “Cubify CubeX 3D Printer Triple Head Print”. The orders
+  with a negative Profit were often part of a larger order (for instance
+  CA-2016-108196), and placed by customers with multiple orders. We
+  suspect these negative Profit’s to be caused by items of lower quality
+  that receive discounts, general discount codes, or volume discounts.
+  However, due to the high discounts especially on orders with negative
+  profit, we assume these to be valid orders.</p>
+  <p>** Some negative profit products **</p>
+  <p>In figure x we plotted the quantities of the most sold products.
+  Unfortunately, the sold quantities of individual products were too low
+  to determine any meaningful trends.</p>
   <fig>
-    <caption><p>Figure x Sale quantity of the most popular
+    <caption><p>Figure X Sale quantity of the most popular
     products</p></caption>
-    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Quantity_top_products-1.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Top_Products_Quantity-1.png" />
   </fig>
-  <p>Our proposed workaround is to aggregate products by their
-  Sub_Category, and treating them as a single product for the rest of
-  the assignment, which we plotted in figure X.</p>
+  <p>Our proposed workaround is to aggregate Product_Name by
+  Sub_Category, and treat it as a single product for the rest of the
+  assignment, which we plotted in figure X.</p>
   <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Aggregated_Sub_Category_sales-1.png" />
-  <p>These aggregated sales start to show trends and seasonality, and
-  are much more useful to base predictions on! We will use these
+  <p>This aggregated Quantity starts to show trends and seasonality, and
+  is much more useful to base predictions on! We will use these
   aggregated sub-categories for the rest of the assignment.</p>
-  <p>To properly finish our data pre-processing we ran some statistics
-  on the aggregated sub-category sales. Table x contains soem
-  descriptive statistics.</p>
+  <p>To properly finish our data preprocessing we ran some statistics on
+  Quantity aggregated by Sub_Category. Table x contains some descriptive
+  statistics.</p>
   <table-wrap>
     <caption>
       <p>Statistics for Sub_Category quantity</p>
@@ -616,22 +606,421 @@ contains the <bold>relevant</bold> R code in the Article Notebook.</p>
       </tbody>
     </table>
   </table-wrap>
-  <p>The statistics for the sales aggregated by product category look
-  valid. We can further inspect them by visualizing them as histogram
-  and visually check for anomalies. Figure y contains histograms of the
-  quantities per sub-category.</p>
+  <p>The statistics for Quantity aggregated by Sub_Category looks valid.
+  We can visualize it as histogram and check for anomalies. Figure y
+  contains histograms of Quantity per Sub_Category.</p>
   <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/sub_category_histograms-1.png" />
-  <p>The histograms show that the quantities are not normally
-  distributed, but have a right-skewed distribution. This is expected as
-  most orders contain a small number of items, but some orders contain a
-  large number of items. We will not remove these outliers as they are
-  valid orders.</p>
-  <p>As the data we are going to use seems valid, we move on to
-  exploring the trends and visualizing our data.</p>
+  <p>The histograms show that the quantities a right-skewed distributed.
+  This is to be expected since most orders contain only a small number
+  of items. We will not remove the outliers with large quantities since
+  they appear valid..</p>
 </sec>
 <sec id="data-visualization">
-  <title>2 Data Visualization</title>
-  <p>some text for the visualization</p>
+  <title>3 Data Visualization</title>
+</sec>
+<sec id="forecasting-method-evaluation">
+  <title>4 Forecasting Method Evaluation</title>
+  <sec id="forecasting-top-3-product-categories-4a">
+    <title>Forecasting top 3 product categories (4a)</title>
+    <p>Let’s forecast sold quantities for the three most sold
+    sub-categories:</p>
+    <p>The steps taken for data preparation were:</p>
+    <list list-type="bullet">
+      <list-item>
+        <p>Identifying Top Subcategories: The top three subcategories
+        are selected from our dataset based on their sold quantities.
+        The top three were: Binders, furnishing and paper.</p>
+      </list-item>
+      <list-item>
+        <p>The sold quantities are aggregated monthly to create a time
+        series object which we can use in the forecasting.</p>
+      </list-item>
+      <list-item>
+        <p>A KPSS showed that the data is non stationary. First-order
+        differencing is applied to transform the data from
+        non-stationary to stationary. The KPSS results in a p-value
+        &gt;0.05 showing the stationarity.</p>
+      </list-item>
+    </list>
+    <p>Three models are applied to each subcategory to forecast it. The
+    models we use are: ARIMA, Holt-Winters and ETS. We have chosen these
+    models because of their level of suitability for discrete time
+    series data with all different levels of trend and seasonality. To
+    evaluate the methods and its effectiveness , the data is split into
+    a training set (70%) and testing set (30%).</p>
+    <p>To assess the results, we use the following performance metrics:
+    ME, RMSE, MAE and MAPE. They are calculated for the training and
+    testing phases of the forecast.</p>
+    <p>As we can see on the forecasting results ARIMA performed well for
+    binders. We can state this because of the lowest RMSE if you compare
+    it to the other models.</p>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Results1-1.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Results1-2.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Results1-3.png" />
+    <preformat>
+    KPSS Test for Level Stationarity
+
+data:  ts_diff
+KPSS Level = 0.10182, Truncation lag parameter = 3, p-value = 0.1
+
+
+    KPSS Test for Level Stationarity
+
+data:  ts_diff
+KPSS Level = 0.061982, Truncation lag parameter = 3, p-value = 0.1
+
+
+    KPSS Test for Level Stationarity
+
+data:  ts_diff
+KPSS Level = 0.098438, Truncation lag parameter = 3, p-value = 0.1</preformat>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/results3-1.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Results4-1.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Results4-2.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Results4-3.png" />
+    <preformat>
+KPSS Test for Differenced Sub-Category: Binders 
+
+    KPSS Test for Level Stationarity
+
+data:  ts_current
+KPSS Level = 0.10182, Truncation lag parameter = 3, p-value = 0.1
+
+
+KPSS Test for Differenced Sub-Category: Paper 
+
+    KPSS Test for Level Stationarity
+
+data:  ts_current
+KPSS Level = 0.061982, Truncation lag parameter = 3, p-value = 0.1
+
+
+KPSS Test for Differenced Sub-Category: Furnishings 
+
+    KPSS Test for Level Stationarity
+
+data:  ts_current
+KPSS Level = 0.098438, Truncation lag parameter = 3, p-value = 0.1</preformat>
+    <p>As we can see on the forecasting results ARIMA performed well for
+    binders. We can state this because of the lowest RMSE. - ARIMA
+    Binders: - Forecasting results Binders:</p>
+    <p>For the subcategory furnishings we can see that the ETS
+    forecasting method is the most stable across the training and
+    testing phase. - ETS furnishings - Forecasting results
+    Furnishings:</p>
+    <p>For the last subcategory and product paper the ETS model is again
+    the most consistent, comparing the statistics for training and test
+    set. The high variability in the test data leads to larger
+    forecasting errors in all the 3 models.</p>
+    <list list-type="bullet">
+      <list-item>
+        <p>ETS Furnishings:</p>
+      </list-item>
+      <list-item>
+        <p>Forecasting results:</p>
+      </list-item>
+    </list>
+    <p>Residual Diagnostics: - The checks show no real autocorrelation
+    for ARIMA models. Which indicates a good fitting forecast.</p>
+  </sec>
+  <sec id="conclusion-4a">
+    <title>Conclusion (4a)</title>
+    <p>The most effective model is not the same in all the
+    subcategories. Each model was validated based on its ability to
+    capture seasonality and trend. ARIMA performed better for Binders,
+    while ETS performed better for Furnishings and Paper.</p>
+  </sec>
+  <sec id="clustering-4b">
+    <title>Clustering (4b)</title>
+    <preformat>
+
+Results for Cluster_1 
+
+Sub-Category: Binders 
+
+ARIMA Accuracy:
+                    ME      RMSE      MAE        MPE     MAPE      MASE
+Training set 0.7706014  4.643476 2.982256  0.6865304 12.91204 0.4854835
+Test set     5.9407398 10.783528 7.616473 10.3681817 17.32927 1.2398909
+                   ACF1 Theil's U
+Training set 0.04429472        NA
+Test set     0.04929320 0.3573866
+
+Holt-Winters Accuracy:
+                    ME     RMSE      MAE        MPE     MAPE      MASE
+Training set 0.8668058 5.215491 3.789990 -0.4040374 15.36545 0.6169751
+Test set     2.2473496 8.712049 6.243226  0.1597635 16.02219 1.0163391
+                     ACF1 Theil's U
+Training set -0.389045966        NA
+Test set     -0.001830843 0.2777843
+
+ETS Accuracy:
+                   ME      RMSE      MAE       MPE     MAPE      MASE
+Training set 0.743354  4.712561 3.656409  1.358692 15.41708 0.5952293
+Test set     7.439784 12.216161 8.825094 10.667088 20.93561 1.4366433
+                   ACF1 Theil's U
+Training set -0.2225537        NA
+Test set      0.0608554 0.3767484
+
+
+Results for Cluster_2 
+
+Sub-Category: Paper 
+
+ARIMA Accuracy:
+                    ME      RMSE       MAE        MPE     MAPE      MASE
+Training set  1.117384  6.309464  3.827714   1.702165 14.32157 0.5468163
+Test set     -9.014128 12.230774 10.375521 -30.103886 31.89519 1.4822173
+                     ACF1 Theil's U
+Training set -0.007064333        NA
+Test set      0.108516273 0.6984566
+
+Holt-Winters Accuracy:
+                     ME     RMSE       MAE        MPE     MAPE      MASE
+Training set   1.509544  7.27986  4.854547   3.325281 16.41309 0.6935067
+Test set     -12.036865 14.48061 13.347292 -39.791842 41.51609 1.9067560
+                    ACF1 Theil's U
+Training set -0.02710216        NA
+Test set      0.10006713  0.845232
+
+ETS Accuracy:
+                     ME      RMSE      MAE         MPE     MAPE      MASE
+Training set 0.60941117  6.204628 4.474990 -1.66197953 18.73240 0.6392842
+Test set     0.08500424 11.304488 8.247017 -0.08462612 20.47598 1.1781453
+                    ACF1 Theil's U
+Training set 0.005205508        NA
+Test set     0.341519997  0.582549
+
+
+Results for Cluster_3 
+
+Sub-Category: Furnishings 
+
+ARIMA Accuracy:
+                    ME     RMSE      MAE       MPE     MAPE      MASE
+Training set 0.0050974 3.873555 2.567868 -6.624673 20.20958 0.5559302
+Test set     3.9523810 7.782677 6.238095 10.720079 22.75340 1.3505155
+                    ACF1 Theil's U
+Training set -0.20160077        NA
+Test set     -0.03570035 0.6102339
+
+Holt-Winters Accuracy:
+                    ME     RMSE      MAE      MPE     MAPE      MASE
+Training set 0.9137655 4.164677 3.475419 7.490317 24.75583 0.7524103
+Test set     3.6371987 7.200985 5.673333 9.724318 20.50134 1.2282474
+                    ACF1 Theil's U
+Training set -0.43317305        NA
+Test set      0.01804785 0.5689788
+
+ETS Accuracy:
+                    ME     RMSE      MAE        MPE     MAPE     MASE
+Training set 0.7370579 3.466690 2.851745  0.4301648 20.85220 0.617388
+Test set     6.0973038 8.354163 6.690832 20.7276401 23.55317 1.448531
+                   ACF1 Theil's U
+Training set -0.2087083        NA
+Test set      0.3729315 0.7455977</preformat>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/somelable-1.png" />
+    <preformat>
+Residual Diagnostics for Sub-Category: Binders </preformat>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/somelable-2.png" />
+    <preformat>
+    Ljung-Box test
+
+data:  Residuals from ARIMA(0,1,2)(0,1,0)[12]
+Q* = 2.6295, df = 5, p-value = 0.7569
+
+Model df: 2.   Total lags used: 7
+
+
+Residual Diagnostics for Sub-Category: Paper </preformat>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/somelable-3.png" />
+    <preformat>
+    Ljung-Box test
+
+data:  Residuals from ARIMA(0,1,1)(0,1,0)[12]
+Q* = 6.6676, df = 6, p-value = 0.3527
+
+Model df: 1.   Total lags used: 7
+
+
+Residual Diagnostics for Sub-Category: Furnishings </preformat>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/somelable-4.png" />
+    <preformat>
+    Ljung-Box test
+
+data:  Residuals from ARIMA(0,0,0)(0,1,0)[12] with drift
+Q* = 9.5952, df = 7, p-value = 0.2127
+
+Model df: 0.   Total lags used: 7</preformat>
+    <preformat>    Cluster  MeanRMSE MeanMAPE
+1 Cluster_1 10.783528 17.32927
+2 Cluster_2 12.230774 31.89519
+3 Cluster_3  7.782677 22.75340</preformat>
+    <p>Cluster 1 (e.g., Binders): ARIMA outperformed other methods due
+    to significant autocorrelation and trend components.</p>
+    <p>Cluster 2 (e.g., Furnishings): ETS was the most accurate method,
+    effectively balancing trend and seasonality.</p>
+    <p>Cluster 3 (e.g., Paper): ETS also performed best, with ARIMA
+    showing higher error rates due to variability in random
+    components.</p>
+    <p>Residual diagnostics were performed for all ARIMA models,
+    confirming no significant autocorrelation (p &gt; 0.05).</p>
+    <p>Cluster-Level Metrics based on mean RMSE and MAPE show: - Cluster
+    1 had the lowest RMSE using ARIMA. - Cluster 2 and 3 were better
+    modeled with ETS</p>
+  </sec>
+  <sec id="conclusion-4b">
+    <title>Conclusion (4b)</title>
+    <p>Clustering allows for tailored forecasting strategies. We
+    conclude that for the given data set ARIMA is more effective for
+    clusters with strong trends, while ETS is preferable for clusters
+    with mixed seasonal and trend characteristics. The approach aligns
+    with lecture notes, emphasizing the importance of adapting models
+    based on time series characteristics.</p>
+  </sec>
+</sec>
+<sec id="forecasting-future-values">
+  <title>5 Forecasting future values</title>
+  <sec id="forecasting-3-products-5a">
+    <title>Forecasting 3 products (5a)</title>
+    <p>In this session, we focused on evaluating different forecasting
+    models (ARIMA, Holt-Winters, and ETS) for multiple sub-categories by
+    analyzing their accuracy metrics, such as RMSE, MAPE, and residual
+    diagnostics. Based on the evaluation results, we selected the
+    best-performing model for each sub-category. We then used these
+    models to forecast the future outcomes for each sub-category,
+    projecting the data for the next year. Note: we may need to
+    interpret the outcomes and explain why we pick the certain model</p>
+    <preformat>Series: binders_ts 
+ARIMA(1,1,1)(0,1,0)[12] 
+
+Coefficients:
+          ar1      ma1
+      -0.4781  -0.4819
+s.e.   0.2324   0.2426
+
+sigma^2 = 51.18:  log likelihood = -117.97
+AIC=241.94   AICc=242.72   BIC=246.61
+
+Training set error measures:
+                   ME     RMSE      MAE       MPE     MAPE     MASE        ACF1
+Training set 0.864453 5.931761 4.092168 -1.363101 15.06142 0.558023 -0.03746012</preformat>
+    <preformat>         Point Forecast    Lo 80     Hi 80     Lo 95     Hi 95
+Jan 2018       32.48390 23.31571  41.65208 18.462370  46.50543
+Feb 2018       23.77181 14.59632  32.94731  9.739103  37.80452
+Mar 2018       45.85265 35.59989  56.10541 30.172412  61.53289
+Apr 2018       46.20475 35.63662  56.77287 30.042185  62.36730
+May 2018       44.08009 32.93968  55.22051 27.042295  61.11789
+Jun 2018       44.61784 33.06359  56.17210 26.947139  62.28855
+Jul 2018       40.36072 28.34867  52.37277 21.989869  58.73157
+Aug 2018       44.48366 32.05796  56.90937 25.480189  63.48714
+Sep 2018       73.42488 60.58630  86.26346 53.789962  93.05979
+Oct 2018       51.45299 38.22024  64.68573 31.215253  71.69072
+Nov 2018       72.43955 58.82134  86.05775 51.612293  93.26680
+Dec 2018       89.44597 75.45417 103.43777 68.047363 110.84458</preformat>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/unnamed-chunk-18-1.png" />
+    <preformat>ETS(M,N,A) 
+
+Call:
+ets(y = paper_ts)
+
+  Smoothing parameters:
+    alpha = 0.3075 
+    gamma = 1e-04 
+
+  Initial states:
+    l = 22.5954 
+    s = 17.4472 16.5763 -4.1253 15.2986 0.421 -5.102
+           -0.6145 -0.0341 -7.985 -2.6766 -15.6576 -13.5481
+
+  sigma:  0.2365
+
+     AIC     AICc      BIC 
+365.1517 380.1517 393.2197 
+
+Training set error measures:
+                   ME     RMSE      MAE     MPE     MAPE      MASE       ACF1
+Training set 1.450303 6.386648 4.166875 1.75373 14.03399 0.5245018 0.03600045</preformat>
+    <preformat>         Point Forecast    Lo 80    Hi 80    Lo 95    Hi 95
+Jan 2018       30.45588 21.22661 39.68516 16.34092 44.57085
+Feb 2018       28.34651 19.27484 37.41819 14.47258 42.22044
+Mar 2018       41.32776 28.18367 54.47185 21.22561 61.42990
+Apr 2018       36.01933 23.73891 48.29976 17.23804 54.80062
+May 2018       43.97017 29.09477 58.84557 21.22021 66.72013
+Jun 2018       43.39031 28.07408 58.70653 19.96616 66.81445
+Jul 2018       38.90220 24.12853 53.67588 16.30782 61.49659
+Aug 2018       44.42410 27.84663 61.00158 19.07104 69.77717
+Sep 2018       59.30522 38.44478 80.16566 27.40193 91.20850
+Oct 2018       39.87917 22.81850 56.93984 13.78712 65.97122
+Nov 2018       60.58102 38.27853 82.88352 26.47230 94.68975
+Dec 2018       61.45110 38.17748 84.72473 25.85717 97.04504</preformat>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/unnamed-chunk-18-2.png" />
+    <preformat>ETS(M,A,A) 
+
+Call:
+ets(y = furnishings_ts)
+
+  Smoothing parameters:
+    alpha = 0.0438 
+    beta  = 0.0437 
+    gamma = 2e-04 
+
+  Initial states:
+    l = 15.4275 
+    b = -0.1137 
+    s = 13.3158 15.6269 -2.2962 10.1503 -5.0017 -2.448
+           -3.4406 -1.0728 -1.1262 -4.3688 -11.689 -7.6497
+
+  sigma:  0.2527
+
+     AIC     AICc      BIC 
+338.8888 359.2888 370.6992 
+
+Training set error measures:
+                    ME     RMSE      MAE        MPE    MAPE      MASE
+Training set 0.6402485 3.793384 2.884208 -0.8302416 16.2441 0.5352139
+                   ACF1
+Training set 0.04613441</preformat>
+    <preformat>         Point Forecast    Lo 80    Hi 80     Lo 95    Hi 95
+Jan 2018       21.37433 14.45350 28.29515 10.789837 31.95882
+Feb 2018       18.56644 12.52244 24.61044  9.322944 27.80994
+Mar 2018       27.11574 18.26943 35.96205 13.586481 40.64500
+Apr 2018       31.58782 21.22159 41.95404 15.734048 47.44158
+May 2018       32.87189 21.95559 43.78819 16.176845 49.56693
+Jun 2018       31.73384 20.95052 42.51717 15.242170 48.22551
+Jul 2018       33.95710 22.18459 45.72960 15.952604 51.96159
+Aug 2018       32.63192 20.83816 44.42569 14.594916 50.66893
+Sep 2018       49.01546 31.92061 66.11032 22.871140 75.15979
+Oct 2018       37.79884 23.38308 52.21460 15.751844 59.84584
+Nov 2018       56.95159 36.44698 77.45621 25.592490 88.31070
+Dec 2018       55.87232 34.96477 76.77986 23.896983 87.84765</preformat>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/unnamed-chunk-18-3.png" />
+  </sec>
+  <sec id="applying-to-all-data-5b">
+    <title>Applying to all data (5b)</title>
+    <p>In this session, we first grouped the sub-categories into
+    clusters based on key time-series features, including trend
+    strength, seasonal strength, and random strength, using hierarchical
+    clustering. Once the clusters were formed, we applied and evaluated
+    multiple forecasting models—ARIMA, Holt-Winters, and ETS—on each
+    sub-category within its respective cluster, comparing their accuracy
+    metrics such as RMSE and MAPE. Based on the evaluation results, we
+    selected the best-performing model for each sub-category and used it
+    to forecast the future outcomes within a year, leveraging the
+    clustering to enhance the accuracy and relevance of our
+    predictions.</p>
+  </sec>
+</sec>
+<sec id="forecast-interpretation">
+  <title>6 Forecast interpretation</title>
+  <p>Lorem Ipsum</p>
+  <p></p>
+  <sec id="forecasting">
+    <title>Forecasting??</title>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/unnamed-chunk-21-1.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/unnamed-chunk-21-2.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/unnamed-chunk-21-3.png" />
+  </sec>
 </sec>
 </body>
 
@@ -737,22 +1126,31 @@ contains the <bold>relevant</bold> R code in the Article Notebook.</p>
 </front-stub>
 
 <body>
-<p>Introduction</p>
-<p>We analyze, forecast and interpret the
-<ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore
-sales</ext-link> provided by
-<ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/learn/sample-data">Tableau</ext-link>
-using different statistical and machine learning methods.</p>
-<p>We describe our work in the PDF version. However, we would like to
-recommend reading our quarto manuscript <italic>here</italic> as it
-contains the <bold>relevant</bold> R code in the Article Notebook.</p>
+<sec id="data-selection-nb-article">
+  <title>1 Data selection</title>
+  <p>We analyze, forecast and interpret the
+  <ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore
+  sales</ext-link> provided by
+  <ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/learn/sample-data">Tableau</ext-link>
+  using different statistical and machine learning methods.</p>
+  <p>The dataset provided contains information about products, sales and
+  profits of a fictitious US company. The dataset contains about 10,000
+  rows with 1,850 unique product names and 17 product subcategories,
+  covering four consecutive years on a daily basis.</p>
+  <p>We describe our work in the PDF version. However, we would like to
+  recommend reading our quarto manuscript <italic>here</italic> as it
+  contains the <bold>relevant</bold> R code in the Article Notebook.</p>
+</sec>
 <sec id="data-pre-processing-nb-article">
-  <title>1 Data Pre-processing</title>
-  <p>The superstore data set we selected is of high quality. Thus we do
-  the required data pre-processing, but included the hypothetical steps
-  we would take were our data of lower quality to communicate our
-  understanding of the data pre-processing process.</p>
-  <p>We took the following pre-processing steps:</p>
+  <title>2 Data Pre-processing</title>
+  <p>The superstore data set we selected is of high quality: At first
+  glance (which needs to be verified during the visualization), the data
+  appears to have been recorded regularly and without interruptions.
+  There is no sign of a sudden structural change. Since the data are
+  consumer products, it should contain both trends and seasonality.
+  Nevertheless, we have included hypothetical steps to demonstrate our
+  understanding of the data preprocessing procedure. In detail, we
+  did:</p>
   <sec specific-use="notebook-content">
   <code language="r script"># Clear workspace
 rm(list = ls())
@@ -761,7 +1159,7 @@ install_and_load &lt;- function(packages) {
   install.packages(setdiff(packages, rownames(installed.packages())), dependencies = TRUE)
   invisible(lapply(packages, require, character.only = TRUE))
 }
-install_and_load(c(&quot;tidyverse&quot;, &quot;readxl&quot;, &quot;ggplot2&quot;, &quot;lubridate&quot;, &quot;stats&quot;, &quot;Amelia&quot;,&quot;forecast&quot;, &quot;tseries&quot;, &quot;plotly&quot;, &quot;stringr&quot;, &quot;knitr&quot;))</code>
+install_and_load(c(&quot;tidyverse&quot;, &quot;readxl&quot;, &quot;ggplot2&quot;, &quot;lubridate&quot;, &quot;stats&quot;, &quot;Amelia&quot;,&quot;forecast&quot;, &quot;tseries&quot;, &quot;plotly&quot;, &quot;stringr&quot;, &quot;knitr&quot;, &quot;kableExtra&quot;))</code>
   <boxed-text>
     <preformat>Loading required package: tidyverse</preformat>
   </boxed-text>
@@ -827,29 +1225,38 @@ Loading required package: knitr</preformat>
   <boxed-text>
     <preformat>Warning: package 'knitr' was built under R version 4.3.3</preformat>
   </boxed-text>
+  <boxed-text>
+    <preformat>Loading required package: kableExtra
+
+Attaching package: 'kableExtra'
+
+The following object is masked from 'package:dplyr':
+
+    group_rows</preformat>
+  </boxed-text>
   </sec>
   <list list-type="bullet">
     <list-item>
-      <p>Improved column names by removing whitespaces</p>
+      <p>Remove whitespaces from column names</p>
     </list-item>
     <list-item>
-      <p>Removed the Row_ID column as it can be inferred by it’s
+      <p>Remove the Row_ID column as it can be inferred by it’s
       index</p>
     </list-item>
     <list-item>
-      <p>Removed all columns with a single unique value, as storing
-      these would be
+      <p>Remove all columns with a single unique value, as storing these
+      would be
       <ext-link ext-link-type="uri" xlink:href="https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html">redundant</ext-link></p>
     </list-item>
     <list-item>
-      <p>Ensured machine-readable date formats in yyyy-mm-dd as these
+      <p>Ensure machine-readable date formats in yyyy-mm-dd as these
       usually differ per locale.</p>
     </list-item>
     <list-item>
-      <p>Ensured proper decimal separators</p>
+      <p>Ensure proper decimal separators</p>
     </list-item>
     <list-item>
-      <p>Calculated the number of missing values (both NA and empty
+      <p>Calculate the number of missing values (both NA and empty
       string ““) per column.</p>
     </list-item>
   </list>
@@ -885,16 +1292,9 @@ missing_values &lt;- sapply(data, function(col) {
   }
 })
 
+# sum(missing_values) returns 0!
 
-if (sum(missing_values) == 0) {
-  print(&quot;None of the columns contains missing values&quot;) # We print to enforce the &quot;Source: Article notebook
-  } else {
-  print(&quot;Some columns contain missing values&quot;)
-}</code>
-  <boxed-text>
-    <preformat>[1] &quot;None of the columns contains missing values&quot;</preformat>
-  </boxed-text>
-  <code language="r script"># Optionally, print the missing values as a nice table
+# Optionally, print the missing values as a nice table
 missing_values_table &lt;- data.frame(
   Column = names(missing_values),
   Missing_or_Empty = missing_values
@@ -903,19 +1303,15 @@ missing_values_table &lt;- data.frame(
 # kable(missing_values_table, caption = &quot;Missing or Empty Values in Columns&quot;, format = &quot;pipe&quot;)
 
 
-rm(missing_value, missing_values_table)</code>
-  <boxed-text>
-    <preformat>Warning in rm(missing_value, missing_values_table): object 'missing_value' not
-found</preformat>
-  </boxed-text>
+rm(missing_values, missing_values_table)</code>
   </sec>
   <p>After these steps (and transposing the table for better document
   formatting), the data looks as follows:</p>
   <sec specific-use="notebook-content">
-  <code language="r script">kable(t(head(data, 3)), caption = &quot;First 5 Rows of the Data (Transposed)&quot;, format = &quot;markdown&quot;)</code>
+  <code language="r script">kable(t(head(data, 3)), caption = &quot;First 3 Rows of the Data (Transposed)&quot;, format = &quot;markdown&quot;)</code>
   <table-wrap>
     <caption>
-      <p>First 5 Rows of the Data (Transposed)</p>
+      <p>First 3 Rows of the Data (Transposed)</p>
     </caption>
     <table>
       <colgroup>
@@ -1045,10 +1441,12 @@ found</preformat>
     </table>
   </table-wrap>
   </sec>
-  <p>There is some more processing to do, for instance the removal of
-  outliers. However, by doing so we impose our own assumptions on the
-  data. Let’s start by evaluating the descriptive statistics of our data
-  and check if further processing is required.</p>
+  <p>We did not find any missing values, confirming the quality of the
+  data set. There is some more processing to do, for instance the
+  removal of outliers. However, by doing so we impose our own
+  assumptions on the data. Let’s start by evaluating the descriptive
+  statistics of our data and check if further processing is
+  required.</p>
   <sec specific-use="notebook-content">
   <code language="r script">descriptive_statistics &lt;- function(column) {
   if (is.numeric(column)) {
@@ -1093,10 +1491,10 @@ character_stats &lt;- as.data.frame(do.call(rbind, lapply(names(data), function(
   if (is.character(data[[col_name]])) {
     c(Column = col_name, descriptive_stats[[col_name]])
   }
-})), stringsAsFactors = FALSE)
-
-# Output tables
-kable(
+})), stringsAsFactors = FALSE)</code>
+  </sec>
+  <sec specific-use="notebook-content">
+  <code language="r script">kable(
   numeric_stats,
   caption = &quot;Descriptive Statistics for Numeric Columns&quot;,
   format = &quot;pipe&quot;)</code>
@@ -1189,34 +1587,25 @@ kable(
       </tbody>
     </table>
   </table-wrap>
-  <code language="r script"># Let's not render the character table as it contains little relevant information
-#kable(
-#  character_stats,
-#  caption = &quot;Descriptive Statistics for Text Columns&quot;,
-#  format = &quot;pipe&quot;)</code>
   </sec>
-  <p>We inspected the orders with the lowest and highers price (Sales in
-  USD). The most expensive orders were professional printers, camera’s
-  and teleconferencing units with high unit prices, and these orders
-  often were of high Quantity. The orders with the lowest price where
-  often binders, had a high Discount rate, and often a Quantity of just
-  one.</p>
-  <p>We were fascinated by the orders with a negative profit. These all
-  had high Discount rates, and often concerned the same items, such as
-  the Cubify CubeX 3D Printer Triple Head Print. The orders with a
-  negative Profit where often part of a larger order (for instance
-  CA-2016-108196), and placed by customers that placed multiple orders.
-  We suspect these negative Profit’s to be caused by faulty items that
-  receive discounts, general discount codes, or volume discounts.
-  However, due to especially the high discounts on orders with negative
-  profits, we assume these to be valid orders. This decision has also
-  been influenced by the high quality of the data. As we found no
-  missing values whats however, we suspect the chance of some weird but
-  valid orders to be higher than encountering mistakes here.
-  <italic>[this paragraph could use some rewriting]</italic></p>
-  <p>In figure x we plotted the sales of the most popular products.
-  Unfortunately, the sales of individual products were too low to
-  determine any meaningfull trends.</p>
+  <p>We inspect the orders with the lowest and highest Sales amount (in
+  USD). The most expensive orders were professional printers, cameras
+  and teleconferencing units with high unit prices. The orders with the
+  lowest sales amount were often binders and had a high Discount
+  rate.</p>
+  <p>Interestingly there are orders with a negative profit. They
+  typically have high Discount rates and often concern the same item,
+  such as the “Cubify CubeX 3D Printer Triple Head Print”. The orders
+  with a negative Profit were often part of a larger order (for instance
+  CA-2016-108196), and placed by customers with multiple orders. We
+  suspect these negative Profit’s to be caused by items of lower quality
+  that receive discounts, general discount codes, or volume discounts.
+  However, due to the high discounts especially on orders with negative
+  profit, we assume these to be valid orders.</p>
+  <p>** Some negative profit products **</p>
+  <p>In figure x we plotted the quantities of the most sold products.
+  Unfortunately, the sold quantities of individual products were too low
+  to determine any meaningful trends.</p>
   <sec specific-use="notebook-content">
   <code language="r script"># Optionally: print top 10 sale quantity barplot
 # # Sum of Quantity for top products
@@ -1257,7 +1646,10 @@ filtered_time_series_data &lt;- time_series_data %&gt;%
   filter(Product_Name %in% top_products$Product_Name) %&gt;%
   mutate(ProdName10 = substr(Product_Name, 1, 10)) # Product names can be quite long and mess up layouts. Lets only plot the first 10 chars.
 
-# Here we do some special plotting. We want to show the plot with only one selected line by default, but make sure that the other 9 top sold products can be selected. We first create the ggplotly object, and than modify the visibility of the traces
+# Here we do some special plotting. We want to show the plot with only one selected line by default, but make sure that the other 9 top sold products can be selected. We first create the ggplotly object, and than modify the visibility of the traces</code>
+  </sec>
+  <sec specific-use="notebook-content">
+  <code language="r script"># Plot interactive figure in html, plot ggplot2 in pdf:
 
 # Creating the ggplotly object
 p_ly &lt;- ggplotly(ggplot(filtered_time_series_data, aes(x = Order_Date, y = total_quantity, color = ProdName10)) +
@@ -1284,14 +1676,14 @@ for (i in seq_along(p_ly$x$data)) {
 # Plot
 p_ly</code>
   <fig>
-    <caption><p>Figure x Sale quantity of the most popular
+    <caption><p>Figure X Sale quantity of the most popular
     products</p></caption>
-    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Quantity_top_products-1.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Top_Products_Quantity-1.png" />
   </fig>
   </sec>
-  <p>Our proposed workaround is to aggregate products by their
-  Sub_Category, and treating them as a single product for the rest of
-  the assignment, which we plotted in figure X.</p>
+  <p>Our proposed workaround is to aggregate Product_Name by
+  Sub_Category, and treat it as a single product for the rest of the
+  assignment, which we plotted in figure X.</p>
   <sec specific-use="notebook-content">
   <code language="r script"># Bar plots
 
@@ -1361,25 +1753,17 @@ for (i in seq_along(p_ly$x$data)) {
 p_ly</code>
   <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Aggregated_Sub_Category_sales-1.png" />
   </sec>
-  <p>These aggregated sales start to show trends and seasonality, and
-  are much more useful to base predictions on! We will use these
+  <p>This aggregated Quantity starts to show trends and seasonality, and
+  is much more useful to base predictions on! We will use these
   aggregated sub-categories for the rest of the assignment.</p>
-  <p>To properly finish our data pre-processing we ran some statistics
-  on the aggregated sub-category sales. Table x contains soem
-  descriptive statistics.</p>
+  <p>To properly finish our data preprocessing we ran some statistics on
+  Quantity aggregated by Sub_Category. Table x contains some descriptive
+  statistics.</p>
   <sec specific-use="notebook-content">
   <code language="r script">library(dplyr)
-library(kableExtra)</code>
-  <boxed-text>
-    <preformat>
-Attaching package: 'kableExtra'</preformat>
-  </boxed-text>
-  <boxed-text>
-    <preformat>The following object is masked from 'package:dplyr':
+library(kableExtra)
 
-    group_rows</preformat>
-  </boxed-text>
-  <code language="r script"># Summarize the data
+# Summarize the data
 outlier_summary &lt;- data %&gt;%
   group_by(Sub_Category) %&gt;%
   summarize(
@@ -1391,7 +1775,6 @@ outlier_summary &lt;- data %&gt;%
     CI_upper = round(Mean + 1.96 * (Sd / sqrt(n())), 2),
     .groups = &quot;drop&quot;
   )
-
 
 # Output tables
 kable(
@@ -1572,10 +1955,9 @@ kable(
     </table>
   </table-wrap>
   </sec>
-  <p>The statistics for the sales aggregated by product category look
-  valid. We can further inspect them by visualizing them as histogram
-  and visually check for anomalies. Figure y contains histograms of the
-  quantities per sub-category.</p>
+  <p>The statistics for Quantity aggregated by Sub_Category looks valid.
+  We can visualize it as histogram and check for anomalies. Figure y
+  contains histograms of Quantity per Sub_Category.</p>
   <sec specific-use="notebook-content">
   <code language="r script">sub_categories &lt;- unique(data$Sub_Category)
 
@@ -1628,17 +2010,1067 @@ p &lt;- p %&gt;%
 p</code>
   <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/sub_category_histograms-1.png" />
   </sec>
-  <p>The histograms show that the quantities are not normally
-  distributed, but have a right-skewed distribution. This is expected as
-  most orders contain a small number of items, but some orders contain a
-  large number of items. We will not remove these outliers as they are
-  valid orders.</p>
-  <p>As the data we are going to use seems valid, we move on to
-  exploring the trends and visualizing our data.</p>
+  <p>The histograms show that the quantities a right-skewed distributed.
+  This is to be expected since most orders contain only a small number
+  of items. We will not remove the outliers with large quantities since
+  they appear valid..</p>
 </sec>
 <sec id="data-visualization-nb-article">
-  <title>2 Data Visualization</title>
-  <p>some text for the visualization</p>
+  <title>3 Data Visualization</title>
+</sec>
+<sec id="forecasting-method-evaluation-nb-article">
+  <title>4 Forecasting Method Evaluation</title>
+  <sec id="forecasting-top-3-product-categories-4a-nb-article">
+    <title>Forecasting top 3 product categories (4a)</title>
+    <p>Let’s forecast sold quantities for the three most sold
+    sub-categories:</p>
+    <p>The steps taken for data preparation were:</p>
+    <list list-type="bullet">
+      <list-item>
+        <p>Identifying Top Subcategories: The top three subcategories
+        are selected from our dataset based on their sold quantities.
+        The top three were: Binders, furnishing and paper.</p>
+      </list-item>
+      <list-item>
+        <p>The sold quantities are aggregated monthly to create a time
+        series object which we can use in the forecasting.</p>
+      </list-item>
+      <list-item>
+        <p>A KPSS showed that the data is non stationary. First-order
+        differencing is applied to transform the data from
+        non-stationary to stationary. The KPSS results in a p-value
+        &gt;0.05 showing the stationarity.</p>
+      </list-item>
+    </list>
+    <sec specific-use="notebook-content">
+    <code language="r script"># Find top 3 most sold product names
+top_categories &lt;- data %&gt;%
+  group_by(Sub_Category) %&gt;%
+  summarise(Total_Quantity = sum(Quantity)) %&gt;%
+  arrange(desc(Total_Quantity))
+top_3_subcategories &lt;- top_categories$Sub_Category[0:3]
+
+# Filter the data for  top 3 products
+top_3_data &lt;- data %&gt;% filter(Sub_Category %in% top_3_subcategories)
+
+# calculate sales per month
+top_3_data &lt;- top_3_data %&gt;%
+  mutate(Month = floor_date(Order_Date, unit = &quot;month&quot;))
+
+# Aggregate data by month for each product
+top_3_data_aggregated &lt;- top_3_data %&gt;%
+  group_by(Month, Sub_Category) %&gt;%
+  summarise(Sales_Count = n(), .groups = 'drop')
+
+# Create a time series object for each product
+ts_data &lt;- top_3_data_aggregated %&gt;%
+  pivot_wider(names_from = Sub_Category, values_from = Sales_Count, values_fill = 0) %&gt;%
+  select(-Month) %&gt;%
+  as.matrix()
+
+# Create a time series object
+ts_data &lt;- ts(ts_data, start = c(2014, 1), end = c(2017, 12), frequency = 12)
+
+# Create a time series list for each subcategory
+ts_list &lt;- list()
+
+for (subcategory in top_3_subcategories) {
+  # Filter data for the subcategory
+  subcategory_data &lt;- top_3_data_aggregated %&gt;% filter(Sub_Category == subcategory)
+
+  # Create a time series object (assuming monthly data from January 2014 to December 2017)
+  ts_list[[subcategory]] &lt;- ts(subcategory_data$Sales_Count,
+                                start = c(2014, 1),
+                                end = c(2017, 12),
+                                frequency = 12)
+}
+
+#### 4 A
+# Step 4: Apply forecasting methods to the top 3 sub-categories
+forecast_results &lt;- list()  # Store results
+
+for (subcategory in names(ts_list)) {
+  ts_current &lt;- ts_list[[subcategory]]
+
+  # Split the data into training and validation sets (70% training, 30% testing)
+  train_size &lt;- floor(0.7 * length(ts_current))
+  train_ts &lt;- window(ts_current, end = c(2014 + (train_size - 1) %/% 12, (train_size - 1) %% 12 + 1))
+  test_ts &lt;- window(ts_current, start = c(2014 + train_size %/% 12, train_size %% 12 + 1))
+
+  # 1. ARIMA
+  arima_model &lt;- auto.arima(train_ts)
+  arima_forecast &lt;- forecast(arima_model, h = length(test_ts))
+  arima_accuracy &lt;- accuracy(arima_forecast, test_ts)
+
+  # 2. Holt-Winters
+  hw_model &lt;- HoltWinters(train_ts)
+  hw_forecast &lt;- forecast(hw_model, h = length(test_ts))
+  hw_accuracy &lt;- accuracy(hw_forecast, test_ts)
+
+  # 3. ETS
+  ets_model &lt;- ets(train_ts)
+  ets_forecast &lt;- forecast(ets_model, h = length(test_ts))
+  ets_accuracy &lt;- accuracy(ets_forecast, test_ts)
+
+  # Store results
+  forecast_results[[subcategory]] &lt;- list(
+    ARIMA = list(Model = arima_model, Forecast = arima_forecast, Accuracy = arima_accuracy),
+    HoltWinters = list(Model = hw_model, Forecast = hw_forecast, Accuracy = hw_accuracy),
+    ETS = list(Model = ets_model, Forecast = ets_forecast, Accuracy = ets_accuracy)
+  )
+}
+
+
+# For formatting, we ommitted almost all output. You can uncomment the code and check your output if you like.
+
+# # Step 5: Print results
+#  for (subcategory in names(forecast_results)) {
+#   cat(&quot;\n\nResults for Sub_Category:&quot;, subcategory, &quot;\n&quot;)
+# 
+#   cat(&quot;\nARIMA Accuracy:\n&quot;)
+#   print(forecast_results[[subcategory]]$ARIMA$Accuracy)
+# 
+#   cat(&quot;\nHolt-Winters Accuracy:\n&quot;)
+#   print(forecast_results[[subcategory]]$HoltWinters$Accuracy)
+# 
+#   cat(&quot;\nETS Accuracy:\n&quot;)
+#   print(forecast_results[[subcategory]]$ETS$Accuracy)
+# }</code>
+    </sec>
+    <p>Three models are applied to each subcategory to forecast it. The
+    models we use are: ARIMA, Holt-Winters and ETS. We have chosen these
+    models because of their level of suitability for discrete time
+    series data with all different levels of trend and seasonality. To
+    evaluate the methods and its effectiveness , the data is split into
+    a training set (70%) and testing set (30%).</p>
+    <p>To assess the results, we use the following performance metrics:
+    ME, RMSE, MAE and MAPE. They are calculated for the training and
+    testing phases of the forecast.</p>
+    <p>As we can see on the forecasting results ARIMA performed well for
+    binders. We can state this because of the lowest RMSE if you compare
+    it to the other models.</p>
+    <sec specific-use="notebook-content">
+    <code language="r script"># Lets plot the results
+for (subcategory in names(forecast_results)) {
+  ts_current &lt;- ts_list[[subcategory]]
+  train_size &lt;- floor(0.7 * length(ts_current))
+  test_ts &lt;- window(ts_current, start = c(2014 + train_size %/% 12, train_size %% 12 + 1))
+  arima_forecast &lt;- forecast_results[[subcategory]]$ARIMA$Forecast
+  hw_forecast &lt;- forecast_results[[subcategory]]$HoltWinters$Forecast
+  ets_forecast &lt;- forecast_results[[subcategory]]$ETS$Forecast
+  
+  # Combined plot
+  plot(arima_forecast$mean, col = &quot;blue&quot;, lwd = 2, 
+       ylim = range(c(arima_forecast$mean, hw_forecast$mean, ets_forecast$mean, test_ts)),
+       main = paste(&quot;Combined Forecasts for&quot;, subcategory, &quot;before differencing&quot;),
+       xlab = &quot;Time&quot;, ylab = &quot;Forecasted Values&quot;)
+  lines(test_ts, col = &quot;red&quot;, lty = 2, lwd = 2)
+  lines(hw_forecast$mean, col = &quot;green&quot;, lwd = 2)
+  lines(ets_forecast$mean, col = &quot;purple&quot;, lwd = 2)
+  legend(&quot;topleft&quot;, legend = c(&quot;ARIMA&quot;, &quot;Holt-Winters&quot;, &quot;ETS&quot;, &quot;Test Data&quot;),
+         col = c(&quot;blue&quot;, &quot;green&quot;, &quot;purple&quot;, &quot;red&quot;), lty = c(1, 1, 1, 2), lwd = 2)
+}</code>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Results1-1.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Results1-2.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Results1-3.png" />
+    </sec>
+    <sec specific-use="notebook-content">
+    <code language="r script">options(warn = -1)
+# # Step 6: Visualization of Forecasts
+# for (subcategory in names(forecast_results)) {
+#   plot(forecast_results[[subcategory]]$ARIMA$Forecast, main = paste(&quot;ARIMA Forecast for&quot;, subcategory))
+#   lines(test_ts, col = &quot;red&quot;, lty = 2)
+# 
+#   plot(forecast_results[[subcategory]]$HoltWinters$Forecast, main = paste(&quot;Holt-Winters Forecast for&quot;, subcategory))
+#   lines(test_ts, col = &quot;red&quot;, lty = 2)
+# 
+#   plot(forecast_results[[subcategory]]$ETS$Forecast, main = paste(&quot;ETS Forecast for&quot;, subcategory))
+#   lines(test_ts, col = &quot;red&quot;, lty = 2)
+# }
+
+#more stationary tests
+# Perform KPSS Test for the top 3 subcategories
+# top_3_subcategories &lt;- top_categories$Sub_Category[0:3]
+# 
+# for (subcategory in top_3_subcategories) {
+#   if (subcategory %in% names(ts_list)) {
+#     ts_current &lt;- ts_list[[subcategory]]
+#     cat(&quot;\nKPSS Test for Sub-Category:&quot;, subcategory, &quot;\n&quot;)
+#     print(kpss.test(ts_current))
+#   } else {
+#     cat(&quot;\nSub-Category not found in ts_list:&quot;, subcategory, &quot;\n&quot;)
+#   }
+# }
+
+#Because the all the 3 subcategory are non stationary because of a P value which is &lt;=0.05 we need to use differencing
+# Apply differencing to each of the top 3 subcategories
+differenced_series &lt;- list()
+
+for (subcategory in top_3_subcategories) {
+  if (subcategory %in% names(ts_list)) {
+    ts_current &lt;- ts_list[[subcategory]]  # Get the time series for the subcategory
+    ts_diff &lt;- diff(ts_current, differences = 1)  # Apply first-order differencing
+    differenced_series[[subcategory]] &lt;- ts_diff  # Store the differenced series
+
+    # Recheck stationarity with KPSS test
+    #cat(&quot;\nKPSS Test for Differenced Sub-Category:&quot;, subcategory, &quot;\n&quot;)
+    print(kpss.test(ts_diff))
+  } else {
+    #cat(&quot;\nSub-Category not found in ts_list:&quot;, subcategory, &quot;\n&quot;)
+  }
+}</code>
+    <boxed-text>
+      <preformat>
+    KPSS Test for Level Stationarity
+
+data:  ts_diff
+KPSS Level = 0.10182, Truncation lag parameter = 3, p-value = 0.1
+
+
+    KPSS Test for Level Stationarity
+
+data:  ts_diff
+KPSS Level = 0.061982, Truncation lag parameter = 3, p-value = 0.1
+
+
+    KPSS Test for Level Stationarity
+
+data:  ts_diff
+KPSS Level = 0.098438, Truncation lag parameter = 3, p-value = 0.1</preformat>
+    </boxed-text>
+    </sec>
+    <sec specific-use="notebook-content">
+    <code language="r script"># Time differenced plots
+# # Now P value is larger then 0.05 so we have stationary data
+# # Plot the differenced series for each subcategory
+# for (subcategory in top_3_subcategories) {
+#   if (subcategory %in% names(differenced_series)) {
+#     ts_diff &lt;- differenced_series[[subcategory]]
+#     cat(&quot;\nPlotting Differenced Series for Sub-Category:&quot;, subcategory, &quot;\n&quot;)
+#     plot(ts_diff, main = paste(&quot;Differenced Series for Sub-Category:&quot;, subcategory),
+#          ylab = &quot;Differenced Values&quot;, xlab = &quot;Time&quot;)
+#   }
+# }
+
+
+# Combine differenced series plots for all top subcategories
+combined_diff_plot &lt;- function(differenced_series, top_3_subcategories) {
+  plot(NULL, xlim = range(time(differenced_series[[top_3_subcategories[1]]])), 
+       ylim = range(sapply(differenced_series[top_3_subcategories], range, na.rm = TRUE)),
+       xlab = &quot;Time&quot;, ylab = &quot;Differenced Values&quot;,
+       main = &quot;Differenced Series for Top Subcategories&quot;)
+  colors &lt;- c(&quot;blue&quot;, &quot;green&quot;, &quot;purple&quot;)
+  for (i in seq_along(top_3_subcategories)) {
+    subcategory &lt;- top_3_subcategories[i]
+    if (subcategory %in% names(differenced_series)) {
+      ts_diff &lt;- differenced_series[[subcategory]]
+      lines(ts_diff, col = colors[i], lwd = 2, lty = i)
+    }
+  }
+  legend(&quot;topright&quot;, legend = top_3_subcategories, 
+         col = colors, lty = 1:length(top_3_subcategories), lwd = 2)
+}
+combined_diff_plot(differenced_series, top_3_subcategories)</code>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/results3-1.png" />
+    </sec>
+    <sec specific-use="notebook-content">
+    <code language="r script">#NEW FORECASTING FOR 4A with stationary data
+# Step 4: Apply forecasting methods to the differenced top 3 sub-categories
+forecast_results &lt;- list()  # Store results
+
+for (subcategory in names(differenced_series)) {
+  ts_current &lt;- differenced_series[[subcategory]]  # Use the differenced series
+
+  # Split the data into training and validation sets (70% training, 30% testing)
+  train_size &lt;- floor(0.7 * length(ts_current))
+  train_ts &lt;- window(ts_current, end = c(2014 + (train_size - 1) %/% 12, (train_size - 1) %% 12 + 1))
+  test_ts &lt;- window(ts_current, start = c(2014 + train_size %/% 12, train_size %% 12 + 1))
+
+  # 1. ARIMA
+  arima_model &lt;- auto.arima(train_ts)
+  arima_forecast &lt;- forecast(arima_model, h = length(test_ts))
+  arima_accuracy &lt;- accuracy(arima_forecast, test_ts)
+
+  # 2. Holt-Winters
+  hw_model &lt;- HoltWinters(train_ts)
+  hw_forecast &lt;- forecast(hw_model, h = length(test_ts))
+  hw_accuracy &lt;- accuracy(hw_forecast, test_ts)
+
+  # 3. ETS
+  ets_model &lt;- ets(train_ts)
+  ets_forecast &lt;- forecast(ets_model, h = length(test_ts))
+  ets_accuracy &lt;- accuracy(ets_forecast, test_ts)
+
+  # Store results
+  forecast_results[[subcategory]] &lt;- list(
+    ARIMA = list(Model = arima_model, Forecast = arima_forecast, Accuracy = arima_accuracy),
+    HoltWinters = list(Model = hw_model, Forecast = hw_forecast, Accuracy = hw_accuracy),
+    ETS = list(Model = ets_model, Forecast = ets_forecast, Accuracy = ets_accuracy)
+  )
+}
+
+# # Step 5: Print results
+# for (subcategory in names(forecast_results)) {
+#   cat(&quot;\n\nResults for Sub_Category:&quot;, subcategory, &quot;\n&quot;)
+# 
+#   cat(&quot;\nARIMA Accuracy:\n&quot;)
+#   print(forecast_results[[subcategory]]$ARIMA$Accuracy)
+# 
+#   cat(&quot;\nHolt-Winters Accuracy:\n&quot;)
+#   print(forecast_results[[subcategory]]$HoltWinters$Accuracy)
+# 
+#   cat(&quot;\nETS Accuracy:\n&quot;)
+#   print(forecast_results[[subcategory]]$ETS$Accuracy)
+# }
+
+# # Step 6: Visualization of Forecasts
+# for (subcategory in names(forecast_results)) {
+#   plot(forecast_results[[subcategory]]$ARIMA$Forecast,
+#        main = paste(&quot;ARIMA Forecast for&quot;, subcategory),
+#        ylab = &quot;Differenced Values&quot;, xlab = &quot;Time&quot;)
+#   lines(test_ts, col = &quot;red&quot;, lty = 2)
+# 
+#   plot(forecast_results[[subcategory]]$HoltWinters$Forecast,
+#        main = paste(&quot;Holt-Winters Forecast for&quot;, subcategory),
+#        ylab = &quot;Differenced Values&quot;, xlab = &quot;Time&quot;)
+#   lines(test_ts, col = &quot;red&quot;, lty = 2)
+# 
+#   plot(forecast_results[[subcategory]]$ETS$Forecast,
+#        main = paste(&quot;ETS Forecast for&quot;, subcategory),
+#        ylab = &quot;Differenced Values&quot;, xlab = &quot;Time&quot;)
+#   lines(test_ts, col = &quot;red&quot;, lty = 2)
+# }
+
+# Lets plot the results
+for (subcategory in names(forecast_results)) {
+  ts_current &lt;- ts_list[[subcategory]]
+  train_size &lt;- floor(0.7 * length(ts_current))
+  test_ts &lt;- window(ts_current, start = c(2014 + train_size %/% 12, train_size %% 12 + 1))
+  arima_forecast &lt;- forecast_results[[subcategory]]$ARIMA$Forecast
+  hw_forecast &lt;- forecast_results[[subcategory]]$HoltWinters$Forecast
+  ets_forecast &lt;- forecast_results[[subcategory]]$ETS$Forecast
+  
+  # Combined plot
+  plot(arima_forecast$mean, col = &quot;blue&quot;, lwd = 2, 
+       ylim = range(c(arima_forecast$mean, hw_forecast$mean, ets_forecast$mean, test_ts)),
+       main = paste(&quot;Combined Forecasts for&quot;, subcategory, &quot;before differencing&quot;),
+       xlab = &quot;Time&quot;, ylab = &quot;Forecasted Values&quot;)
+  lines(test_ts, col = &quot;red&quot;, lty = 2, lwd = 2)
+  lines(hw_forecast$mean, col = &quot;green&quot;, lwd = 2)
+  lines(ets_forecast$mean, col = &quot;purple&quot;, lwd = 2)
+  legend(&quot;topleft&quot;, legend = c(&quot;ARIMA&quot;, &quot;Holt-Winters&quot;, &quot;ETS&quot;, &quot;Test Data&quot;),
+         col = c(&quot;blue&quot;, &quot;green&quot;, &quot;purple&quot;, &quot;red&quot;), lty = c(1, 1, 1, 2), lwd = 2)
+}</code>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Results4-1.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Results4-2.png" />
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/Results4-3.png" />
+    </sec>
+    <sec specific-use="notebook-content">
+    <code language="r script"># final KPSS test
+
+# Perform KPSS Test for the differenced series in the top 3 subcategories
+for (subcategory in top_3_subcategories) {
+  if (subcategory %in% names(differenced_series)) {
+    ts_current &lt;- differenced_series[[subcategory]]  # Get the differenced series
+    cat(&quot;\nKPSS Test for Differenced Sub-Category:&quot;, subcategory, &quot;\n&quot;)
+    print(kpss.test(ts_current))
+  } else {
+    cat(&quot;\nSub-Category not found in differenced_series:&quot;, subcategory, &quot;\n&quot;)
+  }
+}</code>
+    <boxed-text>
+      <preformat>
+KPSS Test for Differenced Sub-Category: Binders 
+
+    KPSS Test for Level Stationarity
+
+data:  ts_current
+KPSS Level = 0.10182, Truncation lag parameter = 3, p-value = 0.1
+
+
+KPSS Test for Differenced Sub-Category: Paper 
+
+    KPSS Test for Level Stationarity
+
+data:  ts_current
+KPSS Level = 0.061982, Truncation lag parameter = 3, p-value = 0.1
+
+
+KPSS Test for Differenced Sub-Category: Furnishings 
+
+    KPSS Test for Level Stationarity
+
+data:  ts_current
+KPSS Level = 0.098438, Truncation lag parameter = 3, p-value = 0.1</preformat>
+    </boxed-text>
+    <code language="r script"># now they are all 0.1</code>
+    </sec>
+    <p>As we can see on the forecasting results ARIMA performed well for
+    binders. We can state this because of the lowest RMSE. - ARIMA
+    Binders: - Forecasting results Binders:</p>
+    <p>For the subcategory furnishings we can see that the ETS
+    forecasting method is the most stable across the training and
+    testing phase. - ETS furnishings - Forecasting results
+    Furnishings:</p>
+    <p>For the last subcategory and product paper the ETS model is again
+    the most consistent, comparing the statistics for training and test
+    set. The high variability in the test data leads to larger
+    forecasting errors in all the 3 models.</p>
+    <list list-type="bullet">
+      <list-item>
+        <p>ETS Furnishings:</p>
+      </list-item>
+      <list-item>
+        <p>Forecasting results:</p>
+      </list-item>
+    </list>
+    <p>Residual Diagnostics: - The checks show no real autocorrelation
+    for ARIMA models. Which indicates a good fitting forecast.</p>
+  </sec>
+  <sec id="conclusion-4a-nb-article">
+    <title>Conclusion (4a)</title>
+    <p>The most effective model is not the same in all the
+    subcategories. Each model was validated based on its ability to
+    capture seasonality and trend. ARIMA performed better for Binders,
+    while ETS performed better for Furnishings and Paper.</p>
+  </sec>
+  <sec id="clustering-4b-nb-article">
+    <title>Clustering (4b)</title>
+    <sec specific-use="notebook-content">
+    <code language="r script"># 4B
+# 4B: Group Products into Clusters and Apply Forecasting Techniques
+# Step 1: Extract Time-Series Features for Clustering
+time_series_features &lt;- data.frame()
+
+for (subcategory in names(ts_list)) {
+  ts_current &lt;- ts_list[[subcategory]]
+
+  # Decompose the time series to extract features
+  decomposition &lt;- decompose(ts_current)
+  trend_strength &lt;- var(decomposition$trend, na.rm = TRUE) / var(ts_current, na.rm = TRUE)
+  seasonal_strength &lt;- var(decomposition$seasonal, na.rm = TRUE) / var(ts_current, na.rm = TRUE)
+  random_strength &lt;- var(decomposition$random, na.rm = TRUE) / var(ts_current, na.rm = TRUE)
+
+  # Store extracted features
+  time_series_features &lt;- rbind(time_series_features,
+                                data.frame(SubCategory = subcategory,
+                                           TrendStrength = trend_strength,
+                                           SeasonalStrength = seasonal_strength,
+                                           RandomStrength = random_strength))
+}
+
+# Step 2: Normalize the Features for Clustering
+time_series_features_scaled &lt;- time_series_features %&gt;%
+  select(-SubCategory) %&gt;%
+  scale()
+
+# verify rows
+# nrow(time_series_features_scaled)
+
+# Step 3: Perform K-Means Clustering
+# Determine the number of clusters dynamically
+k &lt;- min(3, nrow(time_series_features_scaled))  # Set k to the smaller of 3 or the number of rows
+# Hierarchical Clustering
+distance_matrix &lt;- dist(time_series_features_scaled)  # Calculate distance matrix
+hc &lt;- hclust(distance_matrix)  # Perform hierarchical clustering
+time_series_features$Cluster &lt;- cutree(hc, k = k)  # Cut tree into 'k' clusters
+# Add cluster information to the original data
+time_series_features$Cluster &lt;- cutree(hc, k = k)
+
+# Step 4: Apply Forecasting Techniques to Each Cluster
+forecast_results_by_cluster &lt;- list()
+
+for (cluster_id in unique(time_series_features$Cluster)) {
+  # Get subcategories in the current cluster
+  subcategories_in_cluster &lt;- time_series_features$SubCategory[time_series_features$Cluster == cluster_id]
+
+  # Initialize storage for cluster results
+  cluster_forecast_results &lt;- list()
+
+  for (subcategory in subcategories_in_cluster) {
+    if (subcategory %in% names(ts_list)) {
+      ts_current &lt;- ts_list[[subcategory]]  # Access the time series
+
+      # Split the data into training and validation sets (70% training, 30% testing)
+      train_size &lt;- floor(0.7 * length(ts_current))
+      train_ts &lt;- window(ts_current, end = c(2014 + (train_size - 1) %/% 12, (train_size - 1) %% 12 + 1))
+      test_ts &lt;- window(ts_current, start = c(2014 + train_size %/% 12, train_size %% 12 + 1))
+
+      # 1. ARIMA
+      arima_model &lt;- auto.arima(train_ts)
+      arima_forecast &lt;- forecast(arima_model, h = length(test_ts))
+      arima_accuracy &lt;- accuracy(arima_forecast, test_ts)
+
+      # 2. Holt-Winters
+      hw_model &lt;- HoltWinters(train_ts)
+      hw_forecast &lt;- forecast(hw_model, h = length(test_ts))
+      hw_accuracy &lt;- accuracy(hw_forecast, test_ts)
+
+      # 3. ETS
+      ets_model &lt;- ets(train_ts)
+      ets_forecast &lt;- forecast(ets_model, h = length(test_ts))
+      ets_accuracy &lt;- accuracy(ets_forecast, test_ts)
+
+      # Store results for the subcategory
+      cluster_forecast_results[[subcategory]] &lt;- list(
+        ARIMA = list(Model = arima_model, Forecast = arima_forecast, Accuracy = arima_accuracy),
+        HoltWinters = list(Model = hw_model, Forecast = hw_forecast, Accuracy = hw_accuracy),
+        ETS = list(Model = ets_model, Forecast = ets_forecast, Accuracy = ets_accuracy)
+      )
+    } else {
+      cat(&quot;\nSub-Category not found in ts_list:&quot;, subcategory, &quot;\n&quot;)
+    }
+  }
+
+  # Store results for the cluster
+  forecast_results_by_cluster[[paste0(&quot;Cluster_&quot;, cluster_id)]] &lt;- cluster_forecast_results
+}
+
+# Step 5: Print Forecasting Accuracy for Each Cluster
+for (cluster_id in names(forecast_results_by_cluster)) {
+  cat(&quot;\n\nResults for&quot;, cluster_id, &quot;\n&quot;)
+  cluster_results &lt;- forecast_results_by_cluster[[cluster_id]]
+
+  for (subcategory in names(cluster_results)) {
+    cat(&quot;\nSub-Category:&quot;, subcategory, &quot;\n&quot;)
+
+    cat(&quot;\nARIMA Accuracy:\n&quot;)
+    print(cluster_results[[subcategory]]$ARIMA$Accuracy)
+
+    cat(&quot;\nHolt-Winters Accuracy:\n&quot;)
+    print(cluster_results[[subcategory]]$HoltWinters$Accuracy)
+
+    cat(&quot;\nETS Accuracy:\n&quot;)
+    print(cluster_results[[subcategory]]$ETS$Accuracy)
+  }
+}</code>
+    <boxed-text>
+      <preformat>
+
+Results for Cluster_1 
+
+Sub-Category: Binders 
+
+ARIMA Accuracy:
+                    ME      RMSE      MAE        MPE     MAPE      MASE
+Training set 0.7706014  4.643476 2.982256  0.6865304 12.91204 0.4854835
+Test set     5.9407398 10.783528 7.616473 10.3681817 17.32927 1.2398909
+                   ACF1 Theil's U
+Training set 0.04429472        NA
+Test set     0.04929320 0.3573866
+
+Holt-Winters Accuracy:
+                    ME     RMSE      MAE        MPE     MAPE      MASE
+Training set 0.8668058 5.215491 3.789990 -0.4040374 15.36545 0.6169751
+Test set     2.2473496 8.712049 6.243226  0.1597635 16.02219 1.0163391
+                     ACF1 Theil's U
+Training set -0.389045966        NA
+Test set     -0.001830843 0.2777843
+
+ETS Accuracy:
+                   ME      RMSE      MAE       MPE     MAPE      MASE
+Training set 0.743354  4.712561 3.656409  1.358692 15.41708 0.5952293
+Test set     7.439784 12.216161 8.825094 10.667088 20.93561 1.4366433
+                   ACF1 Theil's U
+Training set -0.2225537        NA
+Test set      0.0608554 0.3767484
+
+
+Results for Cluster_2 
+
+Sub-Category: Paper 
+
+ARIMA Accuracy:
+                    ME      RMSE       MAE        MPE     MAPE      MASE
+Training set  1.117384  6.309464  3.827714   1.702165 14.32157 0.5468163
+Test set     -9.014128 12.230774 10.375521 -30.103886 31.89519 1.4822173
+                     ACF1 Theil's U
+Training set -0.007064333        NA
+Test set      0.108516273 0.6984566
+
+Holt-Winters Accuracy:
+                     ME     RMSE       MAE        MPE     MAPE      MASE
+Training set   1.509544  7.27986  4.854547   3.325281 16.41309 0.6935067
+Test set     -12.036865 14.48061 13.347292 -39.791842 41.51609 1.9067560
+                    ACF1 Theil's U
+Training set -0.02710216        NA
+Test set      0.10006713  0.845232
+
+ETS Accuracy:
+                     ME      RMSE      MAE         MPE     MAPE      MASE
+Training set 0.60941117  6.204628 4.474990 -1.66197953 18.73240 0.6392842
+Test set     0.08500424 11.304488 8.247017 -0.08462612 20.47598 1.1781453
+                    ACF1 Theil's U
+Training set 0.005205508        NA
+Test set     0.341519997  0.582549
+
+
+Results for Cluster_3 
+
+Sub-Category: Furnishings 
+
+ARIMA Accuracy:
+                    ME     RMSE      MAE       MPE     MAPE      MASE
+Training set 0.0050974 3.873555 2.567868 -6.624673 20.20958 0.5559302
+Test set     3.9523810 7.782677 6.238095 10.720079 22.75340 1.3505155
+                    ACF1 Theil's U
+Training set -0.20160077        NA
+Test set     -0.03570035 0.6102339
+
+Holt-Winters Accuracy:
+                    ME     RMSE      MAE      MPE     MAPE      MASE
+Training set 0.9137655 4.164677 3.475419 7.490317 24.75583 0.7524103
+Test set     3.6371987 7.200985 5.673333 9.724318 20.50134 1.2282474
+                    ACF1 Theil's U
+Training set -0.43317305        NA
+Test set      0.01804785 0.5689788
+
+ETS Accuracy:
+                    ME     RMSE      MAE        MPE     MAPE     MASE
+Training set 0.7370579 3.466690 2.851745  0.4301648 20.85220 0.617388
+Test set     6.0973038 8.354163 6.690832 20.7276401 23.55317 1.448531
+                   ACF1 Theil's U
+Training set -0.2087083        NA
+Test set      0.3729315 0.7455977</preformat>
+    </boxed-text>
+    <code language="r script">## Step 6: Visualize the Clusters
+library(ggplot2)
+
+ggplot(time_series_features, aes(x = TrendStrength, y = SeasonalStrength, color = as.factor(Cluster))) +
+  geom_point(size = 3) +
+  labs(title = &quot;Clusters of Subcategories Based on Time-Series Features&quot;,
+       x = &quot;Trend Strength&quot;, y = &quot;Seasonal Strength&quot;, color = &quot;Cluster&quot;) +
+  theme_minimal()</code>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/somelable-1.png" />
+    <code language="r script">#
+#check
+#residual diagnostic
+for (cluster_id in names(forecast_results_by_cluster)) {
+  cluster_results &lt;- forecast_results_by_cluster[[cluster_id]]
+  for (subcategory in names(cluster_results)) {
+    cat(&quot;\nResidual Diagnostics for Sub-Category:&quot;, subcategory, &quot;\n&quot;)
+    checkresiduals(cluster_results[[subcategory]]$ARIMA$Model)
+  }
+}</code>
+    <boxed-text>
+      <preformat>
+Residual Diagnostics for Sub-Category: Binders </preformat>
+    </boxed-text>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/somelable-2.png" />
+    <boxed-text>
+      <preformat>
+    Ljung-Box test
+
+data:  Residuals from ARIMA(0,1,2)(0,1,0)[12]
+Q* = 2.6295, df = 5, p-value = 0.7569
+
+Model df: 2.   Total lags used: 7
+
+
+Residual Diagnostics for Sub-Category: Paper </preformat>
+    </boxed-text>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/somelable-3.png" />
+    <boxed-text>
+      <preformat>
+    Ljung-Box test
+
+data:  Residuals from ARIMA(0,1,1)(0,1,0)[12]
+Q* = 6.6676, df = 6, p-value = 0.3527
+
+Model df: 1.   Total lags used: 7
+
+
+Residual Diagnostics for Sub-Category: Furnishings </preformat>
+    </boxed-text>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/somelable-4.png" />
+    <boxed-text>
+      <preformat>
+    Ljung-Box test
+
+data:  Residuals from ARIMA(0,0,0)(0,1,0)[12] with drift
+Q* = 9.5952, df = 7, p-value = 0.2127
+
+Model df: 0.   Total lags used: 7</preformat>
+    </boxed-text>
+    <code language="r script"># P-value is higher then 0.1 so we have stationary data, this is good
+#cluster level metrics
+cluster_metrics &lt;- data.frame()
+for (cluster_id in names(forecast_results_by_cluster)) {
+  cluster_results &lt;- forecast_results_by_cluster[[cluster_id]]
+  cluster_rmse &lt;- sapply(cluster_results, function(x) x$ARIMA$Accuracy[&quot;Test set&quot;, &quot;RMSE&quot;])
+  cluster_mape &lt;- sapply(cluster_results, function(x) x$ARIMA$Accuracy[&quot;Test set&quot;, &quot;MAPE&quot;])
+  cluster_metrics &lt;- rbind(cluster_metrics, data.frame(Cluster = cluster_id, MeanRMSE = mean(cluster_rmse), MeanMAPE = mean(cluster_mape)))
+}
+print(cluster_metrics)</code>
+    <boxed-text>
+      <preformat>    Cluster  MeanRMSE MeanMAPE
+1 Cluster_1 10.783528 17.32927
+2 Cluster_2 12.230774 31.89519
+3 Cluster_3  7.782677 22.75340</preformat>
+    </boxed-text>
+    </sec>
+    <p>Cluster 1 (e.g., Binders): ARIMA outperformed other methods due
+    to significant autocorrelation and trend components.</p>
+    <p>Cluster 2 (e.g., Furnishings): ETS was the most accurate method,
+    effectively balancing trend and seasonality.</p>
+    <p>Cluster 3 (e.g., Paper): ETS also performed best, with ARIMA
+    showing higher error rates due to variability in random
+    components.</p>
+    <p>Residual diagnostics were performed for all ARIMA models,
+    confirming no significant autocorrelation (p &gt; 0.05).</p>
+    <p>Cluster-Level Metrics based on mean RMSE and MAPE show: - Cluster
+    1 had the lowest RMSE using ARIMA. - Cluster 2 and 3 were better
+    modeled with ETS</p>
+  </sec>
+  <sec id="conclusion-4b-nb-article">
+    <title>Conclusion (4b)</title>
+    <p>Clustering allows for tailored forecasting strategies. We
+    conclude that for the given data set ARIMA is more effective for
+    clusters with strong trends, while ETS is preferable for clusters
+    with mixed seasonal and trend characteristics. The approach aligns
+    with lecture notes, emphasizing the importance of adapting models
+    based on time series characteristics.</p>
+  </sec>
+</sec>
+<sec id="forecasting-future-values-nb-article">
+  <title>5 Forecasting future values</title>
+  <sec id="forecasting-3-products-5a-nb-article">
+    <title>Forecasting 3 products (5a)</title>
+    <p>In this session, we focused on evaluating different forecasting
+    models (ARIMA, Holt-Winters, and ETS) for multiple sub-categories by
+    analyzing their accuracy metrics, such as RMSE, MAPE, and residual
+    diagnostics. Based on the evaluation results, we selected the
+    best-performing model for each sub-category. We then used these
+    models to forecast the future outcomes for each sub-category,
+    projecting the data for the next year. Note: we may need to
+    interpret the outcomes and explain why we pick the certain model</p>
+    <sec specific-use="notebook-content">
+    <code language="r script">#Binders-&gt;choose ARIMA
+binders_ts &lt;- ts_list[[&quot;Binders&quot;]]
+arima_model &lt;- auto.arima(binders_ts)
+summary(arima_model)</code>
+    <boxed-text>
+      <preformat>Series: binders_ts 
+ARIMA(1,1,1)(0,1,0)[12] 
+
+Coefficients:
+          ar1      ma1
+      -0.4781  -0.4819
+s.e.   0.2324   0.2426
+
+sigma^2 = 51.18:  log likelihood = -117.97
+AIC=241.94   AICc=242.72   BIC=246.61
+
+Training set error measures:
+                   ME     RMSE      MAE       MPE     MAPE     MASE        ACF1
+Training set 0.864453 5.931761 4.092168 -1.363101 15.06142 0.558023 -0.03746012</preformat>
+    </boxed-text>
+    <code language="r script">arima_forecast &lt;- forecast(arima_model, h = 12)
+print(arima_forecast)</code>
+    <boxed-text>
+      <preformat>         Point Forecast    Lo 80     Hi 80     Lo 95     Hi 95
+Jan 2018       32.48390 23.31571  41.65208 18.462370  46.50543
+Feb 2018       23.77181 14.59632  32.94731  9.739103  37.80452
+Mar 2018       45.85265 35.59989  56.10541 30.172412  61.53289
+Apr 2018       46.20475 35.63662  56.77287 30.042185  62.36730
+May 2018       44.08009 32.93968  55.22051 27.042295  61.11789
+Jun 2018       44.61784 33.06359  56.17210 26.947139  62.28855
+Jul 2018       40.36072 28.34867  52.37277 21.989869  58.73157
+Aug 2018       44.48366 32.05796  56.90937 25.480189  63.48714
+Sep 2018       73.42488 60.58630  86.26346 53.789962  93.05979
+Oct 2018       51.45299 38.22024  64.68573 31.215253  71.69072
+Nov 2018       72.43955 58.82134  86.05775 51.612293  93.26680
+Dec 2018       89.44597 75.45417 103.43777 68.047363 110.84458</preformat>
+    </boxed-text>
+    <code language="r script">plot(arima_forecast, main = &quot;ARIMA Forecast for Binders (Next 12 Months)&quot;)</code>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/unnamed-chunk-18-1.png" />
+    <code language="r script">#Paper-&gt;choose ETS
+paper_ts &lt;- ts_list[[&quot;Paper&quot;]]
+ets_model &lt;- ets(paper_ts)
+summary(ets_model)</code>
+    <boxed-text>
+      <preformat>ETS(M,N,A) 
+
+Call:
+ets(y = paper_ts)
+
+  Smoothing parameters:
+    alpha = 0.3075 
+    gamma = 1e-04 
+
+  Initial states:
+    l = 22.5954 
+    s = 17.4472 16.5763 -4.1253 15.2986 0.421 -5.102
+           -0.6145 -0.0341 -7.985 -2.6766 -15.6576 -13.5481
+
+  sigma:  0.2365
+
+     AIC     AICc      BIC 
+365.1517 380.1517 393.2197 
+
+Training set error measures:
+                   ME     RMSE      MAE     MPE     MAPE      MASE       ACF1
+Training set 1.450303 6.386648 4.166875 1.75373 14.03399 0.5245018 0.03600045</preformat>
+    </boxed-text>
+    <code language="r script">ets_forecast &lt;- forecast(ets_model, h = 12)
+print(ets_forecast)</code>
+    <boxed-text>
+      <preformat>         Point Forecast    Lo 80    Hi 80    Lo 95    Hi 95
+Jan 2018       30.45588 21.22661 39.68516 16.34092 44.57085
+Feb 2018       28.34651 19.27484 37.41819 14.47258 42.22044
+Mar 2018       41.32776 28.18367 54.47185 21.22561 61.42990
+Apr 2018       36.01933 23.73891 48.29976 17.23804 54.80062
+May 2018       43.97017 29.09477 58.84557 21.22021 66.72013
+Jun 2018       43.39031 28.07408 58.70653 19.96616 66.81445
+Jul 2018       38.90220 24.12853 53.67588 16.30782 61.49659
+Aug 2018       44.42410 27.84663 61.00158 19.07104 69.77717
+Sep 2018       59.30522 38.44478 80.16566 27.40193 91.20850
+Oct 2018       39.87917 22.81850 56.93984 13.78712 65.97122
+Nov 2018       60.58102 38.27853 82.88352 26.47230 94.68975
+Dec 2018       61.45110 38.17748 84.72473 25.85717 97.04504</preformat>
+    </boxed-text>
+    <code language="r script">plot(ets_forecast, main = &quot;ETS Forecast for Paper (Next 12 Months)&quot;)</code>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/unnamed-chunk-18-2.png" />
+    <code language="r script">#Furnishings-&gt;choose ETS
+furnishings_ts &lt;- ts_list[[&quot;Furnishings&quot;]]
+ets_model &lt;- ets(furnishings_ts)
+summary(ets_model)</code>
+    <boxed-text>
+      <preformat>ETS(M,A,A) 
+
+Call:
+ets(y = furnishings_ts)
+
+  Smoothing parameters:
+    alpha = 0.0438 
+    beta  = 0.0437 
+    gamma = 2e-04 
+
+  Initial states:
+    l = 15.4275 
+    b = -0.1137 
+    s = 13.3158 15.6269 -2.2962 10.1503 -5.0017 -2.448
+           -3.4406 -1.0728 -1.1262 -4.3688 -11.689 -7.6497
+
+  sigma:  0.2527
+
+     AIC     AICc      BIC 
+338.8888 359.2888 370.6992 
+
+Training set error measures:
+                    ME     RMSE      MAE        MPE    MAPE      MASE
+Training set 0.6402485 3.793384 2.884208 -0.8302416 16.2441 0.5352139
+                   ACF1
+Training set 0.04613441</preformat>
+    </boxed-text>
+    <code language="r script">ets_forecast &lt;- forecast(ets_model, h = 12)
+print(ets_forecast)</code>
+    <boxed-text>
+      <preformat>         Point Forecast    Lo 80    Hi 80     Lo 95    Hi 95
+Jan 2018       21.37433 14.45350 28.29515 10.789837 31.95882
+Feb 2018       18.56644 12.52244 24.61044  9.322944 27.80994
+Mar 2018       27.11574 18.26943 35.96205 13.586481 40.64500
+Apr 2018       31.58782 21.22159 41.95404 15.734048 47.44158
+May 2018       32.87189 21.95559 43.78819 16.176845 49.56693
+Jun 2018       31.73384 20.95052 42.51717 15.242170 48.22551
+Jul 2018       33.95710 22.18459 45.72960 15.952604 51.96159
+Aug 2018       32.63192 20.83816 44.42569 14.594916 50.66893
+Sep 2018       49.01546 31.92061 66.11032 22.871140 75.15979
+Oct 2018       37.79884 23.38308 52.21460 15.751844 59.84584
+Nov 2018       56.95159 36.44698 77.45621 25.592490 88.31070
+Dec 2018       55.87232 34.96477 76.77986 23.896983 87.84765</preformat>
+    </boxed-text>
+    <code language="r script">plot(ets_forecast, main = &quot;ETS Forecast for Furnishings (Next 12 Months)&quot;)</code>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/unnamed-chunk-18-3.png" />
+    </sec>
+  </sec>
+  <sec id="applying-to-all-data-5b-nb-article">
+    <title>Applying to all data (5b)</title>
+    <p>In this session, we first grouped the sub-categories into
+    clusters based on key time-series features, including trend
+    strength, seasonal strength, and random strength, using hierarchical
+    clustering. Once the clusters were formed, we applied and evaluated
+    multiple forecasting models—ARIMA, Holt-Winters, and ETS—on each
+    sub-category within its respective cluster, comparing their accuracy
+    metrics such as RMSE and MAPE. Based on the evaluation results, we
+    selected the best-performing model for each sub-category and used it
+    to forecast the future outcomes within a year, leveraging the
+    clustering to enhance the accuracy and relevance of our
+    predictions.</p>
+    <sec specific-use="notebook-content">
+    <code language="r script">#Cluster_Binders-&gt;Holt-Winters
+cluster_id &lt;- 1
+subcategory &lt;- &quot;Binders&quot;
+hw_model &lt;- forecast_results_by_cluster[[paste0(&quot;Cluster_&quot;, cluster_id)]][[subcategory]]$HoltWinters$Model
+hw_forecast &lt;- forecast(hw_model, h = 12)
+print(hw_forecast)
+plot(hw_forecast, main = &quot;Holt-Winters Forecast for Binders (Next 12 Months)&quot;, xlab = &quot;Time&quot;, ylab = &quot;Forecasted Values&quot;)
+
+#Cluster_paper-&gt;ETS
+cluster_id &lt;- 2
+subcategory &lt;- &quot;Paper&quot;
+ets_model &lt;- forecast_results_by_cluster[[paste0(&quot;Cluster_&quot;, cluster_id)]][[subcategory]]$ETS$Model
+ets_forecast &lt;- forecast(ets_model, h = 12)
+print(ets_forecast)
+plot(ets_forecast, main = &quot;ETS Forecast for Paper (Next 12 Months)&quot;, xlab = &quot;Time&quot;, ylab = &quot;Forecasted Values&quot;)
+
+#Cluster_Furnishings-&gt;Holt-Winters
+cluster_id &lt;- 3
+subcategory &lt;- &quot;Furnishings&quot;
+hw_model &lt;- forecast_results_by_cluster[[paste0(&quot;Cluster_&quot;, cluster_id)]][[subcategory]]$HoltWinters$Model
+hw_forecast &lt;- forecast(hw_model, h = 12)
+print(hw_forecast)
+plot(hw_forecast, main = &quot;Holt-Winters Forecast for Furnishings (Next 12 Months)&quot;, xlab = &quot;Time&quot;, ylab = &quot;Forecasted Values&quot;)</code>
+    </sec>
+  </sec>
+</sec>
+<sec id="forecast-interpretation-nb-article">
+  <title>6 Forecast interpretation</title>
+  <p>Lorem Ipsum</p>
+  <p></p>
+  <sec specific-use="notebook-content">
+  <code language="r script"># Check for missing values
+missing_values &lt;- colSums(is.na(data))
+print(missing_values)  # Print missing values for reference
+# heat map
+library(Amelia)
+missmap(data, main = &quot;Missing Data Pattern&quot;)
+#distribution of key variables
+#plot Quantity
+ggplot(data, aes(x = Quantity)) +
+  geom_histogram(binwidth = 1, fill = &quot;steelblue&quot;) +
+  labs(title = &quot;Distribution of Quantity&quot;, x = &quot;Quantity&quot;, y = &quot;Frequency&quot;) +
+  theme_minimal()
+#plot sales
+ggplot(data, aes(x = Sales)) +
+  geom_histogram(binwidth = 50, fill = &quot;tomato&quot;) +
+  labs(title = &quot;Distribution of Sales&quot;, x = &quot;Sales&quot;, y = &quot;Frequency&quot;) +
+  theme_minimal()
+# plot profit
+ggplot(data, aes(x = Profit)) +
+  geom_histogram(binwidth = 10, fill = &quot;purple&quot;) +
+  labs(title = &quot;Distribution of Profit&quot;, x = &quot;Profit&quot;, y = &quot;Frequency&quot;) +
+  theme_minimal()
+# time based trends
+data$Order_Date &lt;- as.Date(data$Order_Date, format = &quot;%Y-%m-%d&quot;)  # Ensure date format
+time_series &lt;- data %&gt;%
+  group_by(Order_Date) %&gt;%
+  summarize(total_sales = sum(Sales), total_profit = sum(Profit), total_quantity = sum(Quantity))
+
+ggplot(time_series, aes(x = Order_Date)) +
+  geom_line(aes(y = total_sales, color = &quot;Sales&quot;)) +
+  geom_line(aes(y = total_profit, color = &quot;Profit&quot;)) +
+  geom_line(aes(y = total_quantity, color = &quot;Quantity&quot;)) +
+  labs(title = &quot;Sales, Profit, and Quantity Over Time&quot;, x = &quot;Date&quot;, y = &quot;Value&quot;) +
+  theme_minimal() +
+  scale_color_manual(name = &quot;Metrics&quot;, values = c(&quot;Sales&quot; = &quot;blue&quot;, &quot;Profit&quot; = &quot;green&quot;, &quot;Quantity&quot; = &quot;red&quot;))
+
+#sales by category and sub category
+category_sales &lt;- data %&gt;%
+  group_by(Category, Sub_Category) %&gt;%
+  summarize(total_sales = sum(Sales))
+
+ggplot(category_sales, aes(x = reorder(Sub_Category, -total_sales), y = total_sales, fill = Category)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  labs(title = &quot;Sales by Category and Sub-Category&quot;, x = &quot;Sub-Category&quot;, y = &quot;Total Sales&quot;) +
+  theme_minimal() +
+  coord_flip()
+
+#Outliers detection
+#Quantity
+ggplot(data, aes(x = Category, y = Quantity)) +
+  geom_boxplot() +
+  labs(title = &quot;Boxplot of Quantity by Category&quot;, x = &quot;Category&quot;, y = &quot;Quantity&quot;)
+#sales
+ggplot(data, aes(x = Category, y = Sales)) +
+  geom_boxplot() +
+  labs(title = &quot;Boxplot of Sales by Category&quot;, x = &quot;Category&quot;, y = &quot;Sales&quot;)
+
+#profit
+ggplot(data, aes(x = Category, y = Profit)) +
+  geom_boxplot() +
+  labs(title = &quot;Boxplot of Profit by Category&quot;, x = &quot;Category&quot;, y = &quot;Profit&quot;)
+#Geo visualization
+
+us_map &lt;- map_data(&quot;state&quot;)
+if(&quot;State&quot; %in% colnames(data)) {
+  state_sales &lt;- data %&gt;%
+    group_by(State) %&gt;%
+    summarize(total_sales = sum(Sales))
+
+  # Convert state names to lowercase to match map data
+  state_sales$State &lt;- tolower(state_sales$State)
+
+  # Merge state sales data with map data
+  state_sales_map &lt;- merge(us_map, state_sales, by.x = &quot;region&quot;, by.y = &quot;State&quot;, all.x = TRUE)
+
+  # Plot sales by state
+  ggplot(state_sales_map, aes(long, lat, group = group, fill = total_sales)) +
+    geom_polygon(color = &quot;white&quot;) +
+    scale_fill_continuous(low = &quot;lightblue&quot;, high = &quot;darkblue&quot;, na.value = &quot;gray90&quot;) +
+    labs(title = &quot;Sales by State&quot;, fill = &quot;Total Sales&quot;) +
+    theme_void() +
+    coord_fixed(1.3)
+}
+
+# correlation matrix
+numerical_data &lt;- data %&gt;% select(where(is.numeric))
+
+cor_matrix &lt;- cor(numerical_data, use = &quot;complete.obs&quot;)
+
+# Convert the correlation matrix to a long format
+cor_data &lt;- as.data.frame(as.table(cor_matrix))
+
+# Plot the correlation matrix using ggplot2
+ggplot(cor_data, aes(Var1, Var2, fill = Freq)) +
+  geom_tile(color = &quot;white&quot;) +
+  scale_fill_gradient2(low = &quot;blue&quot;, high = &quot;red&quot;, mid = &quot;white&quot;,
+                       midpoint = 0, limit = c(-1, 1), space = &quot;Lab&quot;,
+                       name=&quot;Correlation&quot;) +
+  geom_text(aes(label = round(Freq, 2)), color = &quot;black&quot;, size = 4) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1,
+                                   size = 12, hjust = 1)) +
+  coord_fixed() +
+  labs(title = &quot;Correlation Matrix of Key Variables&quot;, x = &quot;&quot;, y = &quot;&quot;)</code>
+  </sec>
+  <sec id="forecasting-nb-article">
+    <title>Forecasting??</title>
+    <sec specific-use="notebook-content">
+    <code language="r script">#Aggregate sales per month
+monthly_sales &lt;- data %&gt;%
+  mutate(Month = floor_date(Order_Date, &quot;month&quot;)) %&gt;%
+  group_by(Month) %&gt;%
+  summarize(total_sales = sum(Sales))
+#Convert to time series
+sales_ts &lt;- ts(monthly_sales$total_sales, frequency = 12, start = c(year(min(monthly_sales$Month)), month(min(monthly_sales$Month))))
+#Arima model
+arima_model &lt;- auto.arima(sales_ts)
+arima_forecast &lt;- forecast(arima_model, h = 12)
+autoplot(arima_forecast) + labs(title = &quot;ARIMA Forecast for Monthly Sales&quot;)</code>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/unnamed-chunk-21-1.png" />
+    <code language="r script">#Holts winter model
+hw_model &lt;- HoltWinters(sales_ts)
+hw_forecast &lt;- forecast(hw_model, h = 12)
+autoplot(hw_forecast) + labs(title = &quot;Holt-Winters Forecast for Monthly Sales&quot;)</code>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/unnamed-chunk-21-2.png" />
+    <code language="r script"># clustering for segmentation
+library(cluster)
+#data clustering
+clustering_data &lt;- data %&gt;%
+  select(Sales, Quantity, Discount, Profit) %&gt;%
+  na.omit()
+set.seed(123)
+kmeans_model &lt;- kmeans(clustering_data, centers = 3)
+data$Cluster &lt;- as.factor(kmeans_model$cluster)
+# visualize clustering result
+ggplot(data, aes(x = Sales, y = Profit, color = Cluster)) +
+  geom_point(alpha = 0.6) +
+  labs(title = &quot;K-Means Clustering of Sales and Profit&quot;, x = &quot;Sales&quot;, y = &quot;Profit&quot;) +
+  theme_minimal()</code>
+    <graphic mimetype="image" mime-subtype="png" xlink:href="index_files/figure-jats/unnamed-chunk-21-3.png" />
+    </sec>
+  </sec>
 </sec>
 </body>
 
