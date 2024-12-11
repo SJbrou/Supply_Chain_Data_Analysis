@@ -126,8 +126,10 @@ and Interchange DTD v1.2 20190208//EN" "JATS-archivearticle1.dtd">
 </front>
 
 <body>
+<p>please visit https://sjbrou.github.io/Supply_Chain_Data_Analysis/ for
+an interactive version with better visualizations!</p>
 <sec id="data-selection">
-  <title>1 Data selection</title>
+  <title>Data selection</title>
   <p>We analyze, forecast and interpret the
   <ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore
   sales</ext-link> provided by
@@ -142,7 +144,7 @@ and Interchange DTD v1.2 20190208//EN" "JATS-archivearticle1.dtd">
   contains the <bold>relevant</bold> R code in the Article Notebook.</p>
 </sec>
 <sec id="data-pre-processing">
-  <title>2 Data Pre-processing</title>
+  <title>Data Pre-processing</title>
   <p>The superstore data set we selected is of high quality: At first
   glance (which needs to be verified during the visualization), the data
   appears to have been recorded regularly and without interruptions.
@@ -616,7 +618,7 @@ and Interchange DTD v1.2 20190208//EN" "JATS-archivearticle1.dtd">
   they appear valid..</p>
 </sec>
 <sec id="forecasting-method-evaluation">
-  <title>3 Forecasting Method Evaluation</title>
+  <title>Forecasting Method Evaluation</title>
   <sec id="forecasting-top-3-product-categories-4a">
     <title>Forecasting top 3 product categories (4a)</title>
     <p>Let’s forecast sold quantities for the three most sold
@@ -1233,7 +1235,7 @@ Model df: 0.   Total lags used: 7</preformat>
   </sec>
 </sec>
 <sec id="forecasting-future-values">
-  <title>4 Forecasting future values</title>
+  <title>Forecasting future values</title>
   <sec id="forecasting-3-products-5a">
     <title>Forecasting 3 products (5a)</title>
     <p>In this session, we focused on evaluating different forecasting
@@ -1406,7 +1408,7 @@ Sep 2017       37.80356 32.467775 43.13935 29.643179 45.96395</preformat>
   </sec>
 </sec>
 <sec id="forecast-interpretation">
-  <title>5 Forecast interpretation</title>
+  <title>Forecast interpretation</title>
 </sec>
 </body>
 
@@ -1512,8 +1514,10 @@ Sep 2017       37.80356 32.467775 43.13935 29.643179 45.96395</preformat>
 </front-stub>
 
 <body>
+<p>please visit https://sjbrou.github.io/Supply_Chain_Data_Analysis/ for
+an interactive version with better visualizations!</p>
 <sec id="data-selection-nb-article">
-  <title>1 Data selection</title>
+  <title>Data selection</title>
   <p>We analyze, forecast and interpret the
   <ext-link ext-link-type="uri" xlink:href="https://public.tableau.com/app/sample-data/sample_-_superstore.xls">Superstore
   sales</ext-link> provided by
@@ -1528,7 +1532,7 @@ Sep 2017       37.80356 32.467775 43.13935 29.643179 45.96395</preformat>
   contains the <bold>relevant</bold> R code in the Article Notebook.</p>
 </sec>
 <sec id="data-pre-processing-nb-article">
-  <title>2 Data Pre-processing</title>
+  <title>Data Pre-processing</title>
   <p>The superstore data set we selected is of high quality: At first
   glance (which needs to be verified during the visualization), the data
   appears to have been recorded regularly and without interruptions.
@@ -2367,7 +2371,7 @@ p</code>
   they appear valid..</p>
 </sec>
 <sec id="forecasting-method-evaluation-nb-article">
-  <title>3 Forecasting Method Evaluation</title>
+  <title>Forecasting Method Evaluation</title>
   <sec id="forecasting-top-3-product-categories-4a-nb-article">
     <title>Forecasting top 3 product categories (4a)</title>
     <p>Let’s forecast sold quantities for the three most sold
@@ -3501,7 +3505,7 @@ print(cluster_metrics)</code>
   </sec>
 </sec>
 <sec id="forecasting-future-values-nb-article">
-  <title>4 Forecasting future values</title>
+  <title>Forecasting future values</title>
   <sec id="forecasting-3-products-5a-nb-article">
     <title>Forecasting 3 products (5a)</title>
     <p>In this session, we focused on evaluating different forecasting
@@ -3738,7 +3742,7 @@ Sep 2017       37.80356 32.467775 43.13935 29.643179 45.96395</preformat>
   </sec>
 </sec>
 <sec id="forecast-interpretation-nb-article">
-  <title>5 Forecast interpretation</title>
+  <title>Forecast interpretation</title>
   <sec specific-use="notebook-content">
   <code language="r script"># There was some missing pieces of code that I did not want to remove, but added no value either, 
 

@@ -6,7 +6,8 @@
 \documentclass[
   letterpaper,
   DIV=11,
-  numbers=noendperiod]{scrartcl}
+  numbers=noendperiod,
+  oneside]{scrartcl}
 
 \usepackage{amsmath,amssymb}
 \usepackage{iftex}
@@ -40,8 +41,9 @@
   \KOMAoptions{parskip=half}}
 \makeatother
 \usepackage{xcolor}
+\usepackage[left=1in,marginparwidth=2.0666666666667in,textwidth=4.1333333333333in,marginparsep=0.3in]{geometry}
 \setlength{\emergencystretch}{3em} % prevent overfull lines
-\setcounter{secnumdepth}{2}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 % Make \paragraph and \subparagraph free-standing
 \makeatletter
 \ifx\paragraph\undefined\else
@@ -150,6 +152,10 @@
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
 \makeatother
+\makeatletter
+\@ifpackageloaded{sidenotes}{}{\usepackage{sidenotes}}
+\@ifpackageloaded{marginnote}{}{\usepackage{marginnote}}
+\makeatother
 
 \usepackage{bookmark}
 
@@ -180,6 +186,13 @@ Lamberts (2854979) \and Niek Schroor (2786837)}
 \begin{document}
 \maketitle
 
+
+\marginnote{\begin{footnotesize}
+
+please visit https://sjbrou.github.io/Supply\_Chain\_Data\_Analysis/ for
+an interactive version with better visualizations!
+
+\end{footnotesize}}
 
 \subsection{Data selection}\label{data-selection}
 
