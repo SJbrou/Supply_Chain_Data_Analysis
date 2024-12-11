@@ -4,14 +4,14 @@ project:
 execute:
   freeze: auto
 
+number-depth: 2
+
 format:
   html:
-  
     toc: true
     comments:
       hypothesis: true
+
   docx: default
   jats: default
   agu-pdf: default
-
-

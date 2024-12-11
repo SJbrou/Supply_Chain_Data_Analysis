@@ -15,28 +15,24 @@ authors:
 
 date: last-modified
 bibliography: references.bib
-citation:
-  container-title: Earth and Space Science
 number-sections: true
 ---
 
-<h2>Introduction</h2>
+## Data selection
 
 We analyze, forecast and interpret the [Superstore sales](https://public.tableau.com/app/sample-data/sample_-_superstore.xls) provided by [Tableau](https://public.tableau.com/app/learn/sample-data) using different statistical and machine learning methods.
+
+The dataset provided contains information about products, sales and profits of a fictitious US company. The dataset contains about 10,000 rows with 1,850 unique product names and 17 product subcategories, covering four consecutive years on a daily basis.
 
 We describe our work in the PDF version. However, we would like to recommend reading our quarto manuscript *here* as it contains the **relevant** R code in the Article Notebook.
 
 ## Data Pre-processing
 
-The superstore data set we selected is of high quality. Thus we do the required data pre-processing, but included the hypothetical steps we would take were our data of lower quality to communicate our understanding of the data pre-processing process.
+The superstore data set we selected is of high quality: At first glance (which needs to be verified during the visualization), the data appears to have been recorded regularly and without interruptions. There is no sign of a sudden structural change. Since the data are consumer products, it should contain both trends and seasonality.
+Nevertheless, we have included hypothetical steps to demonstrate our understanding of the data preprocessing procedure. In detail, we did:
 
-We took the following pre-processing steps:
-
-```{r}
+```{r message=FALSE, warning=FALSE}
 #| label: setup
-#| include: false
-#| output: false
-#| message: false
 
 # Clear workspace
 rm(list = ls())
@@ -45,7 +41,7 @@ install_and_load <- function(packages) {
   install.packages(setdiff(packages, rownames(installed.packages())), dependencies = TRUE)
   invisible(lapply(packages, require, character.only = TRUE))
 }
-install_and_load(c("tidyverse", "readxl", "ggplot2", "lubridate", "stats", "Amelia","forecast", "tseries", "plotly", "stringr", "knitr"))
+install_and_load(c("tidyverse", "readxl", "ggplot2", "lubridate", "stats", "Amelia","forecast", "tseries", "plotly", "stringr", "knitr", "kableExtra"))
 ```
 
 -   Improved column names by removing whitespaces
@@ -89,12 +85,7 @@ missing_values <- sapply(data, function(col) {
   }
 })
 
-
-if (sum(missing_values) == 0) {
-  print("None of the columns contains missing values") # We print to enforce the "Source: Article notebook
-  } else {
-  print("Some columns contain missing values")
-}
+# sum(missing_values) returns 0!
 
 # Optionally, print the missing values as a nice table
 missing_values_table <- data.frame(
@@ -105,17 +96,19 @@ missing_values_table <- data.frame(
 # kable(missing_values_table, caption = "Missing or Empty Values in Columns", format = "pipe")
 
 
-rm(missing_value, missing_values_table)
+rm(missing_values, missing_values_table)
 ```
 
 After these steps (and transposing the table for better document formatting), the data looks as follows:
 ```{r}
 #| label: data_table1
-kable(t(head(data, 3)), caption = "First 5 Rows of the Data (Transposed)", format = "markdown")
+dat_table <- t(head(data,))
+
+kable(t(head(data, 3)), caption = "First 3 Rows of the Data (Transposed)", format = "markdown")
 
 ```
 
-There is some more processing to do, for instance the removal of outliers. However, by doing so we impose our own assumptions on the data. Let's start by evaluating the descriptive statistics of our data and check if further processing is required. 
+We did not find any missing values, confirming the quality of the data set. There is some more processing to do, for instance the removal of outliers. However, by doing so we impose our own assumptions on the data. Let's start by evaluating the descriptive statistics of our data and check if further processing is required.
 
 ```{r}
 #| label: descriptive statistics
@@ -175,23 +168,18 @@ kable(
   date_stats,
   caption = "Descriptive Statistics for Date Columns",
   format = "pipe")
-
-# Let's not render the character table as it contains little relevant information
-#kable(
-#  character_stats,
-#  caption = "Descriptive Statistics for Text Columns",
-#  format = "pipe")
 ```
+We inspect the orders with the lowest and highest Sales amount (in USD). The most expensive orders were professional printers, cameras and teleconferencing units with high unit prices. The orders with the lowest sales amount were often binders and had a high Discount rate.
 
-We inspected the orders with the lowest and highers price (<code>Sales</code> in USD). The most expensive orders were professional printers, camera's and teleconferencing units with high unit prices, and these orders often were of high <code>Quantity</code>. The orders with the lowest price where often binders, had a high <code>Discount</code> rate, and often a <code>Quantity</code> of just one. 
+Interestingly there are orders with a negative profit. They typically have high Discount rates and often concern the same item, such as the “Cubify CubeX 3D Printer Triple Head Print”. The orders with a negative Profit were often part of a larger order (for instance CA-2016-108196), and placed by customers with multiple orders. We suspect these negative Profit's to be caused by items of lower quality that receive discounts, general discount codes, or volume discounts. However, due to the high discounts especially on orders with negative profit, we assume these to be valid orders. 
 
-We were fascinated by the orders with a negative <code>profit</code>. These all had high <code>Discount</code> rates, and often concerned the same items, such as the <code>Cubify CubeX 3D Printer Triple Head Print</code>. The orders with a negative <code>Profit</code> where often part of a larger order (for instance <code>CA-2016-108196</code>), and placed by customers that placed multiple orders. We suspect these negative <code>Profit</code>'s to be caused by faulty items that receive discounts, general discount codes, or volume discounts. However, due to especially the high discounts on orders with negative profits, we assume these to be valid orders. This decision has also been influenced by the high quality of the data. As we found no missing values whats however, we suspect the chance of some weird but valid orders to be higher than encountering mistakes here. *[this paragraph could use some rewriting]*
+** Some negative profit products **
 
-In figure x we plotted the sales of the most popular products. Unfortunately, the sales of individual products were too low to determine any meaningfull trends. 
+In figure x we plotted the quantities of the most sold products. Unfortunately, the sold quantities of individual products were too low to determine any meaningful trends.
 
 ```{r message=FALSE, warnng=FALSE, error=FALSE}
 #| label: Quantity_top_products
-#| fig-cap: Figure x Sale quantity of the most popular products
+#| fig-cap: Figure X Sale quantity of the most popular products
 
 # Optionally: print top 10 sale quantity barplot
 # # Sum of Quantity for top products
@@ -253,8 +241,7 @@ for (i in seq_along(p_ly$x$data)) {
 p_ly
 ```
 
-
-Our proposed workaround is to aggregate products by their <code>Sub_Category</code>, and treating them as a single product for the rest of the assignment, which we plotted in figure X.
+Our proposed workaround is to aggregate <code>Product_Name</code> by <code>Sub_Category</code>, and treat it as a single product for the rest of the assignment, which we plotted in figure X.
 
 ```{r}
 #| label: Aggregated_Sub_Category_sales
@@ -328,10 +315,9 @@ for (i in seq_along(p_ly$x$data)) {
 p_ly
 ```
 
-These aggregated sales start to show trends and seasonality, and are much more useful to base predictions on! We will use these aggregated sub-categories for the rest of the assignment.
+This aggregated Quantity starts to show trends and seasonality, and is much more useful to base predictions on! We will use these aggregated sub-categories for the rest of the assignment.
 
-To properly finish our data pre-processing we ran some statistics on the aggregated sub-category sales. Table x contains soem descriptive statistics.
-
+To properly finish our data preprocessing we ran some statistics on Quantity aggregated by Sub_Category. Table x contains some descriptive statistics.
 
 ```{r}
 #| label: sub_category_descriptive_statistics_table
@@ -352,16 +338,14 @@ outlier_summary <- data %>%
     .groups = "drop"
   )
 
-
 # Output tables
 kable(
   outlier_summary,
   caption = "Statistics for Sub_Category quantity",
   format = "pipe")
-
 ```
 
-The statistics for the sales aggregated by product category look valid. We can further inspect them by visualizing them as histogram and visually check for anomalies. Figure y contains histograms of the quantities per sub-category. 
+The statistics for <code>Quantity</code> aggregated by <code>Sub_Category</code> looks valid. We can visualize it as histogram and check for anomalies. Figure y contains histograms of <code>Quantity</code> per <code>Sub_Category</code>.
 
 ```{r}
 #| label: sub_category_histograms
@@ -417,27 +401,31 @@ p <- p %>%
 p
 ```
 
-The histograms show that the quantities are not normally distributed, but have a right-skewed distribution. This is expected as most orders contain a small number of items, but some orders contain a large number of items. We will not remove these outliers as they are valid orders.
-
-As the data we are going to use seems valid, we move on to exploring the trends and visualizing our data.
+The histograms show that the quantities a right-skewed distributed. This is to be expected since most orders contain only a small number of items. We will not remove the outliers with large quantities since they appear valid..
 
 ## Data Visualization
 
-
-
-
-
-some text for the visualization
-
-
-
+<hr>
 
 ## Forecasting Method Evaluation
 
-Let's forecast sales for the three most sold sub-categories:
+### Forecasting top 3 product categories (4a)
 
-```{r}
+Let's forecast sold quantities for the three most sold sub-categories:
+
+The steps taken for data preparation were:
+
+-   Identifying Top Subcategories: The top three subcategories are selected from our dataset based on their sold quantities. The top three were: Binders, furnishing and paper.
+-   The sold quantities are aggregated monthly to create a time series object which we can use in the forecasting.
+-   A KPSS showed that the data is non stationary. First-order differencing is applied to transform the data from non-stationary to stationary. The KPSS results in a p-value >0.05 showing the stationarity. 
+
+```{r message=FALSE, error=FALSE, warning=FALSE}
+#| label: plots1
 # Find top 3 most sold product names
+top_categories <- data %>%
+  group_by(Sub_Category) %>%
+  summarise(Total_Quantity = sum(Quantity)) %>%
+  arrange(desc(Total_Quantity))
 top_3_subcategories <- top_categories$Sub_Category[0:3]
 
 # Filter the data for  top 3 products
@@ -475,7 +463,6 @@ for (subcategory in top_3_subcategories) {
                                 frequency = 12)
 }
 
-
 #### 4 A
 # Step 4: Apply forecasting methods to the top 3 sub-categories
 forecast_results <- list()  # Store results
@@ -511,45 +498,86 @@ for (subcategory in names(ts_list)) {
   )
 }
 
-# Step 5: Print results
+
+# For formatting, we ommitted almost all output. You can uncomment the code and check your output if you like.
+
+# # Step 5: Print results
+#  for (subcategory in names(forecast_results)) {
+#   cat("\n\nResults for Sub_Category:", subcategory, "\n")
+# 
+#   cat("\nARIMA Accuracy:\n")
+#   print(forecast_results[[subcategory]]$ARIMA$Accuracy)
+# 
+#   cat("\nHolt-Winters Accuracy:\n")
+#   print(forecast_results[[subcategory]]$HoltWinters$Accuracy)
+# 
+#   cat("\nETS Accuracy:\n")
+#   print(forecast_results[[subcategory]]$ETS$Accuracy)
+# }
+```
+
+Three models are applied to each subcategory to forecast it. The models we use are: ARIMA, Holt-Winters and ETS. We have chosen these models because of their level of suitability for discrete time series data with all different levels of trend and seasonality. To evaluate the methods and its effectiveness , the data is split into a training set (70%) and testing set (30%). 
+
+To assess the results, we use the following performance metrics: ME, RMSE, MAE and MAPE. They are calculated for the training and testing phases of the forecast. 
+
+As we can see on the forecasting results ARIMA performed well for binders. We can state this because of the lowest RMSE if you compare it to the other models.
+
+```{r}
+#| label: Results1
+
+# Lets plot the results
 for (subcategory in names(forecast_results)) {
-  cat("\n\nResults for Sub_Category:", subcategory, "\n")
-
-  cat("\nARIMA Accuracy:\n")
-  print(forecast_results[[subcategory]]$ARIMA$Accuracy)
-
-  cat("\nHolt-Winters Accuracy:\n")
-  print(forecast_results[[subcategory]]$HoltWinters$Accuracy)
-
-  cat("\nETS Accuracy:\n")
-  print(forecast_results[[subcategory]]$ETS$Accuracy)
+  ts_current <- ts_list[[subcategory]]
+  train_size <- floor(0.7 * length(ts_current))
+  test_ts <- window(ts_current, start = c(2014 + train_size %/% 12, train_size %% 12 + 1))
+  arima_forecast <- forecast_results[[subcategory]]$ARIMA$Forecast
+  hw_forecast <- forecast_results[[subcategory]]$HoltWinters$Forecast
+  ets_forecast <- forecast_results[[subcategory]]$ETS$Forecast
+  
+  # Combined plot
+  plot(arima_forecast$mean, col = "blue", lwd = 2, 
+       ylim = range(c(arima_forecast$mean, hw_forecast$mean, ets_forecast$mean, test_ts)),
+       main = paste("Combined Forecasts for", subcategory, "before differencing"),
+       xlab = "Time", ylab = "Forecasted Values")
+  lines(test_ts, col = "red", lty = 2, lwd = 2)
+  lines(hw_forecast$mean, col = "green", lwd = 2)
+  lines(ets_forecast$mean, col = "purple", lwd = 2)
+  legend("topleft", legend = c("ARIMA", "Holt-Winters", "ETS", "Test Data"),
+         col = c("blue", "green", "purple", "red"), lty = c(1, 1, 1, 2), lwd = 2)
 }
 
-# Step 6: Visualization of Forecasts
-for (subcategory in names(forecast_results)) {
-  plot(forecast_results[[subcategory]]$ARIMA$Forecast, main = paste("ARIMA Forecast for", subcategory))
-  lines(test_ts, col = "red", lty = 2)
+```
 
-  plot(forecast_results[[subcategory]]$HoltWinters$Forecast, main = paste("Holt-Winters Forecast for", subcategory))
-  lines(test_ts, col = "red", lty = 2)
+test1
 
-  plot(forecast_results[[subcategory]]$ETS$Forecast, main = paste("ETS Forecast for", subcategory))
-  lines(test_ts, col = "red", lty = 2)
-}
+```{r message=FALSE, warning=FALSE, error=FALSE}
+#| label: Results2
+options(warn = -1)
+# # Step 6: Visualization of Forecasts
+# for (subcategory in names(forecast_results)) {
+#   plot(forecast_results[[subcategory]]$ARIMA$Forecast, main = paste("ARIMA Forecast for", subcategory))
+#   lines(test_ts, col = "red", lty = 2)
+# 
+#   plot(forecast_results[[subcategory]]$HoltWinters$Forecast, main = paste("Holt-Winters Forecast for", subcategory))
+#   lines(test_ts, col = "red", lty = 2)
+# 
+#   plot(forecast_results[[subcategory]]$ETS$Forecast, main = paste("ETS Forecast for", subcategory))
+#   lines(test_ts, col = "red", lty = 2)
+# }
 
 #more stationary tests
 # Perform KPSS Test for the top 3 subcategories
-top_3_subcategories <- top_categories$Sub_Category[0:3]
-
-for (subcategory in top_3_subcategories) {
-  if (subcategory %in% names(ts_list)) {
-    ts_current <- ts_list[[subcategory]]
-    cat("\nKPSS Test for Sub-Category:", subcategory, "\n")
-    print(kpss.test(ts_current))
-  } else {
-    cat("\nSub-Category not found in ts_list:", subcategory, "\n")
-  }
-}
+# top_3_subcategories <- top_categories$Sub_Category[0:3]
+# 
+# for (subcategory in top_3_subcategories) {
+#   if (subcategory %in% names(ts_list)) {
+#     ts_current <- ts_list[[subcategory]]
+#     cat("\nKPSS Test for Sub-Category:", subcategory, "\n")
+#     print(kpss.test(ts_current))
+#   } else {
+#     cat("\nSub-Category not found in ts_list:", subcategory, "\n")
+#   }
+# }
 
 #Because the all the 3 subcategory are non stationary because of a P value which is <=0.05 we need to use differencing
 # Apply differencing to each of the top 3 subcategories
@@ -562,22 +590,57 @@ for (subcategory in top_3_subcategories) {
     differenced_series[[subcategory]] <- ts_diff  # Store the differenced series
 
     # Recheck stationarity with KPSS test
-    cat("\nKPSS Test for Differenced Sub-Category:", subcategory, "\n")
+    #cat("\nKPSS Test for Differenced Sub-Category:", subcategory, "\n")
     print(kpss.test(ts_diff))
   } else {
-    cat("\nSub-Category not found in ts_list:", subcategory, "\n")
+    #cat("\nSub-Category not found in ts_list:", subcategory, "\n")
   }
 }
-# Now P value is larger then 0.05 so we have stationary data
-# Plot the differenced series for each subcategory
-for (subcategory in top_3_subcategories) {
-  if (subcategory %in% names(differenced_series)) {
-    ts_diff <- differenced_series[[subcategory]]
-    cat("\nPlotting Differenced Series for Sub-Category:", subcategory, "\n")
-    plot(ts_diff, main = paste("Differenced Series for Sub-Category:", subcategory),
-         ylab = "Differenced Values", xlab = "Time")
+
+```
+
+test2
+
+```{r}
+#| label: results3
+# Time differenced plots
+# # Now P value is larger then 0.05 so we have stationary data
+# # Plot the differenced series for each subcategory
+# for (subcategory in top_3_subcategories) {
+#   if (subcategory %in% names(differenced_series)) {
+#     ts_diff <- differenced_series[[subcategory]]
+#     cat("\nPlotting Differenced Series for Sub-Category:", subcategory, "\n")
+#     plot(ts_diff, main = paste("Differenced Series for Sub-Category:", subcategory),
+#          ylab = "Differenced Values", xlab = "Time")
+#   }
+# }
+
+
+# Combine differenced series plots for all top subcategories
+combined_diff_plot <- function(differenced_series, top_3_subcategories) {
+  plot(NULL, xlim = range(time(differenced_series[[top_3_subcategories[1]]])), 
+       ylim = range(sapply(differenced_series[top_3_subcategories], range, na.rm = TRUE)),
+       xlab = "Time", ylab = "Differenced Values",
+       main = "Differenced Series for Top Subcategories")
+  colors <- c("blue", "green", "purple")
+  for (i in seq_along(top_3_subcategories)) {
+    subcategory <- top_3_subcategories[i]
+    if (subcategory %in% names(differenced_series)) {
+      ts_diff <- differenced_series[[subcategory]]
+      lines(ts_diff, col = colors[i], lwd = 2, lty = i)
+    }
   }
+  legend("topright", legend = top_3_subcategories, 
+         col = colors, lty = 1:length(top_3_subcategories), lwd = 2)
 }
+combined_diff_plot(differenced_series, top_3_subcategories)
+
+```
+ 
+ test3
+ 
+```{r}
+#| label: Results4
 
 #NEW FORECASTING FOR 4A with stationary data
 # Step 4: Apply forecasting methods to the differenced top 3 sub-categories
@@ -614,37 +677,66 @@ for (subcategory in names(differenced_series)) {
   )
 }
 
-# Step 5: Print results
+# # Step 5: Print results
+# for (subcategory in names(forecast_results)) {
+#   cat("\n\nResults for Sub_Category:", subcategory, "\n")
+# 
+#   cat("\nARIMA Accuracy:\n")
+#   print(forecast_results[[subcategory]]$ARIMA$Accuracy)
+# 
+#   cat("\nHolt-Winters Accuracy:\n")
+#   print(forecast_results[[subcategory]]$HoltWinters$Accuracy)
+# 
+#   cat("\nETS Accuracy:\n")
+#   print(forecast_results[[subcategory]]$ETS$Accuracy)
+# }
+
+# # Step 6: Visualization of Forecasts
+# for (subcategory in names(forecast_results)) {
+#   plot(forecast_results[[subcategory]]$ARIMA$Forecast,
+#        main = paste("ARIMA Forecast for", subcategory),
+#        ylab = "Differenced Values", xlab = "Time")
+#   lines(test_ts, col = "red", lty = 2)
+# 
+#   plot(forecast_results[[subcategory]]$HoltWinters$Forecast,
+#        main = paste("Holt-Winters Forecast for", subcategory),
+#        ylab = "Differenced Values", xlab = "Time")
+#   lines(test_ts, col = "red", lty = 2)
+# 
+#   plot(forecast_results[[subcategory]]$ETS$Forecast,
+#        main = paste("ETS Forecast for", subcategory),
+#        ylab = "Differenced Values", xlab = "Time")
+#   lines(test_ts, col = "red", lty = 2)
+# }
+
+# Lets plot the results
 for (subcategory in names(forecast_results)) {
-  cat("\n\nResults for Sub_Category:", subcategory, "\n")
-
-  cat("\nARIMA Accuracy:\n")
-  print(forecast_results[[subcategory]]$ARIMA$Accuracy)
-
-  cat("\nHolt-Winters Accuracy:\n")
-  print(forecast_results[[subcategory]]$HoltWinters$Accuracy)
-
-  cat("\nETS Accuracy:\n")
-  print(forecast_results[[subcategory]]$ETS$Accuracy)
+  ts_current <- ts_list[[subcategory]]
+  train_size <- floor(0.7 * length(ts_current))
+  test_ts <- window(ts_current, start = c(2014 + train_size %/% 12, train_size %% 12 + 1))
+  arima_forecast <- forecast_results[[subcategory]]$ARIMA$Forecast
+  hw_forecast <- forecast_results[[subcategory]]$HoltWinters$Forecast
+  ets_forecast <- forecast_results[[subcategory]]$ETS$Forecast
+  
+  # Combined plot
+  plot(arima_forecast$mean, col = "blue", lwd = 2, 
+       ylim = range(c(arima_forecast$mean, hw_forecast$mean, ets_forecast$mean, test_ts)),
+       main = paste("Combined Forecasts for", subcategory, "before differencing"),
+       xlab = "Time", ylab = "Forecasted Values")
+  lines(test_ts, col = "red", lty = 2, lwd = 2)
+  lines(hw_forecast$mean, col = "green", lwd = 2)
+  lines(ets_forecast$mean, col = "purple", lwd = 2)
+  legend("topleft", legend = c("ARIMA", "Holt-Winters", "ETS", "Test Data"),
+         col = c("blue", "green", "purple", "red"), lty = c(1, 1, 1, 2), lwd = 2)
 }
 
-# Step 6: Visualization of Forecasts
-for (subcategory in names(forecast_results)) {
-  plot(forecast_results[[subcategory]]$ARIMA$Forecast,
-       main = paste("ARIMA Forecast for", subcategory),
-       ylab = "Differenced Values", xlab = "Time")
-  lines(test_ts, col = "red", lty = 2)
+```
 
-  plot(forecast_results[[subcategory]]$HoltWinters$Forecast,
-       main = paste("Holt-Winters Forecast for", subcategory),
-       ylab = "Differenced Values", xlab = "Time")
-  lines(test_ts, col = "red", lty = 2)
+test4
 
-  plot(forecast_results[[subcategory]]$ETS$Forecast,
-       main = paste("ETS Forecast for", subcategory),
-       ylab = "Differenced Values", xlab = "Time")
-  lines(test_ts, col = "red", lty = 2)
-}
+```{r}
+#| label: KPSStest
+# final KPSS test
 
 # Perform KPSS Test for the differenced series in the top 3 subcategories
 for (subcategory in top_3_subcategories) {
@@ -659,9 +751,33 @@ for (subcategory in top_3_subcategories) {
 # now they are all 0.1
 ```
 
-## Clustering (4B)
+
+
+
+As we can see on the forecasting results ARIMA performed well for binders. We can state this because of the lowest RMSE. 
+-	ARIMA Binders:
+-	Forecasting results Binders: 
+
+For the subcategory furnishings we can see that the ETS forecasting method is the most stable across the training and testing phase. 
+-	ETS furnishings
+-	Forecasting results Furnishings:
+
+For the last subcategory and product paper the ETS model is again the most consistent, comparing the statistics for training and test set. The high variability in the test data leads to larger forecasting errors in all the 3 models.
+
+-	ETS Furnishings:
+-	Forecasting results: 
+
+Residual Diagnostics:
+-	The checks show no real autocorrelation for ARIMA models. Which indicates a good fitting forecast. 
+
+### Conclusion (4a)
+
+The most effective model is not the same in all the subcategories. Each model was validated based on its ability to capture seasonality and trend. ARIMA performed better for Binders, while ETS performed better for Furnishings and Paper. 
+
+### Clustering (4b)
 
 ```{r}
+#| label: somelable
 # 4B
 # 4B: Group Products into Clusters and Apply Forecasting Techniques
 # Step 1: Extract Time-Series Features for Clustering
@@ -801,16 +917,30 @@ for (cluster_id in names(forecast_results_by_cluster)) {
 }
 print(cluster_metrics)
 
-
 ```
+Cluster 1 (e.g., Binders): ARIMA outperformed other methods due to significant autocorrelation and trend components.
 
+Cluster 2 (e.g., Furnishings): ETS was the most accurate method, effectively balancing trend and seasonality.
 
+Cluster 3 (e.g., Paper): ETS also performed best, with ARIMA showing higher error rates due to variability in random components.
 
-## 5A
+Residual diagnostics were performed for all ARIMA models, confirming no significant autocorrelation (p > 0.05).
 
+Cluster-Level Metrics based on mean RMSE and MAPE show:
+-   Cluster 1 had the lowest RMSE using ARIMA.
+-   Cluster 2 and 3 were better modeled with ETS
+
+### Conclusion (4b)
+
+Clustering allows for tailored forecasting strategies. We conclude that for the given data set ARIMA is more effective for clusters with strong trends, while ETS is preferable for clusters with mixed seasonal and trend characteristics. The approach aligns with lecture notes, emphasizing the importance of adapting models based on time series characteristics.
+
+## Forecasting future values
+
+### Forecasting 3 products (5a)
+
+In this session, we focused on evaluating different forecasting models (ARIMA, Holt-Winters, and ETS) for multiple sub-categories by analyzing their accuracy metrics, such as RMSE, MAPE, and residual diagnostics. Based on the evaluation results, we selected the best-performing model for each sub-category. We then used these models to forecast the future outcomes for each sub-category, projecting the data for the next year. Note: we may need to interpret the outcomes and explain why we pick the certain model
 
 ```{r}
-
 #Binders->choose ARIMA
 binders_ts <- ts_list[["Binders"]]
 arima_model <- auto.arima(binders_ts)
@@ -837,9 +967,11 @@ plot(ets_forecast, main = "ETS Forecast for Furnishings (Next 12 Months)")
 
 ```
 
-## 5B
+### Applying to all data (5b)
 
-```{r}
+In this session, we first grouped the sub-categories into clusters based on key time-series features, including trend strength, seasonal strength, and random strength, using hierarchical clustering. Once the clusters were formed, we applied and evaluated multiple forecasting models—ARIMA, Holt-Winters, and ETS—on each sub-category within its respective cluster, comparing their accuracy metrics such as RMSE and MAPE. Based on the evaluation results, we selected the best-performing model for each sub-category and used it to forecast the future outcomes within a year, leveraging the clustering to enhance the accuracy and relevance of our predictions.
+
+```{r eval=FALSE}
 #Cluster_Binders->Holt-Winters
 cluster_id <- 1
 subcategory <- "Binders"
@@ -865,9 +997,19 @@ print(hw_forecast)
 plot(hw_forecast, main = "Holt-Winters Forecast for Furnishings (Next 12 Months)", xlab = "Time", ylab = "Forecasted Values")
 
 ```
-### Some other part?
+## Forecast interpretation
 
-```{r}
+Lorem Ipsum
+
+
+
+
+
+
+<br>
+
+
+```{r eval=FALSE}
 # Check for missing values
 missing_values <- colSums(is.na(data))
 print(missing_values)  # Print missing values for reference

@@ -1,0 +1,52 @@
+\documentclass[border=1mm]{standalone}
+\usepackage{amssymb, amsmath}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage[utf8]{inputenc}
+\usepackage{makecell}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{xunicode}
+\usepackage{xcolor}
+\begin{document}
+
+\begin{longtable}[t]{llll}
+\caption{\label{tab:data_table1}First 3 Rows of the Data (Transposed)}\\
+\toprule
+ &  &  & \\
+\midrule
+Order\_ID & CA-2016-152156 & CA-2016-152156 & CA-2016-138688\\
+Order\_Date & 2016-11-08 & 2016-11-08 & 2016-06-12\\
+Ship\_Date & 2016-11-11 & 2016-11-11 & 2016-06-16\\
+Ship\_Mode & Second Class & Second Class & Second Class\\
+Customer\_ID & CG-12520 & CG-12520 & DV-13045\\
+\addlinespace
+Customer\_Name & Claire Gute & Claire Gute & Darrin Van Huff\\
+Segment & Consumer & Consumer & Corporate\\
+City & Henderson & Henderson & Los Angeles\\
+State & Kentucky & Kentucky & California\\
+Postal\_Code & 42420 & 42420 & 90036\\
+\addlinespace
+Region & South & South & West\\
+Product\_ID & FUR-BO-10001798 & FUR-CH-10000454 & OFF-LA-10000240\\
+Category & Furniture & Furniture & Office Supplies\\
+Sub\_Category & Bookcases & Chairs & Labels\\
+Product\_Name & Bush Somerset Collection Bookcase & Hon Deluxe Fabric Upholstered Stacking Chairs, Rounded Back & Self-Adhesive Address Labels for Typewriters by Universal\\
+\addlinespace
+Sales & 261.96 & 731.94 & 14.62\\
+Quantity & 2 & 3 & 2\\
+Discount & 0 & 0 & 0\\
+Profit & 41.9136 & 219.5820 & 6.8714\\
+\bottomrule
+\end{longtable}
+\end{document}
