@@ -174,7 +174,7 @@
 \makeatother
 \subtitle{Analyzing and Forcasting Supermarket Sales}
 \author{Stan Brouwer (2671939) \and Liz Chen (2840693) \and Maaike
-Lamberts (2854979) \and Niek Schroor}
+Lamberts (2854979) \and Niek Schroor (2786837)}
 \date{2024-12-11}
 
 \begin{document}
@@ -433,8 +433,6 @@ is to be expected since most orders contain only a small number of
 items. We will not remove the outliers with large quantities since they
 appear valid..
 
-\subsection{Data Visualization}\label{data-visualization}
-
 \subsection{Forecasting Method
 Evaluation}\label{forecasting-method-evaluation}
 
@@ -472,19 +470,167 @@ all different levels of trend and seasonality. To evaluate the methods
 and its effectiveness , the data is split into a training set (70\%) and
 testing set (30\%).
 
-To assess the results, we use the following performance metrics: ME,
-RMSE, MAE and MAPE. They are calculated for the training and testing
-phases of the forecast.
-
-As we can see on the forecasting results ARIMA performed well for
-binders. We can state this because of the lowest RMSE if you compare it
-to the other models.
-
 \pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/Results1-1.pdf}}
 
 \pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/Results1-2.pdf}}
 
 \pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/Results1-3.pdf}}
+
+\textsubscript{Source:
+\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
+Notebook}}
+
+To assess the results, we use the following performance metrics: ME,
+RMSE, MAE and MAPE. They are calculated for the training and testing
+phases of the forecast.
+
+\begin{longtable}[]{@{}llllrrrrrrrr@{}}
+\caption{Training Set Forecast Accuracy}\tabularnewline
+\toprule\noalign{}
+& Sub\_Category & Method & Dataset & ME & RMSE & MAE & MPE & MAPE & MASE
+& ACF1 & Theil\_U \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+& Sub\_Category & Method & Dataset & ME & RMSE & MAE & MPE & MAPE & MASE
+& ACF1 & Theil\_U \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & Binders & ARIMA & Training set & 0.771 & 4.643 & 2.982 & 0.687 &
+12.912 & 0.485 & 0.044 & NA \\
+3 & Binders & HoltWinters & Training set & 0.867 & 5.215 & 3.790 &
+-0.404 & 15.365 & 0.617 & -0.389 & NA \\
+5 & Binders & ETS & Training set & 0.743 & 4.713 & 3.656 & 1.359 &
+15.417 & 0.595 & -0.223 & NA \\
+7 & Paper & ARIMA & Training set & 1.117 & 6.309 & 3.828 & 1.702 &
+14.322 & 0.547 & -0.007 & NA \\
+9 & Paper & HoltWinters & Training set & 1.510 & 7.280 & 4.855 & 3.325 &
+16.413 & 0.694 & -0.027 & NA \\
+11 & Paper & ETS & Training set & 0.609 & 6.205 & 4.475 & -1.662 &
+18.732 & 0.639 & 0.005 & NA \\
+13 & Furnishings & ARIMA & Training set & 0.005 & 3.874 & 2.568 & -6.625
+& 20.210 & 0.556 & -0.202 & NA \\
+15 & Furnishings & HoltWinters & Training set & 0.914 & 4.165 & 3.475 &
+7.490 & 24.756 & 0.752 & -0.433 & NA \\
+17 & Furnishings & ETS & Training set & 0.737 & 3.467 & 2.852 & 0.430 &
+20.852 & 0.617 & -0.209 & NA \\
+\end{longtable}
+
+\textsubscript{Source:
+\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
+Notebook}}
+
+As we can see on the forecasting results ARIMA performed well for
+binders. We can state this because of the lowest RMSE.
+
+For the subcategory furnishings we can see that the ETS forecasting
+method is the most stable across the training and testing phase.
+
+For the last subcategory and product paper the ETS model is again the
+most consistent, comparing the statistics for training and test set. The
+high variability in the test data leads to larger forecasting errors in
+all the 3 models.
+
+Concerning the residual diagnostics, the checks show no real
+autocorrelation for ARIMA models. Which indicates a good fitting
+forecast.
+
+\subsubsection{Conclusion (4a)}\label{conclusion-4a}
+
+The most effective model is not the same in all the subcategories. Each
+model was validated based on its ability to capture seasonality and
+trend. ARIMA performed better for Binders, while ETS performed better
+for Furnishings and Paper.
+
+\subsubsection{Clustering Subcategories and forecasting
+(4b)}\label{clustering-subcategories-and-forecasting-4b}
+
+Steps Taken:
+
+\begin{itemize}
+\tightlist
+\item
+  Trend strength, random variation and seasonal strength were calculated
+  for the subcategory using the time series we have.
+\end{itemize}
+
+Clustering:
+
+The clustering method used is the hierarchical clustering method. To
+group subcategories into three different clusters based on features
+which are normalized. The hierarchical clustering gave the following
+results:
+
+\begin{itemize}
+\item
+  Cluster 1: Stronger seasonality
+\item
+  Cluster 2: moderate trend and seasonality
+\item
+  Cluster 3: Lower trend and seasonal strength
+\end{itemize}
+
+For each different cluster we also used the models introduced in 4A
+(ARIMA, Holt-Winters, ETS). These results where all aggregated at the
+level of each cluster so we can assess mean RMSE and MAPE for each
+different model.
+
+\begin{longtable}[]{@{}llllrrrrrrrr@{}}
+\caption{Forecast Accuracy Results}\tabularnewline
+\toprule\noalign{}
+& Sub\_Category & Method & Dataset & ME & RMSE & MAE & MPE & MAPE & MASE
+& ACF1 & Theil\_U \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+& Sub\_Category & Method & Dataset & ME & RMSE & MAE & MPE & MAPE & MASE
+& ACF1 & Theil\_U \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+2 & Binders & ARIMA & Test set & 5.941 & 10.784 & 7.616 & 10.368 &
+17.329 & 1.240 & 0.049 & 0.357 \\
+4 & Binders & HoltWinters & Test set & 2.247 & 8.712 & 6.243 & 0.160 &
+16.022 & 1.016 & -0.002 & 0.278 \\
+6 & Binders & ETS & Test set & 7.440 & 12.216 & 8.825 & 10.667 & 20.936
+& 1.437 & 0.061 & 0.377 \\
+8 & Paper & ARIMA & Test set & -9.014 & 12.231 & 10.376 & -30.104 &
+31.895 & 1.482 & 0.109 & 0.698 \\
+10 & Paper & HoltWinters & Test set & -12.037 & 14.481 & 13.347 &
+-39.792 & 41.516 & 1.907 & 0.100 & 0.845 \\
+12 & Paper & ETS & Test set & 0.085 & 11.304 & 8.247 & -0.085 & 20.476 &
+1.178 & 0.342 & 0.583 \\
+14 & Furnishings & ARIMA & Test set & 3.952 & 7.783 & 6.238 & 10.720 &
+22.753 & 1.351 & -0.036 & 0.610 \\
+16 & Furnishings & HoltWinters & Test set & 3.637 & 7.201 & 5.673 &
+9.724 & 20.501 & 1.228 & 0.018 & 0.569 \\
+18 & Furnishings & ETS & Test set & 6.097 & 8.354 & 6.691 & 20.728 &
+23.553 & 1.449 & 0.373 & 0.746 \\
+\end{longtable}
+
+\textsubscript{Source:
+\href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
+Notebook}}
+
+\begin{longtable}[]{@{}lrrl@{}}
+\caption{KPSS Test Results for Top 3 Subcategories}\tabularnewline
+\toprule\noalign{}
+Sub\_Category & KPSS\_Statistic & P\_Value & Null\_Hypothesis \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Sub\_Category & KPSS\_Statistic & P\_Value & Null\_Hypothesis \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Binders & 0.785 & 0.01 & Rejected (Non-Stationary) \\
+Paper & 0.738 & 0.01 & Rejected (Non-Stationary) \\
+Furnishings & 0.764 & 0.01 & Rejected (Non-Stationary) \\
+\end{longtable}
 
 \textsubscript{Source:
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
@@ -559,37 +705,6 @@ KPSS Level = 0.098438, Truncation lag parameter = 3, p-value = 0.1
 \textsubscript{Source:
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
 Notebook}}
-
-As we can see on the forecasting results ARIMA performed well for
-binders. We can state this because of the lowest RMSE. - ARIMA Binders:
-- Forecasting results Binders:
-
-For the subcategory furnishings we can see that the ETS forecasting
-method is the most stable across the training and testing phase. - ETS
-furnishings - Forecasting results Furnishings:
-
-For the last subcategory and product paper the ETS model is again the
-most consistent, comparing the statistics for training and test set. The
-high variability in the test data leads to larger forecasting errors in
-all the 3 models.
-
-\begin{itemize}
-\tightlist
-\item
-  ETS Furnishings:
-\item
-  Forecasting results:
-\end{itemize}
-
-Residual Diagnostics: - The checks show no real autocorrelation for
-ARIMA models. Which indicates a good fitting forecast.
-
-\subsubsection{Conclusion (4a)}\label{conclusion-4a}
-
-The most effective model is not the same in all the subcategories. Each
-model was validated based on its ability to capture seasonality and
-trend. ARIMA performed better for Binders, while ETS performed better
-for Furnishings and Paper.
 
 \subsubsection{Clustering (4b)}\label{clustering-4b}
 
@@ -779,8 +894,6 @@ their accuracy metrics, such as RMSE, MAPE, and residual diagnostics.
 Based on the evaluation results, we selected the best-performing model
 for each sub-category. We then used these models to forecast the future
 outcomes for each sub-category, projecting the data for the next year.
-Note: we may need to interpret the outcomes and explain why we pick the
-certain model
 
 \begin{verbatim}
 Series: binders_ts 
@@ -815,7 +928,7 @@ Nov 2018       72.43955 58.82134  86.05775 51.612293  93.26680
 Dec 2018       89.44597 75.45417 103.43777 68.047363 110.84458
 \end{verbatim}
 
-\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/unnamed-chunk-18-1.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/unnamed-chunk-21-1.pdf}}
 
 \begin{verbatim}
 ETS(M,N,A) 
@@ -858,7 +971,7 @@ Nov 2018       60.58102 38.27853 82.88352 26.47230 94.68975
 Dec 2018       61.45110 38.17748 84.72473 25.85717 97.04504
 \end{verbatim}
 
-\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/unnamed-chunk-18-2.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/unnamed-chunk-21-2.pdf}}
 
 \begin{verbatim}
 ETS(M,A,A) 
@@ -905,7 +1018,7 @@ Nov 2018       56.95159 36.44698 77.45621 25.592490 88.31070
 Dec 2018       55.87232 34.96477 76.77986 23.896983 87.84765
 \end{verbatim}
 
-\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/unnamed-chunk-18-3.pdf}}
+\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/unnamed-chunk-21-3.pdf}}
 
 \textsubscript{Source:
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
@@ -924,25 +1037,69 @@ model for each sub-category and used it to forecast the future outcomes
 within a year, leveraging the clustering to enhance the accuracy and
 relevance of our predictions.
 
+\begin{verbatim}
+         Point Forecast    Lo 80    Hi 80     Lo 95    Hi 95
+Oct 2016       31.26733 24.51360 38.02106 20.938398 41.59627
+Nov 2016       58.57211 51.81274 65.33147 48.234553 68.90966
+Dec 2016       46.52209 39.75006 53.29412 36.165163 56.87901
+Jan 2017       20.60516 13.81068 27.39965 10.213895 30.99643
+Feb 2017       17.19081 10.36138 24.02023  6.746097 27.63551
+Mar 2017       32.40031 25.52088 39.27975 21.879129 42.92150
+Apr 2017       36.54419 29.59727 43.49111 25.919798 47.16858
+May 2017       42.60581 35.57173 49.63990 31.848113 53.36351
+Jun 2017       34.81156 27.66868 41.95444 23.887472 45.73565
+Jul 2017       37.46761 30.19266 44.74256 26.341532 48.59368
+Aug 2017       38.24466 30.81304 45.67627 26.878978 49.61034
+Sep 2017       67.16755 59.55368 74.78141 55.523142 78.81195
+\end{verbatim}
+
+\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/unnamed-chunk-22-1.pdf}}
+
+\begin{verbatim}
+         Point Forecast     Lo 80    Hi 80      Lo 95     Hi 95
+Oct 2016       25.88021 14.987312 36.77312  9.2209588  42.53947
+Nov 2016       59.89171 33.023650 86.75978 18.8005561 100.98287
+Dec 2016       66.56848 34.945434 98.19153 18.2052047 114.93176
+Jan 2017       14.00226  6.995420 21.00910  3.2862229  24.71830
+Feb 2017       12.48362  5.931497 19.03574  2.4630129  22.50422
+Mar 2017       29.00633 13.095755 44.91690  4.6732073  53.33945
+Apr 2017       26.62997 11.410973 41.84896  3.3545236  49.90541
+May 2017       42.52022 17.268520 67.77192  3.9010776  81.13936
+Jun 2017       35.62513 13.690064 57.56019  2.0783432  69.17191
+Jul 2017       25.03347  9.084935 40.98201  0.6422896  49.42466
+Aug 2017       29.56385 10.109840 49.01785 -0.1884895  59.31618
+Sep 2017       51.80976 16.651800 86.96771 -1.9596973 105.57921
+\end{verbatim}
+
+\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/unnamed-chunk-22-2.pdf}}
+
+\begin{verbatim}
+         Point Forecast     Lo 80    Hi 80     Lo 95    Hi 95
+Oct 2016       14.89552  9.559730 20.23131  6.735134 23.05590
+Nov 2016       36.06019 30.724406 41.39598 27.899811 44.22058
+Dec 2016       32.74939 27.413606 38.08518 24.589010 40.90978
+Jan 2017       13.37457  8.038784 18.71036  5.214189 21.53496
+Feb 2017       12.97277  7.636978 18.30855  4.812382 21.13315
+Mar 2017       19.37898 14.043187 24.71476 11.218592 27.53936
+Apr 2017       17.92073 12.584940 23.25652  9.760344 26.08111
+May 2017       28.71390 23.378112 34.04969 20.553516 36.87428
+Jun 2017       18.46131 13.125525 23.79710 10.300929 26.62170
+Jul 2017       21.50610 16.170317 26.84189 13.345721 29.66649
+Aug 2017       12.73905  7.403259 18.07484  4.578664 20.89943
+Sep 2017       37.80356 32.467775 43.13935 29.643179 45.96395
+\end{verbatim}
+
+\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/unnamed-chunk-22-3.pdf}}
+
 \textsubscript{Source:
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
 Notebook}}
 
 \subsection{Forecast interpretation}\label{forecast-interpretation}
 
-Lorem Ipsum
-
 \textsubscript{Source:
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
 Notebook}}
-
-\subsubsection{Forecasting??}\label{forecasting}
-
-\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/unnamed-chunk-21-1.pdf}}
-
-\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/unnamed-chunk-21-2.pdf}}
-
-\pandocbounded{\includegraphics[keepaspectratio]{index_files/figure-pdf/unnamed-chunk-21-3.pdf}}
 
 \textsubscript{Source:
 \href{https://SJbrou.github.io/Supply_Chain_Data_Analysis/index.qmd.html}{Article
