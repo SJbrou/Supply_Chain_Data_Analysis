@@ -2,13 +2,13 @@
 title: Supply Chain Data Analytics
 subtitle: Analyzing and Forcasting Supermarket Sales
 authors:
-  - name: Stan Brouwer
+  - name: Stan Brouwer (2671939)
     orchid: 0009-0006-3447-0096
     affiliation: Vrije Universiteit
     corresponding: true
-  - name: Liz Chan
+  - name: Liz Chen (2840693)
     affiliation: Master TSCM
-  - name: Maaike Lamberst
+  - name: Maaike Lamberts (2854979)
     affiliation: Supply Chain Data analysis
   - name: Niek Schroor
     affiliation: Group 10
@@ -305,10 +305,10 @@ top_10_data_aggregated <- top_10_data %>%
 p_ly <- ggplotly(ggplot(top_10_data_aggregated, aes(x = Month, y = Sales_Count, color = Sub_Category, group = Sub_Category)) +
     geom_line(size = 1) +
     geom_point(size = 2) +
-    labs(title = "Monthly Sales for the Top 3 Most Sold Products",
+    labs(title = "Monthly Sales for the Top 3 Most Sold Sub Categories",
          x = "Month",
          y = "Sales Count",
-         color = "Product Name") +
+         color = "Sub Category") +
     theme_minimal())
 
 # Modify the visibility of traces
@@ -390,7 +390,7 @@ dropdown_buttons <- lapply(seq_along(sub_categories), function(i) {
 # Style drop down layout
 p <- p %>%
   layout(
-    title = "Distribution of Quantity Sold per Order by Sub-Category",
+    title = "Distribution of Quantity Sold per Order by Sub Category",
     xaxis = list(title = "Quantity"),
     yaxis = list(title = "Frequency"),
     showlegend = FALSE,  # Drop down instead of legend

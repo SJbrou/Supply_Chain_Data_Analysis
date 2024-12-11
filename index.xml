@@ -18,29 +18,29 @@ and Interchange DTD v1.2 20190208//EN" "JATS-archivearticle1.dtd">
 <contrib-group>
 <contrib contrib-type="author" corresp="yes">
 <name>
-<surname>Brouwer</surname>
-<given-names>Stan</given-names>
+<surname>(2671939)</surname>
+<given-names>Stan Brouwer</given-names>
 </name>
-<string-name>Stan Brouwer</string-name>
+<string-name>Stan Brouwer (2671939)</string-name>
 
 <xref ref-type="aff" rid="aff-1">a</xref>
 <xref ref-type="corresp" rid="cor-1">&#x002A;</xref>
 </contrib>
 <contrib contrib-type="author">
 <name>
-<surname>Chan</surname>
-<given-names>Liz</given-names>
+<surname>(2840693)</surname>
+<given-names>Liz Chen</given-names>
 </name>
-<string-name>Liz Chan</string-name>
+<string-name>Liz Chen (2840693)</string-name>
 
 <xref ref-type="aff" rid="aff-2">b</xref>
 </contrib>
 <contrib contrib-type="author">
 <name>
-<surname>Lamberst</surname>
-<given-names>Maaike</given-names>
+<surname>(2854979)</surname>
+<given-names>Maaike Lamberts</given-names>
 </name>
-<string-name>Maaike Lamberst</string-name>
+<string-name>Maaike Lamberts (2854979)</string-name>
 
 <xref ref-type="aff" rid="aff-3">c</xref>
 </contrib>
@@ -1036,29 +1036,29 @@ Dec 2018       55.87232 34.96477 76.77986 23.896983 87.84765</preformat>
 <contrib-group>
 <contrib contrib-type="author" corresp="yes">
 <name>
-<surname>Brouwer</surname>
-<given-names>Stan</given-names>
+<surname>(2671939)</surname>
+<given-names>Stan Brouwer</given-names>
 </name>
-<string-name>Stan Brouwer</string-name>
+<string-name>Stan Brouwer (2671939)</string-name>
 
 <xref ref-type="aff" rid="aff-1-nb-article">a</xref>
 <xref ref-type="corresp" rid="cor-1-nb-article">&#x002A;</xref>
 </contrib>
 <contrib contrib-type="author">
 <name>
-<surname>Chan</surname>
-<given-names>Liz</given-names>
+<surname>(2840693)</surname>
+<given-names>Liz Chen</given-names>
 </name>
-<string-name>Liz Chan</string-name>
+<string-name>Liz Chen (2840693)</string-name>
 
 <xref ref-type="aff" rid="aff-2-nb-article">b</xref>
 </contrib>
 <contrib contrib-type="author">
 <name>
-<surname>Lamberst</surname>
-<given-names>Maaike</given-names>
+<surname>(2854979)</surname>
+<given-names>Maaike Lamberts</given-names>
 </name>
-<string-name>Maaike Lamberst</string-name>
+<string-name>Maaike Lamberts (2854979)</string-name>
 
 <xref ref-type="aff" rid="aff-3-nb-article">c</xref>
 </contrib>
@@ -1734,10 +1734,10 @@ top_10_data_aggregated &lt;- top_10_data %&gt;%
 p_ly &lt;- ggplotly(ggplot(top_10_data_aggregated, aes(x = Month, y = Sales_Count, color = Sub_Category, group = Sub_Category)) +
     geom_line(size = 1) +
     geom_point(size = 2) +
-    labs(title = &quot;Monthly Sales for the Top 3 Most Sold Products&quot;,
+    labs(title = &quot;Monthly Sales for the Top 3 Most Sold Sub Categories&quot;,
          x = &quot;Month&quot;,
          y = &quot;Sales Count&quot;,
-         color = &quot;Product Name&quot;) +
+         color = &quot;Sub Category&quot;) +
     theme_minimal())
 
 # Modify the visibility of traces
@@ -1990,7 +1990,7 @@ dropdown_buttons &lt;- lapply(seq_along(sub_categories), function(i) {
 # Style drop down layout
 p &lt;- p %&gt;%
   layout(
-    title = &quot;Distribution of Quantity Sold per Order by Sub-Category&quot;,
+    title = &quot;Distribution of Quantity Sold per Order by Sub Category&quot;,
     xaxis = list(title = &quot;Quantity&quot;),
     yaxis = list(title = &quot;Frequency&quot;),
     showlegend = FALSE,  # Drop down instead of legend
