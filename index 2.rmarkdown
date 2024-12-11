@@ -23,6 +23,9 @@ output:
 prefer-html: true
 ---
 
+
+
+
 ## Data selection
 
 We analyze, forecast and interpret the [Superstore sales](https://public.tableau.com/app/sample-data/sample_-_superstore.xls) provided by [Tableau](https://public.tableau.com/app/learn/sample-data) using different statistical and machine learning methods.
@@ -35,6 +38,9 @@ We describe our work in the PDF version. However, we would like to recommend rea
 
 The superstore data set we selected is of high quality: At first glance (which needs to be verified during the visualization), the data appears to have been recorded regularly and without interruptions. There is no sign of a sudden structural change. Since the data are consumer products, it should contain both trends and seasonality.
 Nevertheless, we have included hypothetical steps to demonstrate our understanding of the data preprocessing procedure. In detail, we did:
+
+
+
 
 ```{r message=FALSE, warning=FALSE, error=FALSE}
 #| label: setup
@@ -49,12 +55,18 @@ install_and_load <- function(packages) {
 install_and_load(c("tidyverse", "readxl", "ggplot2", "lubridate", "stats", "Amelia","forecast", "tseries", "plotly", "stringr", "knitr", "kableExtra"))
 ```
 
+
+
+
 -   Remove whitespaces from column names
 -   Remove the <code>Row_ID</code> column as it can be inferred by it's index
 -   Remove all columns with a single unique value, as storing these would be [redundant](https://few.vu.nl/~molenaar/courses/StatR/chapters/B-06-raw_data.html)
 -   Ensure machine-readable date formats in <code>yyyy-mm-dd</code> as these usually differ per locale.
 -   Ensure proper decimal separators
 -   Calculate the number of missing values (both NA and empty string "") per column.
+
+
+
 
 ```{r}
 #| label: data_preprocessing
@@ -104,13 +116,25 @@ missing_values_table <- data.frame(
 rm(missing_values, missing_values_table)
 ```
 
+
+
+
 After these steps (and transposing the table for better document formatting), the data looks as follows:
+
+
+
 ```{r}
 #| label: data_table1
 kable(t(head(data, 3)), caption = "First 3 Rows of the Data (Transposed)", format = "markdown")
 ```
 
+
+
+
 We did not find any missing values, confirming the quality of the data set. There is some more processing to do, for instance the removal of outliers. However, by doing so we impose our own assumptions on the data. Let's start by evaluating the descriptive statistics of our data and check if further processing is required.
+
+
+
 
 ```{r}
 #| label: descriptive statistics
@@ -173,6 +197,9 @@ kable(
   caption = "Descriptive Statistics for Date Columns",
   format = "pipe")
 ```
+
+
+
 We inspect the orders with the lowest and highest Sales amount (in USD). The most expensive orders were professional printers, cameras and teleconferencing units with high unit prices. The orders with the lowest sales amount were often binders and had a high Discount rate.
 
 Interestingly there are orders with a negative profit. They typically have high Discount rates and often concern the same item, such as the “Cubify CubeX 3D Printer Triple Head Print”. The orders with a negative Profit were often part of a larger order (for instance CA-2016-108196), and placed by customers with multiple orders. We suspect these negative Profit's to be caused by items of lower quality that receive discounts, general discount codes, or volume discounts. However, due to the high discounts especially on orders with negative profit, we assume these to be valid orders. 
@@ -180,6 +207,9 @@ Interestingly there are orders with a negative profit. They typically have high 
 ** Some negative profit products **
 
 In figure x we plotted the quantities of the most sold products. Unfortunately, the sold quantities of individual products were too low to determine any meaningful trends.
+
+
+
 
 ```{r message=FALSE, warnng=FALSE, error=FALSE}
 #| label: Quantity_top_products
@@ -250,7 +280,13 @@ for (i in seq_along(p_ly$x$data)) {
 p_ly
 ```
 
+
+
+
 Our proposed workaround is to aggregate <code>Product_Name</code> by <code>Sub_Category</code>, and treat it as a single product for the rest of the assignment, which we plotted in figure X.
+
+
+
 
 ```{r}
 #| label: Aggregated_Sub_Category_sales
@@ -324,9 +360,15 @@ for (i in seq_along(p_ly$x$data)) {
 p_ly
 ```
 
+
+
+
 This aggregated Quantity starts to show trends and seasonality, and is much more useful to base predictions on! We will use these aggregated sub-categories for the rest of the assignment.
 
 To properly finish our data preprocessing we ran some statistics on Quantity aggregated by Sub_Category. Table x contains some descriptive statistics.
+
+
+
 
 ```{r}
 #| label: sub_category_descriptive_statistics_table
@@ -354,7 +396,13 @@ kable(
   format = "pipe")
 ```
 
+
+
+
 The statistics for <code>Quantity</code> aggregated by <code>Sub_Category</code> looks valid. We can visualize it as histogram and check for anomalies. Figure y contains histograms of <code>Quantity</code> per <code>Sub_Category</code>.
+
+
+
 
 ```{r}
 #| label: sub_category_histograms
@@ -410,6 +458,9 @@ p <- p %>%
 p
 ```
 
+
+
+
 The histograms show that the quantities a right-skewed distributed. This is to be expected since most orders contain only a small number of items. We will not remove the outliers with large quantities since they appear valid..
 
 ## Data Visualization
@@ -427,6 +478,9 @@ The steps taken for data preparation were:
 -   Identifying Top Subcategories: The top three subcategories are selected from our dataset based on their sold quantities. The top three were: Binders, furnishing and paper.
 -   The sold quantities are aggregated monthly to create a time series object which we can use in the forecasting.
 -   A KPSS showed that the data is non stationary. First-order differencing is applied to transform the data from non-stationary to stationary. The KPSS results in a p-value >0.05 showing the stationarity. 
+
+
+
 
 ```{r message=FALSE, error=FALSE, warning=FALSE}
 #| label: plots1
@@ -525,11 +579,17 @@ for (subcategory in names(ts_list)) {
 # }
 ```
 
+
+
+
 Three models are applied to each subcategory to forecast it. The models we use are: ARIMA, Holt-Winters and ETS. We have chosen these models because of their level of suitability for discrete time series data with all different levels of trend and seasonality. To evaluate the methods and its effectiveness , the data is split into a training set (70%) and testing set (30%). 
 
 To assess the results, we use the following performance metrics: ME, RMSE, MAE and MAPE. They are calculated for the training and testing phases of the forecast. 
 
 As we can see on the forecasting results ARIMA performed well for binders. We can state this because of the lowest RMSE if you compare it to the other models.
+
+
+
 
 ```{r}
 #| label: Results1
@@ -641,8 +701,7 @@ combined_diff_plot <- function(differenced_series, top_3_subcategories) {
 combined_diff_plot(differenced_series, top_3_subcategories)
 
 ```
- 
- 
+
 ```{r}
 #| label: Results4
 
@@ -736,8 +795,6 @@ for (subcategory in names(forecast_results)) {
 
 ```
 
-
-
 ```{r}
 #| label: KPSStest
 # final KPSS test
@@ -754,6 +811,9 @@ for (subcategory in top_3_subcategories) {
 }
 # now they are all 0.1
 ```
+
+
+
 
 
 
@@ -779,6 +839,9 @@ Residual Diagnostics:
 The most effective model is not the same in all the subcategories. Each model was validated based on its ability to capture seasonality and trend. ARIMA performed better for Binders, while ETS performed better for Furnishings and Paper. 
 
 ### Clustering (4b)
+
+
+
 
 ```{r}
 #| label: somelable
@@ -920,6 +983,9 @@ for (cluster_id in names(forecast_results_by_cluster)) {
 print(cluster_metrics)
 
 ```
+
+
+
 Cluster 1 (e.g., Binders): ARIMA outperformed other methods due to significant autocorrelation and trend components.
 
 Cluster 2 (e.g., Furnishings): ETS was the most accurate method, effectively balancing trend and seasonality.
@@ -941,6 +1007,9 @@ Clustering allows for tailored forecasting strategies. We conclude that for the 
 ### Forecasting 3 products (5a)
 
 In this session, we focused on evaluating different forecasting models (ARIMA, Holt-Winters, and ETS) for multiple sub-categories by analyzing their accuracy metrics, such as RMSE, MAPE, and residual diagnostics. Based on the evaluation results, we selected the best-performing model for each sub-category. We then used these models to forecast the future outcomes for each sub-category, projecting the data for the next year. Note: we may need to interpret the outcomes and explain why we pick the certain model
+
+
+
 
 ```{r}
 #Binders->choose ARIMA
@@ -969,9 +1038,15 @@ plot(ets_forecast, main = "ETS Forecast for Furnishings (Next 12 Months)")
 
 ```
 
+
+
+
 ### Applying to all data (5b)
 
 In this session, we first grouped the sub-categories into clusters based on key time-series features, including trend strength, seasonal strength, and random strength, using hierarchical clustering. Once the clusters were formed, we applied and evaluated multiple forecasting models—ARIMA, Holt-Winters, and ETS—on each sub-category within its respective cluster, comparing their accuracy metrics such as RMSE and MAPE. Based on the evaluation results, we selected the best-performing model for each sub-category and used it to forecast the future outcomes within a year, leveraging the clustering to enhance the accuracy and relevance of our predictions.
+
+
+
 
 ```{r eval=FALSE}
 #Cluster_Binders->Holt-Winters
@@ -999,6 +1074,9 @@ print(hw_forecast)
 plot(hw_forecast, main = "Holt-Winters Forecast for Furnishings (Next 12 Months)", xlab = "Time", ylab = "Forecasted Values")
 
 ```
+
+
+
 ## Forecast interpretation
 
 Lorem Ipsum
@@ -1009,6 +1087,9 @@ Lorem Ipsum
 
 
 <br>
+
+
+
 
 
 ```{r eval=FALSE}
@@ -1119,7 +1200,13 @@ ggplot(cor_data, aes(Var1, Var2, fill = Freq)) +
 ```
 
 
+
+
+
 ### Forecasting??
+
+
+
 ```{r}
 
 #Aggregate sales per month

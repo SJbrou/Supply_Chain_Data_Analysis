@@ -14,3 +14,4 @@ format:
 
   docx: default
   jats: default
+  pdf: default
